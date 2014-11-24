@@ -1,4 +1,4 @@
-Ext.define('Ext.lib.Grid.column.ComboColumn', {
+Ext.define('Ext.lib.grid.column.ComboColumn', {
 	extend : 'Ext.grid.column.Column',
 	alias : 'widget.combocolumn',
 	

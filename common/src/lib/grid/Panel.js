@@ -1,4 +1,4 @@
-Ext.define('Ext.lib.Grid.Panel', {
+Ext.define('Ext.lib.grid.Panel', {
 	extend : 'Ext.grid.Panel',
 	alias : 'widget.simpleGrid',
 
