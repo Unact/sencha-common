@@ -8,8 +8,8 @@ Ext.define('Ext.lib.app.ControllerWithTabs', {
 	onLaunch: function(){
 		var controller = this, app = controller.getApplication();
 		
-		if(tabsControllers && tabsControllers.length>0){
-			tabsControllers.every(
+		if(controller.tabsControllers && controller.tabsControllers.length>0){
+			controller.tabsControllers.every(
 				function(tabController){
 					app.getController(tabController);
 					return true;
