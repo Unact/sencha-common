@@ -21,6 +21,7 @@ Ext.define('Ext.lib.BuyerSpSets', {
 
 		Ext.Ajax.request({
 		    url: '/buyers_sp/buyers_sp',
+		    method: 'GET',
 		    params: Ext.Object.merge(me.getParams(), {authenticity_token: window._token}),
 
 		    success: function(xhr) {
@@ -57,7 +58,8 @@ Ext.define('Ext.lib.BuyerSpSets', {
 		me.clear();
 		
 		Ext.Ajax.request({
-		    url: '/buyers_sp/index',
+		    url: '/buyers_sp',
+		    method: 'GET',
 		    params: Ext.Object.merge(me.getParams(), {client: client, authenticity_token: window._token}),
 
 		    success: function(xhr) {
@@ -108,7 +110,8 @@ Ext.define('Ext.lib.BuyerSpSets', {
 		};
 
 		Ext.Ajax.request({
-		    url: '/buyers_sp/create',
+		    url: '/buyers_sp',
+		    method: 'POST',
 		    params: {authenticity_token: window._token},
 			jsonData: data,
 		    success: arg.success,
