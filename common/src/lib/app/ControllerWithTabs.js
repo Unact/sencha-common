@@ -9,10 +9,16 @@ Ext.define('Ext.lib.app.ControllerWithTabs', {
 		var controller = this, app = controller.getApplication();
 		
 		if(controller.tabsControllers && controller.tabsControllers.length>0){
-			controller.tabsControllers.every(
-				function(tabController){
-					app.getController(tabController);
-					return true;
+			Ext.require(
+				controller.tabsControllers,
+				function(){
+					controller.tabsControllers.every(
+						function(tabController){
+							var currentController = app.getController(tabController);
+							currentController.onLaunch();
+							return true;
+						}
+					);
 				}
 			);
 		}
