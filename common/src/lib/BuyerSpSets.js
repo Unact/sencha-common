@@ -156,7 +156,7 @@ Ext.define('Ext.lib.BuyerSpSets', {
      */ 
 	cretaComboBoxField: function(id, name, sp_values, itemsCfg) {
 		var store = Ext.create('Ext.data.Store', {
-			model: 'app.model.valueModel',
+			model: 'app.model.ValueModel',
 			data: sp_values
 		});
 		
