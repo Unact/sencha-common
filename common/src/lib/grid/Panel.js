@@ -17,7 +17,8 @@ Ext.define('Ext.lib.grid.Panel', {
  	 * функция getSelected- возвращает значение поля в выделенной строке. Параметр - название поля
 	 */
 	constructor : function(currentConfig) {
-		var initConfig = this.getInitialConfig() || {},
+		var me  = this,
+			initConfig = me.getInitialConfig() || {},
 			plugins,
 			buttons = [],
 			i;
@@ -46,43 +47,20 @@ Ext.define('Ext.lib.grid.Panel', {
 			}
 		}
 		
-		if(config.disableRefresh!==true){
-			buttons.push(
-				{
-					id : 'refresh'+config.suffix,
-					icon : '/ext/resources/themes/images/default/grid/refresh.gif',
-					tooltip: 'Обновить'
-				}
-			);
-		}
-		if(config.disableSave!==true){
-			buttons.push(
-				{
-					id : 'save'+config.suffix,
-					icon : '/images/save.png',
-					tooltip: 'Сохранить'
-				}
-			);
-		}
-		if(config.disableAdd!==true){
-			buttons.push(
-				{
-					id : 'add'+config.suffix,
-					icon : '/ext/examples/shared/icons/fam/add.gif',
-					tooltip: 'Добавить'
-				}
-			);
-		}
-		if(config.disableDelete!==true){
-			buttons.push(
-				{
-					id : 'delete'+config.suffix,
-					icon : '/ext/examples/shared/icons/fam/delete.gif',
-					disabled : true,
-					tooltip: 'Удалить'
-				}
-			);
-		}
+		me.createDefaultButtons();
+		
+		if(config.disableRefresh!==true)
+			buttons.push(me.refreshBtn);
+		
+		if(config.disableSave!==true)
+			buttons.push(me.saveBtn);
+
+		if(config.disableAdd!==true)
+			buttons.push(me.addBtn);
+		
+		if(config.disableDelete!==true)
+			buttons.push(me.deleteBtn);
+
 		
 		if(config.afterButtons!=null){
 			for(i=0; i<config.afterButtons.length; i++){
@@ -350,5 +328,34 @@ Ext.define('Ext.lib.grid.Panel', {
 			});
 			return true;
 		};
+	},
+	
+	createDefaultButtons: function() {
+		me = this;
+		
+		me.refreshBtn = Ext.create('Ext.Button', {
+			id : 'refresh'+config.suffix,
+			icon : '/ext/resources/themes/images/default/grid/refresh.gif',
+			tooltip: 'Обновить'
+		});
+
+		me.saveBtn = Ext.create('Ext.Button', {
+			id : 'save'+config.suffix,
+			icon : '/images/save.png',
+			tooltip: 'Сохранить'
+		});
+
+		me.addBtn = Ext.create('Ext.Button', {
+			id : 'add'+config.suffix,
+			icon : '/ext/examples/shared/icons/fam/add.gif',
+			tooltip: 'Добавить'
+		});
+		
+		me.deleteBtn = Ext.create('Ext.Button', {
+			id : 'delete'+config.suffix,
+			icon : '/ext/examples/shared/icons/fam/delete.gif',
+			disabled : true,
+			tooltip: 'Удалить'
+		});
 	}
 });
