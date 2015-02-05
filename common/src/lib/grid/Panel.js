@@ -72,6 +72,12 @@ Ext.define('Ext.lib.grid.Panel', {
 				tooltip : 'Удалить'
 			});
 		}
+		
+		if (config.afterButtons != null) {
+			for ( i = 0; i < config.afterButtons.length; i++) {
+				buttons.push(config.afterButtons[i]);
+			}
+		}
 
 		config.dockedItems = [{
 			xtype : 'toolbar',
