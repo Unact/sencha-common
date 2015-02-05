@@ -43,35 +43,7 @@ Ext.define('Ext.lib.grid.Panel', {
 			}
 		}
 
-		if (config.disableRefresh !== true) {
-			buttons.push({
-				id : 'refresh' + config.suffix,
-				icon : '/ext/resources/themes/images/default/grid/refresh.gif',
-				tooltip : 'Обновить'
-			});
-		}
-		if (config.disableSave !== true) {
-			buttons.push({
-				id : 'save' + config.suffix,
-				icon : '/images/save.png',
-				tooltip : 'Сохранить'
-			});
-		}
-		if (config.disableAdd !== true) {
-			buttons.push({
-				id : 'add' + config.suffix,
-				icon : '/ext/examples/shared/icons/fam/add.gif',
-				tooltip : 'Добавить'
-			});
-		}
-		if (config.disableDelete !== true) {
-			buttons.push({
-				id : 'delete' + config.suffix,
-				icon : '/ext/examples/shared/icons/fam/delete.gif',
-				disabled : true,
-				tooltip : 'Удалить'
-			});
-		}
+		me.createDefaultButtons(buttons, config);
 		
 		if (config.afterButtons != null) {
 			for ( i = 0; i < config.afterButtons.length; i++) {
@@ -300,6 +272,47 @@ Ext.define('Ext.lib.grid.Panel', {
 				direction : state
 			});
 			return true;
+		};
+	},
+	
+	createDefaultButtons: function(buttons, config) {
+		me = this;
+		
+		if(config.disableRefresh !== true) {
+			me.refreshBtn = Ext.create('Ext.Button', {
+				id : 'refresh'+config.suffix,
+				icon : '/ext/resources/themes/images/default/grid/refresh.gif',
+				tooltip: 'Обновить'
+			});
+			buttons.push(me.refreshBtn);
+		};
+
+		if(config.disableSave !== true) {
+			me.saveBtn = Ext.create('Ext.Button', {
+				id : 'save'+config.suffix,
+				icon : '/images/save.png',
+				tooltip: 'Сохранить'
+			});
+			buttons.push(me.saveBtn);
+		};
+
+		if(config.disableAdd !== true) {
+			me.addBtn = Ext.create('Ext.Button', {
+				id : 'add'+config.suffix,
+				icon : '/ext/examples/shared/icons/fam/add.gif',
+				tooltip: 'Добавить'
+			});
+			buttons.push(me.addBtn);
+		}
+		
+		if (config.disableDelete !== true) {
+			me.deleteBtn = Ext.create('Ext.Button', {
+				id : 'delete'+config.suffix,
+				icon : '/ext/examples/shared/icons/fam/delete.gif',
+				disabled : true,
+				tooltip: 'Удалить'
+			});
+			buttons.push(me.deleteBtn);
 		};
 	}
 });
