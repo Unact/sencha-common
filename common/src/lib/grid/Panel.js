@@ -169,76 +169,53 @@ Ext.define('Ext.lib.grid.Panel', {
 		}
 	},
 
-	loadComboColumn : function(callback) {
+	loadComboColumns : function(callback) {
 		var count = 0,
-			countNoLoad = 0,
-			contoller = this,
-			windowTitle = (contoller.title || ''),
-			comboColumns = [],
-			comboColumnsStoreName = [],
-			comboColumnsNoLoad = [],
-			errors = [];
-
-		if (windowTitle != '')
-			windowTitle = ', окно: ' + windowTitle;
-
-		for (var i in contoller.columns) {
-			var col = contoller.columns[i];
-			if (col.xtype == 'combocolumn') {
-				var s = col.store.self.getName();
-				if (comboColumnsStoreName.indexOf(s) == -1) {
-					comboColumns.push(col);
-					comboColumnsStoreName.push(s);
-					count++;
+			grid = this,
+			comboColumns = {},
+			duplicateColumns = [],
+			errors = [],
+			storeName;
+		
+		grid.columns.every(function(column) {
+			if (column.xtype == 'combocolumn') {
+				storeName = column.store.self.getName();
+				if (comboColumns[storeName]) {
+					duplicateColumns.push(column);
 				} else {
+					comboColumns[storeName] = column;
+					count++;
+				}
+			}
+			return true;
+		});
 
-					comboColumnsNoLoad.push(col);
-					countNoLoad++;
-				};
-			};
-		};
-
-		for (var i in comboColumns) {
-			comboColumns[i].store.load({
+		for (var mainStoreName in comboColumns) {
+			comboColumns[mainStoreName].store.load({
 				callback : function(records, operation, success) {
 					count--;
 
-					if (!success)
-						errors.push('Ошибка загрузки справочника для поля: ' + this.text + windowTitle);
+					if (success!==true){
+						errors.push('Ошибка загрузки справочника для поля: ' + this.text + ', окно: ' + grid.title);
+					}
 
 					if (count == 0) {
-
-						if (countNoLoad !== 0) {
-							for (var i in comboColumnsNoLoad) {
-								var store1 = comboColumnsNoLoad[i].store;
-								var s = store1.self.getName();
-								var store2 = comboColumns[comboColumnsStoreName.indexOf(s)].store;
-								store1.add(store2.getRange(0, store2.getCount() - 1, {
-									callback : function() {
-										countNoLoad--;
-										if (countNoLoad == 0) {
-											if (errors.length > 0)
-												Ext.Msg.alert('Ошибка', errors.join("</br>"));
-											if (callback && typeof (callback) === "function") {
-												callback(records, operation, success);
-											}
-										}
-									}
-								}));
-							}
-						} else {
-							if (errors.length > 0)
-								Ext.Msg.alert('Ошибка', errors.join("</br>"));
-
-							if (callback && typeof (callback) === "function") {
-								callback(records, operation, success);
-							}
-						};
+						for (var duplicateStoreName in duplicateColumns) {
+							var duplicateStore = duplicateColumns[duplicateStoreName].store,
+								mainStore = comboColumns[mainStoreName].store;
+							duplicateStore.add(mainStore.data.getRange());
+						}
+						if (errors.length > 0) {
+							Ext.Msg.alert('Ошибка', errors.join("</br>"));
+						}
+						if (callback && typeof (callback) === "function") {
+							callback((errors.length > 0) ? errors : true);
+						}
 					}
 				},
-				scope : comboColumns[i]
+				scope : comboColumns[mainStoreName]
 			});
-		};
+		}
 	},
 
 	makeComboColumn : function(column, storeCombo, allowNull, onlyRenderer) {
@@ -285,7 +262,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				tooltip: 'Обновить'
 			});
 			buttons.push(me.refreshBtn);
-		};
+		}
 
 		if(config.disableSave !== true) {
 			me.saveBtn = Ext.create('Ext.Button', {
@@ -294,7 +271,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				tooltip: 'Сохранить'
 			});
 			buttons.push(me.saveBtn);
-		};
+		}
 
 		if(config.disableAdd !== true) {
 			me.addBtn = Ext.create('Ext.Button', {
@@ -313,6 +290,6 @@ Ext.define('Ext.lib.grid.Panel', {
 				tooltip: 'Удалить'
 			});
 			buttons.push(me.deleteBtn);
-		};
+		}
 	}
 });
