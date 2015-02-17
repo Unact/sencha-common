@@ -12,13 +12,10 @@ Ext.define('Ext.lib.app.ControllerWithTabs', {
 			Ext.require(
 				controller.tabsControllers,
 				function(){
-					controller.tabsControllers.every(
-						function(tabController){
-							var currentController = app.getController(tabController);
-							currentController.onLaunch();
-							return true;
-						}
-					);
+					for(var i=0; i<controller.tabsControllers.length; i++) {
+						var currentController = app.getController(controller.tabsControllers[i]);
+						currentController.onLaunch();
+					}
 				}
 			);
 		}
