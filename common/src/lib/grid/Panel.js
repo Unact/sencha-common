@@ -140,27 +140,19 @@ Ext.define('Ext.lib.grid.Panel', {
 	},
 
 	syncStore : function(extraParams, callback) {
-		function storeHasChanges(store) {
-			return ((store.getNewRecords().length > 0) || (store.getUpdatedRecords().length > 0) || (store.getRemovedRecords().length > 0));
-		};
-
-		var Store = this.getStore();
-		if (storeHasChanges(Store)) {
+		if (this.store.hasChanges()) {
 			if (extraParams) {
-				Store.proxy.extraParams = extraParams;
+				this.store.proxy.extraParams = extraParams;
 			}
 
-			Store.sync({
+			this.store.sync({
 				callback : function(batch) {
-					if (batch.exceptions.length > 0) {
+					var errorsPresent = batch.exceptions.length > 0;
+					if (errorsPresent) {
 						Ext.Msg.alert("Ошибка", batch.exceptions[0].getError().responseText);
-						if (callback && typeof (callback) === "function") {
-							callback(false);
-						}
-					} else {
-						if (callback && typeof (callback) === "function") {
-							callback(true);
-						}
+					}
+					if (callback && typeof (callback) === "function") {
+						callback(!errorsPresent);
 					}
 				}
 			});
