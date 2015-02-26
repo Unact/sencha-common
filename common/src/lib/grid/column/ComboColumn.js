@@ -49,6 +49,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 				store : me.store,
 				listConfig : config.listConfig,
 				queryMode : config.queryMode || 'local',
+				queryParam : config.queryParam || 'query',
 				displayField : config.displayField || 'name',
 				valueField : config.valueField || 'id',
 				colorField : config.colorField,
