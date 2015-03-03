@@ -64,7 +64,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 			});
 			
 			if(config.skipBeforeQuery!==false){
-				fieldConfig.listeners = {};
+				fieldConfig.listeners |= {};
 				Ext.applyIf(fieldConfig.listeners, {
 					beforequery: function(queryEvent){
 						queryEvent.combo.store.clearFilter();
