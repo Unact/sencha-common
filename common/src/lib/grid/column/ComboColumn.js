@@ -102,7 +102,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 					}
 					return matching == null;
 				});
-				return matching;
+				return matching || "";
 			},
 			depends: [me.dataIndex],
 			persist: false
