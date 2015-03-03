@@ -63,7 +63,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 				triggerAction: 'all'
 			});
 			
-			if(config.skipBeforeQuery===true){
+			if(config.skipBeforeQuery!==true){
 				fieldConfig.listeners |= {};
 				Ext.applyIf(fieldConfig.listeners, {
 					beforequery: function(queryEvent){
