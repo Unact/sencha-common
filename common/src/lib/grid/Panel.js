@@ -176,40 +176,5 @@ Ext.define('Ext.lib.grid.Panel', {
 		Ext.apply(this, config);
 
 		this.callParent(arguments);
-	},
-	
-	makeComboColumn: function(column, storeCombo, allowNull, onlyRenderer){
-		function renderer(value){
-			var matching = null,
-				data=storeCombo.snapshot || storeCombo.data;
-			data.each(function(record){
-				if(record.get('id')==value){
-					matching=record.get('name');
-				}
-				return matching==null;
-			});
-			return matching;
-		};
-		
-		if(!onlyRenderer){
-			column.field = Ext.create('Ext.form.ComboBox', {
-				store: storeCombo,
-				queryMode: 'local',
-				displayField: 'name',
-				valueField: 'id',
-				value: "",
-				autoSelect: (allowNull!==true)
-			});
-		}
-		column.renderer=renderer;
-		
-		column.doSort = function(state){
-			this.store.sort({
-				property: column.dataIndex,
-				transform: renderer,
-				direction: state
-			});
-			return true;
-		};
 	}
 });

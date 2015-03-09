@@ -6,6 +6,8 @@
 Ext.define('Ext.lib.data.RestXmlStore', {
 	extend: 'Ext.data.Store',
 	
+	alias: 'store.restxml',
+	
 	requires : [
 		'Ext.data.proxy.Rest',
 		'Ext.data.reader.Xml',
@@ -43,17 +45,11 @@ Ext.define('Ext.lib.data.RestXmlStore', {
 			currentConfig = {};
 
 		Ext.apply(currentConfig, this.getInitialConfig());
-		/*console.log(currentConfig);
-		Ext.apply(currentConfig, this.config);
-		console.log(currentConfig);*/
 		Ext.apply(currentConfig, config);
-		//console.log(currentConfig);
 		
 		currentProxyConfig = currentConfig.proxy,
 		entityName = currentConfig.entityName,
 		entityPluralName = Ext.util.Inflector.pluralize(entityName);
-		
-
 		
 		currentProxyConfig.url = '/rest/' + entityPluralName;
 		currentProxyConfig.reader.record = entityName;
