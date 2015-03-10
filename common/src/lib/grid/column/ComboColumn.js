@@ -87,10 +87,11 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 	},
 	
 	setStore: function(store){
-		var me = this;
+		var me = this,
+			initConfig = me.getInitialConfig();
 		
 		me.store = store;
-		if(me.getInitialConfig('store')){
+		if(initConfig.field && initConfig.field.store){
 			me.field.bindStore(store);
 		}
 	},
@@ -98,30 +99,26 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 	addPrimaryValueField: function(){
 		var me = this, store, model;
 		
-		if(me.primaryValueFieldAdded){
-			store = me.up('grid').getStore();
-			model = store.getModel();
-			
-			model.addFields([{	
-				name: me.fieldName,
-				convert: function(v, rec) {
-					var matching = null,
-						data = me.store.snapshot || me.store.data,
-						foreignKey = rec.get(me.dataIndex);
-					data.each(function(record) {
-						if (record.get(me.primaryKey) == foreignKey) {
-							matching = record.get(me.primaryValue);
-						}
-						return matching == null;
-					});
-					return matching || "";
-				},
-				depends: [me.dataIndex],
-				persist: false
-			}]);
-			
-			me.primaryValueFieldAdded = true;
-		}
+		store = me.up('grid').getStore();
+		model = store.getModel();
+		
+		model.addFields([{	
+			name: me.fieldName,
+			convert: function(v, rec) {
+				var matching = null,
+					data = me.store.snapshot || me.store.data,
+					foreignKey = rec.get(me.dataIndex);
+				data.each(function(record) {
+					if (record.get(me.primaryKey) == foreignKey) {
+						matching = record.get(me.primaryValue);
+					}
+					return matching == null;
+				});
+				return matching || "";
+			},
+			depends: [me.dataIndex],
+			persist: false
+		}]);
 	},
 	
 	/*

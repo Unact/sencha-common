@@ -54,8 +54,8 @@ Ext.define('Ext.lib.data.RestXmlStore', {
 		currentProxyConfig.writer.record = entityName;
 		currentProxyConfig.writer.documentRoot = entityPluralName;
 		
-		Ext.apply(this, currentConfig);
-		
 		this.callParent(arguments);
+		
+		//Ext.apply(this, currentConfig);
 	}
 });
