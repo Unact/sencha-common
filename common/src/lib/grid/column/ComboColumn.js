@@ -15,6 +15,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 	 * skipBeforeQuery - пропустить встроенный обработчик события начала запроса
 	 * primaryKey - наименование поля первичного ключа. по умолчанию 'id'
 	 * primaryValue - наименование поля, хранящего отображаемое значение. по умолчанию 'name'
+	 * comboStore - 
 	 * 
 	 * В модель добавляется вычисляемое поле, хранящее значение, которое надо отобразить.
 	 */
@@ -26,19 +27,26 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 		
 		me.callParent(arguments);
 		
-		if(!config.store.isStore){
-			me.store = Ext.data.StoreManager.lookup(config.store);
-			if(me.store==null){
-				me.store = Ext.create(config.store);
-			}
-		} else {
-			me.store = config.store;
-		}
-		
 		me.primaryKey = config.primaryKey || 'id';
 		me.primaryValue = config.primaryValue || 'name';
 		
 		me.fieldName = me.dataIndex + '_' + me.primaryValue;
+		
+		if(config.store){
+			if(!config.store.isStore){
+				me.store = Ext.data.StoreManager.lookup(config.store);
+				if(me.store==null){
+					me.store = Ext.create(config.store);
+				}
+			} else {
+				me.store = config.store;
+			}
+		} else {
+			me.store = Ext.create('Ext.data.Store', {
+				fields: [me.primaryKey, me.primaryValue],
+				proxy: { type: 'memory' }
+			});
+		}
 		
 		function renderer(v, metaData, rec){
 			return rec.get(me.fieldName);
@@ -78,34 +86,54 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 		}
 	},
 	
+	setStore: function(store){
+		var me = this;
+		
+		me.store = store;
+		if(me.getInitialConfig('store')){
+			me.field.bindStore(store);
+		}
+	},
+	
+	addPrimaryValueField: function(){
+		var me = this, store, model;
+		
+		if(me.primaryValueFieldAdded){
+			store = me.up('grid').getStore();
+			model = store.getModel();
+			
+			model.addFields([{	
+				name: me.fieldName,
+				convert: function(v, rec) {
+					var matching = null,
+						data = me.store.snapshot || me.store.data,
+						foreignKey = rec.get(me.dataIndex);
+					data.each(function(record) {
+						if (record.get(me.primaryKey) == foreignKey) {
+							matching = record.get(me.primaryValue);
+						}
+						return matching == null;
+					});
+					return matching || "";
+				},
+				depends: [me.dataIndex],
+				persist: false
+			}]);
+			
+			me.primaryValueFieldAdded = true;
+		}
+	},
+	
 	/*
 	 * Для добавления поля в модель, связанную с таблицей, необходимо иметь доступ к таблице
 	 * Это возможно только после создания таблицы. Например, при отображении колонки
 	 * таблица уже существует. Поэтому добавлять поле будем в этом обработчике
 	 */
 	onRender: function(){
-		var me = this,
-			store = me.up('grid').getStore(),
-			model = store.getModel();
+		var me = this;
 		
 		me.callParent();
 		
-		model.addFields([{	
-			name: me.fieldName,
-			convert: function(v, rec) {
-				var matching = null,
-					data = me.store.snapshot || me.store.data,
-					foreignKey = rec.get(me.dataIndex);
-				data.each(function(record) {
-					if (record.get(me.primaryKey) == foreignKey) {
-						matching = record.get(me.primaryValue);
-					}
-					return matching == null;
-				});
-				return matching || "";
-			},
-			depends: [me.dataIndex],
-			persist: false
-		}]);
+		me.addPrimaryValueField();
 	}
 });

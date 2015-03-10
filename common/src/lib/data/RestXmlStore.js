@@ -13,24 +13,21 @@ Ext.define('Ext.lib.data.RestXmlStore', {
 		'Ext.data.reader.Xml',
 		'Ext.data.writer.Xml'],
 	
-	config: {
-		proxy: {
-			type: 'rest',
-			timeout: 120000,
-			headers: {
-				'HTTP_X_CSRF_TOKEN':
-				window._token
-			},
-			extraParams: {
-				_csrf: window._token
-			},
-			reader: {
-				type: 'xml',
-				messageProperty: 'error'
-			},
-			writer: {
-				type:'xml'
-			}
+	proxy: {
+		type: 'rest',
+		timeout: 120000,
+		headers: {
+			'HTTP_X_CSRF_TOKEN': window._token
+		},
+		extraParams: {
+			_csrf: window._token
+		},
+		reader: {
+			type: 'xml',
+			messageProperty: 'error'
+		},
+		writer: {
+			type:'xml'
 		}
 	},
 	
@@ -58,7 +55,7 @@ Ext.define('Ext.lib.data.RestXmlStore', {
 		currentProxyConfig.writer.documentRoot = entityPluralName;
 		
 		Ext.apply(this, currentConfig);
-
+		
 		this.callParent(arguments);
 	}
 });
