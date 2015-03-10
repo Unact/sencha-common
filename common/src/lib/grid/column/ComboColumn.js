@@ -59,7 +59,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 		};
 		
 		if(!config.onlyRenderer){
-			Ext.applyIf(fieldConfig, config.fieldConfig);
+			Ext.applyIf(fieldConfig, config.field);
 			Ext.applyIf(fieldConfig, {
 				queryMode: 'local',
 				displayField: me.primaryValue,
@@ -72,7 +72,9 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 			});
 			
 			if(config.skipBeforeQuery!==true){
-				fieldConfig.listeners |= {};
+				if(!fieldConfig.listeners) {
+					fieldConfig.listeners = {};
+				}
 				Ext.applyIf(fieldConfig.listeners, {
 					beforequery: function(queryEvent){
 						queryEvent.combo.store.clearFilter();
@@ -81,7 +83,6 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 					}
 				});
 			}
-			
 			me.field = Ext.create('Ext.form.ComboBox', fieldConfig);
 		}
 	},
