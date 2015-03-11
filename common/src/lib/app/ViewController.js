@@ -26,7 +26,7 @@ Ext.define('Ext.lib.app.ViewController', {
 				
 				if (val == 0) {
 					if(me.callback && ( typeof me.callback)=="function"){
-						me.callback();
+						me.callback.call(me);
 					}
 					me.mainContainer.setLoading(false);
 				}
