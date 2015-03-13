@@ -32,7 +32,8 @@ Ext.define('Ext.lib.app.ViewController', {
 				}
 			},
 			load: function(dictionaries){
-				var me = this;
+				var me = this,
+					store;
 				if (Array.isArray(dictionaries)) {
 					me.dictionaryCount += dictionaries.length;
 		
@@ -40,7 +41,12 @@ Ext.define('Ext.lib.app.ViewController', {
 		
 					for ( i = 0; i < dictionaries.length; i++) {
 						if (( typeof dictionaries[i]) === "string") {
-							Ext.data.StoreManager.lookup(dictionaries[i]).load(function(records, operation, success) {
+							store = Ext.data.StoreManager.lookup(dictionaries[i]);
+						} else if (dictionaries[i].isStore) {
+							store = dictionaries[i];
+						}
+						if(store) {
+							store.load(function(records, operation, success) {
 								if(success!==true && me.skipDictionaryAlert){
 									Ext.Msg.alert("Ошибка", "Ошибка при загрузке " + dictionaries[i]);
 								}
