@@ -6,6 +6,8 @@ Ext.define('Ext.lib.grid.Panel', {
 	 * @param {Object} config Config object.
 	 * suffix - специальное имя для компонента. используется при построении идентификатора объектов и плагинов
 	 * disable* - не использовать данную кнопку или функцию
+	 * defaultAddClickEvent - использовать ли событие по-умолчанию для кнопки Добавить,
+	 * defaultDeleteClickEvent - использовать ли событие по-умолчанию для кнопки Удалить,
 	 * beforeButtons - дополнительные элементы для панели, располагающиеся перед основными кнопками
 	 * afterButtons - дополнительные элементы для панели, располагающиеся после основных кнопок
 	 * disableEditing - таблица нередактируемая. По умолчанию используется редактирование ячеек
@@ -271,6 +273,10 @@ Ext.define('Ext.lib.grid.Panel', {
 				icon : '/ext/examples/shared/icons/fam/add.gif',
 				tooltip: 'Добавить'
 			});
+
+			if(config.defaultAddClickEvent == true)
+				me.addBtn.addListener("click", function(btn) {me.onAddClick(btn);});
+				
 			buttons.push(me.addBtn);
 		}
 		
@@ -281,7 +287,46 @@ Ext.define('Ext.lib.grid.Panel', {
 				disabled : true,
 				tooltip: 'Удалить'
 			});
+			
+			if(config.defaultDeleteClickEvent == true)
+				me.deleteBtn.addListener("click", me.onDeleteClick);
+			
 			buttons.push(me.deleteBtn);
+		}
+	},
+	
+	onAddClick: function(btn, fields) {
+		var grid = btn.ownerCt.ownerCt,     //btn -> toolbar -> grid
+		    editingPlugin = grid.findPlugin('cellediting') || grid.findPlugin('rowediting'),
+		    store         = grid.getStore(),
+		    sm            = grid.getSelectionModel(),
+		    index = store.indexOf(sm.getLastSelected()),
+		    fields = fields || {},
+		    model = Ext.ModelManager.create(fields, store.model);
+
+		editingPlugin.cancelEdit();
+		store.insert(Math.max(index, 0), model);
+		sm.select(model);
+		editingPlugin.startEdit(model, 0);
+		
+		return model;
+	},
+	
+	onDeleteClick: function(btn) {
+		var grid = btn.ownerCt.ownerCt,     //btn -> toolbar -> grid
+		    editingPlugin = grid.findPlugin('cellediting') || grid.findPlugin('rowediting'),
+		    store         = grid.getStore(),
+		    sm            = grid.getSelectionModel(),
+		    index = store.indexOf(sm.getLastSelected());
+
+		if (index>=0) {
+			editingPlugin.cancelEdit();
+
+			store.remove(sm.getSelection());
+
+			if (store.getCount() > 0) {
+				sm.select(Math.min(index, store.getCount() - 1));
+			}
 		}
 	}
 });
