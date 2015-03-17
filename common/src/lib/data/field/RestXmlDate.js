@@ -12,7 +12,7 @@ Ext.define('Ext.lib.data.field.RestXmlDate', {
 			return v;
 		}
 
-		var parsed = null, formats = "d.m.y|c|d/m/Y|d-m-y|d-m-Y|d/m|d-m|dm|dmy|dmY|d|Y-m-d".split('|');
+		var parsed = null, formats = "d.m.y|d.m.Y|c|d/m/Y|d-m-y|d-m-Y|d/m|d-m|dm|dmy|dmY|d|Y-m-d".split('|');
 		
 		for(var i=0; i<formats.length; i++){
 			parsed = Ext.Date.parse(v, formats[i]);
