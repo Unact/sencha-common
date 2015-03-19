@@ -49,7 +49,23 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 		}
 		
 		function renderer(v, metaData, rec){
-			return rec.get(me.fieldName);
+			//костыль на пару дней, чтобы в админке работало отображение
+			//при смене пунктов меню.
+			var val = rec.get(me.fieldName);
+			if(val){
+				return val;
+			} else {
+				var matching = null,
+					data = me.store.snapshot || me.store.data,
+					foreignKey = rec.get(me.dataIndex);
+				data.each(function(record) {
+					if (record.get(me.primaryKey) == foreignKey) {
+						matching = record.get(me.primaryValue);
+					}
+					return matching == null;
+				});
+				return matching || "";
+			}
 		};
 		
 		me.renderer = config.renderer || renderer;

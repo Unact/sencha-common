@@ -104,5 +104,5 @@ Ext.apply(Ext.form.field.VTypes, {
 		return Ext.lib.Checkers.checkOwnAccount(value);
 	},
 	ownaccountText: 'Некорректное значение лицевого счета',
-	ownaccountMask: /[0-9 АВСЕНКМРТХ]/,
+	ownaccountMask: /[0-9 АВСЕНКМРТХ]/
 });
