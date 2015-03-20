@@ -75,6 +75,9 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 		};
 		
 		if(!config.onlyRenderer){
+			if(me.width){
+				fieldConfig.width = me.width - 4;
+			}
 			Ext.applyIf(fieldConfig, config.field);
 			Ext.applyIf(fieldConfig, {
 				queryMode: 'local',
