@@ -167,7 +167,6 @@ Ext.define('Ext.lib.grid.Panel', {
 		var count = 0,
 			grid = this,
 			comboColumns = {},
-			duplicateColumns = [],
 			errors = [],
 			storeName;
 		
@@ -175,9 +174,9 @@ Ext.define('Ext.lib.grid.Panel', {
 			if (column.xtype == 'combocolumn') {
 				storeName = column.store.self.getName();
 				if (comboColumns[storeName]) {
-					duplicateColumns.push(column);
+					comboColumns[storeName].duplicateColumns.push(column);
 				} else {
-					comboColumns[storeName] = column;
+					comboColumns[storeName] = {mainColumn: column, duplicateColumns: []};
 					count++;
 				}
 			}
@@ -185,20 +184,19 @@ Ext.define('Ext.lib.grid.Panel', {
 		});
 
 		for (var mainStoreName in comboColumns) {
-			comboColumns[mainStoreName].store.load({
+			comboColumns[mainStoreName].mainColumn.store.load({
 				callback : function(records, operation, success) {
 					count--;
 
 					if (success!==true){
-						errors.push('Ошибка загрузки справочника для поля: ' + this.text + ', окно: ' + grid.title);
+						errors.push('Ошибка загрузки справочника для поля: ' + this.mainColumn.text + ', окно: ' + grid.title);
 					}
+			
+					this.duplicateColumns.forEach(function(clm){
+						clm.store.add(this.mainColumn.store.data.getRange());
+					}, this);
 
 					if (count == 0) {
-						for (var duplicateStoreName in duplicateColumns) {
-							var duplicateStore = duplicateColumns[duplicateStoreName].store,
-								mainStore = comboColumns[mainStoreName].store;
-							duplicateStore.add(mainStore.data.getRange());
-						}
 						if (errors.length > 0) {
 							Ext.Msg.alert('Ошибка', errors.join("</br>"));
 						}
