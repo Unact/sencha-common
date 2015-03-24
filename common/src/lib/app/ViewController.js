@@ -5,12 +5,23 @@ Ext.define('Ext.lib.app.ViewController', {
 	 * Загрузчик словарей.
 	 * dictionaries - массив. Элементом может являться строка или объект.
 	 * Строка трактуется как идентификатор хранилища 
-	 * Объект должен содержать идентификатор хранилища в качестве ключа и
+	 * Объект должен быть объектом хранилища или
+	 * содержать идентификатор хранилища в качестве ключа и
 	 * функцию обратного вызова или массив в качестве значения.
 	 * callback - функция обратного вызова после загрузки всех словарей
 	 */
 	loadDictionaries : function(dictionaries, callback) {
 		var controller = this, i, properties, loader;
+		
+		function getStore(obj){
+			var store;
+			if (( typeof obj) === "string") {
+				store = Ext.data.StoreManager.lookup(obj);
+			} else if (obj.isStore) {
+				store = obj;
+			}
+			return store;
+		}
 		
 		loader = {
 			dictionaryCount : 0,
@@ -40,11 +51,7 @@ Ext.define('Ext.lib.app.ViewController', {
 					me.mainContainer.setLoading(true);
 		
 					for ( i = 0; i < dictionaries.length; i++) {
-						if (( typeof dictionaries[i]) === "string") {
-							store = Ext.data.StoreManager.lookup(dictionaries[i]);
-						} else if (dictionaries[i].isStore) {
-							store = dictionaries[i];
-						}
+						store = getStore(dictionaries[i]);
 						if(store) {
 							store.load(function(records, operation, success) {
 								if(success!==true && me.skipDictionaryAlert){
@@ -59,7 +66,8 @@ Ext.define('Ext.lib.app.ViewController', {
 				} else {
 					properties = Object.getOwnPropertyNames(dictionaries);
 					if (properties.length >= 1) {
-						Ext.data.StoreManager.lookup(properties[0]).load(function(records, operation, success) {
+						store = getStore(properties[0]);
+						store.load(function(records, operation, success) {
 							if(success!==true && me.skipDictionaryAlert){
 								Ext.Msg.alert("Ошибка", "Ошибка при загрузке " + properties[0]);
 							}

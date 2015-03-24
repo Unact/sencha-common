@@ -95,34 +95,44 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 			initConfig = me.getInitialConfig();
 		
 		me.store = store;
-		if(initConfig.field && initConfig.field.store){
+		if(me.field){
 			me.field.bindStore(store);
 		}
 	},
 	
-	addPrimaryValueField: function(){
-		var me = this, store, model;
+	addPrimaryValueField: function(model){
+		var me = this, fields, fieldPresent = false;
 		
-		store = me.up('grid').getStore();
-		model = store.getModel();
-		
-		model.addFields([{	
-			name: me.fieldName,
-			convert: function(v, rec) {
-				var matching = null,
-					data = me.store.snapshot || me.store.data,
-					foreignKey = rec.get(me.dataIndex);
-				data.each(function(record) {
-					if (record.get(me.primaryKey) == foreignKey) {
-						matching = record.get(me.primaryValue);
-					}
-					return matching == null;
-				});
-				return matching || "";
-			},
-			depends: [me.dataIndex],
-			persist: false
-		}]);
+		if(model==null){
+			model = me.up('grid').store.getModel();
+		}
+		fields = model.getFields();
+		fields.forEach(function(field){
+			if(field.name==me.fieldName){
+				fieldPresent = true;
+			}
+			return !fieldPresent;
+		});
+		if(!fieldPresent){
+			model.addFields([{	
+				name: me.fieldName,
+				convert: function(v, rec) {
+					var matching = null,
+						data = me.store.snapshot || me.store.data,
+						foreignKey = rec.get(me.dataIndex);
+					
+					data.each(function(record) {
+						if (record.get(me.primaryKey) == foreignKey) {
+							matching = record.get(me.primaryValue);
+						}
+						return matching == null;
+					});
+					return matching || "";
+				},
+				depends: [me.dataIndex],
+				persist: false
+			}]);
+		}
 	},
 	
 	/*
