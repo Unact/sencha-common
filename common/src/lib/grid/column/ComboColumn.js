@@ -95,7 +95,12 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 			initConfig = me.getInitialConfig();
 		
 		me.store = store;
-		if(me.field){
+		if(me.field &&
+			!(
+				initConfig.field &&
+				(initConfig.field.store || (initConfig.field.bind && initConfig.field.bind.store))
+			)
+		){
 			me.field.bindStore(store);
 		}
 	},
