@@ -27,7 +27,7 @@ Ext.define('Ext.lib.data.field.RestXmlDate', {
 		var result;
 		
 		if (v instanceof Date) {
-			result = Ext.Date.format(v, 'Y-m-d H:i:s');
+			result = Ext.Date.format(v, (me.isDate ? 'Y-m-d' : 'Y-m-d H:i:s'));
 		}
 		return result;
 	}
