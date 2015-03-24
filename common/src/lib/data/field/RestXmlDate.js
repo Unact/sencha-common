@@ -2,6 +2,8 @@ Ext.define('Ext.lib.data.field.RestXmlDate', {
 	extend : 'Ext.data.field.Date',
 
 	alias : 'data.field.restXmlDate',
+	
+	isDate: true,
 
 	convert : function(v) {
 		if (!v) {
