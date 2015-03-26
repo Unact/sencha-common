@@ -214,5 +214,5 @@ Ext.define('Ext.lib.grid.Panel', {
 			return true;
 		});
 		return rows.length>0 ? rows.join("\n") : null;
-	},
+	}
 });
