@@ -8,7 +8,33 @@ Ext.define('Ext.lib.Checkers', {
 				return 'Введите ИНН';
 			}
 			
-			this.checkInn(value);
+			value=value.replace('\s', '');
+			if((value.length!=10 && value.length!=12) || isNaN(parseInt(value))){
+				return 'ИНН должен состоять из 10 или 12 цифр';
+			}
+			if(value.length==10){
+				check=(
+					parseInt(value[9]) == (((2*parseInt(value[0])+4*parseInt(value[1])+10*parseInt(value[2])+
+					3*parseInt(value[3])+5*parseInt(value[4])+9*parseInt(value[5])+4*parseInt(value[6])+
+					6*parseInt(value[7])+8*parseInt(value[8])) % 11) % 10)
+				);
+			}
+			if(value.length==12){
+				check=(
+					parseInt(value[10]) == (((7*parseInt(value[0])+2*parseInt(value[1])+4*parseInt(value[2])+
+					10*parseInt(value[3])+3*parseInt(value[4])+5*parseInt(value[5])+9*parseInt(value[6])+
+					4*parseInt(value[7])+6*parseInt(value[8])+8*parseInt(value[9])) % 11) % 10)
+				);
+				if(check){
+					check=(
+						parseInt(value[11]) == (((3*parseInt(value[0])+7*parseInt(value[1])+2*parseInt(value[2])+
+						4*parseInt(value[3])+10*parseInt(value[4])+3*parseInt(value[5])+
+						5*parseInt(value[6])+9*parseInt(value[7])+4*parseInt(value[8])+
+						6*parseInt(value[9]) + 8*parseInt(value[10])) % 11) % 10)
+					);
+				}
+			}
+			return check || "Значение ИНН некорреткно";
 		},
 		
 		checkInn: function(value){
