@@ -105,12 +105,14 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 		}
 	},
 	
+	// эта функция вызывается таблицей при привязке основного хранилища
 	addPrimaryValueField: function(model){
 		var me = this, fields, fieldPresent = false;
 		
 		if(model==null){
 			model = me.up('grid').store.getModel();
 		}
+		
 		fields = model.getFields();
 		fields.forEach(function(field){
 			if(field.name==me.fieldName){
@@ -138,18 +140,5 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 				persist: false
 			}]);
 		}
-	},
-	
-	/*
-	 * Для добавления поля в модель, связанную с таблицей, необходимо иметь доступ к таблице
-	 * Это возможно только после создания таблицы. Например, при отображении колонки
-	 * таблица уже существует. Поэтому добавлять поле будем в этом обработчике
-	 */
-	onRender: function(){
-		var me = this;
-		
-		me.callParent();
-		
-		me.addPrimaryValueField();
 	}
 });
