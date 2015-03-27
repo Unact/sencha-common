@@ -88,7 +88,12 @@ Ext.define('Ext.lib.app.ViewController', {
 	},
     
     onError : function(msg) {
-        var parser = new DOMParser(), xmlDoc = parser.parseFromString(Ext.util.Format.htmlDecode(msg), "text/xml");
-        Ext.Msg.alert("Ошибка", xmlDoc.getElementsByTagName("error")[0].childNodes[0].nodeValue);
+        var parser = new DOMParser(),
+        	xmlDoc = parser.parseFromString(Ext.util.Format.htmlDecode(msg), "text/xml"),
+        	errorTags = xmlDoc.getElementsByTagName("error"),
+        	error = (errorTags && errorTags.length>0) ?
+        		errorTags[0].childNodes[0].nodeValue :
+        		"Сервер не отвечает";
+        Ext.Msg.alert("Ошибка", error);
     }
 });
