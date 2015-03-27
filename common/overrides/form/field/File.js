@@ -28,24 +28,26 @@ Ext.define('Ext.overrides.form.field.File', {
 		var me = this,
 			file = me.fileInputEl.getAttribute('files')[0];
 		
-		check = me.checkFile(file);
-		
-		if(check!==true){
-			Ext.Msg.alert('Ошибка', check);
-		} else {
-			if (window.File && window.FileReader && window.FileList && window.Blob) {
-				reader = new FileReader();
-				reader.onload = function(event) {
-	                callback(event.target.result);
-	            };
-
-				reader.onerror = function(event) {
-					Ext.Msg.alert('Ошибка', "Файл не может быть прочитан! Код " + event.target.error.code);
-				};
-
-				reader.readAsText(file, me.encoding);
+		if(file){
+			check = me.checkFile(file);
+			
+			if(check!==true){
+				Ext.Msg.alert('Ошибка', check);
 			} else {
-				Ext.Msg.alert('Ошибка', 'API для работы с файлами не поддерживается Вашим браузером');
+				if (window.File && window.FileReader && window.FileList && window.Blob) {
+					reader = new FileReader();
+					reader.onload = function(event) {
+		                callback(event.target.result);
+		            };
+	
+					reader.onerror = function(event) {
+						Ext.Msg.alert('Ошибка', "Файл не может быть прочитан! Код " + event.target.error.code);
+					};
+	
+					reader.readAsText(file, me.encoding);
+				} else {
+					Ext.Msg.alert('Ошибка', 'API для работы с файлами не поддерживается Вашим браузером');
+				}
 			}
 		}
 	}
