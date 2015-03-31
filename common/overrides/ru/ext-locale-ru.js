@@ -5,3 +5,14 @@ Ext.define("Ext.locale.ru.grid.RowEditor", {
 	errorsText : 'Ошибки',
 	dirtyText: 'Вам необходимо сохранить изменения'
 });
+
+Ext.define("Ext.locale.ru.window.MessageBox", {
+	override: "Ext.window.MessageBox",
+	
+	buttonText : {
+		ok : 'ОК',
+		yes : 'Да',
+		no : 'Нет',
+		cancel : 'Отмена'
+	}
+});
