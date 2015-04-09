@@ -49,6 +49,8 @@ Ext.define('Ext.lib.LoadingCounter', {
 	 * @return {Ext.LoadMask} The LoadMask instance that has just been shown.
 	 */
 	loadingBreak: function(silent) {
+		var me = this;
+		
 		me.countDownCounter = 0;
 		
 		if(!silent)
