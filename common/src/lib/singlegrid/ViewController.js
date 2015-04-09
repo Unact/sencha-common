@@ -1,10 +1,17 @@
+// Контроллер таблицы
 Ext.define('Ext.lib.singlegrid.ViewController', {
 	extend : 'Ext.lib.app.ViewController',
 	alias : 'controller.singlegrid',
 	
+	/**
+	 * Добавляются обработчики для кнопок обновления, добавления, удаления и сохранения.
+	 * Для методов добавления и обновления доступны "предварительные" шаблонные методы (см. ниже)
+	 * Также добавляется обработчик события обновления представления (refrehtable)
+	 */
 	init: function(){
 		var me = this,
 			grid = me.getView(),
+			addHandler = "on" + grid.suffix + "Add",
 			deleteHandler = "on" + grid.suffix + "Delete",
 			saveHandler = "on" + grid.suffix + "Save",
 			refreshHandler = 'on' + grid.suffix + 'Refresh';
@@ -15,6 +22,10 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		}
 		
 		if(grid.disableDelete !== true && me[deleteHandler]==null){
+			me[deleteHandler] = me.onDelete;
+		}
+		
+		if(grid.disableAdd !== true && me[addHandler]==null){
 			me[deleteHandler] = me.onDelete;
 		}
 		
@@ -68,6 +79,21 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         }
 	},
 	
+	// вызывает при наличии функцию beforeAdd.
+	// Функция должна возвратить объект для вставки в хранилище.
+	// Если объект не будет возвращен, то в хранилище ничего не вставится.
+	onAdd : function(button) {
+		var me = this,
+			result = {};
+		
+		if(me.beforeAdd!=null && (typeof me.beforeAdd == 'function')){
+			result = me.beforeAdd();
+		}
+		if(result){
+			me.grid.store.insert(0, result);
+		}
+	},
+	
 	onSave: function() {
         var me = this,
         	store = me.grid.store;
@@ -88,6 +114,8 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		}
 	},
 	
+	// вызывает при наличии функцию beforeRefresh.
+	// Функция должна возвратить "истину" для продолжения обновления
 	onRefresh: function(){
 		var me = this,
 			result = true,
