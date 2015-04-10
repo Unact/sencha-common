@@ -26,7 +26,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		}
 		
 		if(grid.disableAdd !== true && me[addHandler]==null){
-			me[deleteHandler] = me.onDelete;
+			me[addHandler] = me.onAdd;
 		}
 		
 		if(grid.disableSave !== true && me[saveHandler]==null){
@@ -79,9 +79,12 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         }
 	},
 	
-	// вызывает при наличии функцию beforeAdd.
-	// Функция должна возвратить объект для вставки в хранилище.
-	// Если объект не будет возвращен, то в хранилище ничего не вставится.
+	/**
+	 * 
+	 * вызывает при наличии функцию beforeAdd.
+	 * Функция должна возвратить объект для вставки в хранилище.
+	 * Если объект не будет возвращен, то в хранилище ничего не вставится.
+	 */
 	onAdd : function(button) {
 		var me = this,
 			result = {};
