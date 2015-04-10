@@ -163,39 +163,32 @@ Ext.define('Ext.lib.grid.Panel', {
 		}
 	},
 
+
 	loadComboColumns : function(callback) {
 		var count = 0,
 			grid = this,
-			comboColumns = {},
-			errors = [],
-			storeName;
+			comboColumns = [],
+			errors = [];
 		
-		grid.columns.every(function(column) {
-			if (column.xtype == 'combocolumn') {
-				storeName = column.store.self.getName();
-				if (comboColumns[storeName]) {
-					comboColumns[storeName].duplicateColumns.push(column);
-				} else {
-					comboColumns[storeName] = {mainColumn: column, duplicateColumns: []};
-					count++;
-				}
+		grid.columns.forEach(function(column) {
+			if(column.xtype == 'combocolumn') {
+				var store = column.store;
+				
+				if(!comboColumns.some(function(col) {return col.store == store;}))
+					comboColumns.push(column);
 			}
-			return true;
 		});
+		count = comboColumns.length;
 
-		for (var mainStoreName in comboColumns) {
-			comboColumns[mainStoreName].mainColumn.store.load({
+		comboColumns.forEach(function(column) {
+			column.store.load({
 				callback : function(records, operation, success) {
 					count--;
 
 					if (success!==true){
-						errors.push('Ошибка загрузки справочника для поля: ' + this.mainColumn.text + ', окно: ' + grid.title);
+						errors.push('Ошибка загрузки справочника для поля: ' + column.text + ', окно: ' + grid.title);
 					}
 			
-					this.duplicateColumns.forEach(function(clm){
-						clm.store.add(this.mainColumn.store.data.getRange());
-					}, this);
-
 					if (count == 0) {
 						if (errors.length > 0) {
 							Ext.Msg.alert('Ошибка', errors.join("</br>"));
@@ -205,10 +198,11 @@ Ext.define('Ext.lib.grid.Panel', {
 						}
 					}
 				},
-				scope : comboColumns[mainStoreName]
+				scope : column
 			});
-		}
+		});
 	},
+
 
 	makeComboColumn : function(column, storeCombo, allowNull, onlyRenderer) {
 		function renderer(value) {
