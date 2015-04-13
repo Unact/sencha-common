@@ -48,7 +48,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         var me = this,
         	sm = me.grid.getSelectionModel(),
         	oldSelection = sm.getSelection(),
-        	store = me.grid.store,
+        	store = me.grid.getStore(),
         	oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
 				store.indexOf(oldSelection[0]) :
 				null;
@@ -87,19 +87,25 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	 */
 	onAdd : function(button) {
 		var me = this,
-			result = {};
+			result = {},
+			sm = me.grid.getSelectionModel(),
+			store = me.grid.getStore(),
+			index = store.indexOf(sm.getLastSelected()),
+			newRec;
 		
 		if(me.beforeAdd!=null && (typeof me.beforeAdd == 'function')){
 			result = me.beforeAdd();
 		}
 		if(result){
-			me.grid.store.insert(0, result);
+			newRec = store.insert(Math.max(index, 0), result);
+			
+			sm.select(newRec);
 		}
 	},
 	
 	onSave: function() {
         var me = this,
-        	store = me.grid.store;
+        	store = me.grid.getStore();
         
 		if (store.hasChanges()) {
 			me.grid.getSelectionModel().deselectAll();
@@ -124,7 +130,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			result = true,
 			vm = me.getView().getViewModel(),
 			sm = me.grid.getSelectionModel(),
-			store = me.grid.store,
+			store = me.grid.getStore(),
         	oldSelection = sm.getSelection(),
         	oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
 				store.indexOf(oldSelection[0]) :
