@@ -33,15 +33,18 @@ Ext.define('Ext.overrides.form.field.File', {
 			
 			if(check!==true){
 				Ext.Msg.alert('Ошибка', check);
+				me.reset();
 			} else {
 				if (window.File && window.FileReader && window.FileList && window.Blob) {
 					reader = new FileReader();
 					reader.onload = function(event) {
 		                callback(event.target.result);
+		                me.reset();
 		            };
 	
 					reader.onerror = function(event) {
 						Ext.Msg.alert('Ошибка', "Файл не может быть прочитан! Код " + event.target.error.code);
+						me.reset();
 					};
 	
 					reader.readAsText(file, me.encoding);
