@@ -83,7 +83,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	 * Функция должна возвратить объект для вставки в хранилище.
 	 * Если объект не будет возвращен, то в хранилище ничего не вставится.
 	 */
-	beforeAdd: function(){
+	beforeAdd: function(masterRecord){
 		return {};
 	},
 	
@@ -99,11 +99,15 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			sm = me.grid.getSelectionModel(),
 			store = me.grid.getStore(),
 			index = store.indexOf(sm.getLastSelected()),
-			newRec;
+			newRec,
+			masterRecord;
 		
-		if(me.beforeAdd!=null && (typeof me.beforeAdd == 'function')){
-			result = me.beforeAdd();
+		if(me.masterGrid){
+			masterRecord = me.masterGrid.getViewModel().get('masterRecord');
 		}
+		
+		result = me.beforeAdd(masterRecord);
+		
 		if(result){
 			newRec = store.insert(Math.max(index, 0), result);
 			
@@ -134,7 +138,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	/**
 	 * Функция должна возвратить "истину" для продолжения обновления
 	 */
-	beforeRefresh: function(){
+	beforeRefresh: function(masterRecord){
 		return true;
 	},
 	
@@ -151,12 +155,24 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         	oldSelection = sm.getSelection(),
         	oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
 				store.indexOf(oldSelection[0]) :
-				null;
+				null,
+			masterRecord;
 		
 		sm.deselectAll();
-		if(me.beforeRefresh!=null && (typeof me.beforeRefresh == 'function')){
-			result = me.beforeRefresh();
-		}
+        
+        if(me.masterGrid){
+        	masterRecord = me.masterGrid.getViewModel().get('masterRecord');
+	        if(masterRecord && !masterRecord.phantom)
+	        {
+	        	result = me.beforeRefresh(masterRecord);
+	        } else {
+	        	store.loadData([]);
+	        	result = false;
+	        }
+        } else {
+        	result = me.beforeRefresh(masterRecord);
+        }
+		
 		if(result){
 			if (vm==null || vm.get('filterReady')!==false) {
 				me.mainView.setLoading(true);
