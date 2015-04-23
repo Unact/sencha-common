@@ -36,10 +36,10 @@ Ext.define('Ext.lib.LoadingCounter', {
 		var me = this;
 		
 		if(0 == --me.countDownCounter) {
+			var ret = me.setLoading(false);
 			if(me.countDownCallback && (typeof me.countDownCallback)=="function")
 				me.countDownCallback();
-
-			return me.setLoading(false);
+			return ret;
 		}
 	},
 
