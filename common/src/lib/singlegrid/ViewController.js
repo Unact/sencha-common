@@ -88,6 +88,13 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	},
 	
 	/**
+	 * Функция должна возвратить объект для вставки в хранилище.
+	 * Если объект не будет возвращен, то в хранилище ничего не вставится.
+	 */
+	afterAdd: function(record){
+	},
+	
+	/**
 	 * 
 	 * вызывает функцию beforeAdd.
 	 * Функция должна возвратить объект для вставки в хранилище.
@@ -113,6 +120,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			
 			sm.select(newRec);
 		}
+		me.afterAdd(newRec[0]);
 	},
 	
 	onSave: function() {
@@ -209,5 +217,36 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			me.detailGrid.setDisabled(!selectionCorrect || selected[0].phantom);
 			me.detailGrid.fireEvent('refreshtable');
 		}
+	},
+	
+	onCancelEdit: function(editor, ctx, eOpts) {
+		var me = this;
+		
+		if(ctx.record.phantom && !ctx.record.dirty){
+			ctx.grid.store.remove(ctx.record);
+		}
+	},
+	
+	onCompleteEdit: function(editor, ctx, eOpts){
+		var me = this,
+			grid = ctx.grid,
+			record = ctx.record,
+			sm = grid.getSelectionModel();
+		
+		me.mainView.setLoading(true);
+		sm.deselectAll();
+		record.self.setProxy(grid.getStore().getProxy());
+		record.save({
+			callback: function(records, operation, success){
+				sm.select(record);
+				if (!success) {
+					me.onError(operation.getError().response.responseText,
+					function(){
+						editor.startEdit(record);
+					});
+				}
+				me.mainView.setLoading(false);
+			}
+		});
 	}
 });
