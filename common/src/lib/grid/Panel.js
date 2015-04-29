@@ -19,7 +19,8 @@ Ext.define('Ext.lib.grid.Panel', {
 	 * функция getSelected- возвращает значение поля в выделенной строке. Параметр - название поля
 	 */
 	constructor : function(currentConfig) {
-		var me = this, initConfig = me.getInitialConfig() || {}, plugins, buttons = [], i;
+		var me = this, initConfig = me.getInitialConfig() || {}, plugins, buttons = [], i,
+			toolbar;
 
 		currentConfig = currentConfig || {};
 		config = {};
@@ -51,13 +52,25 @@ Ext.define('Ext.lib.grid.Panel', {
 			for ( i = 0; i < config.afterButtons.length; i++) {
 				buttons.push(config.afterButtons[i]);
 			}
-		}
-
-		config.dockedItems = [{
+		};
+		
+		toolbar = {
 			xtype : 'toolbar',
 			dock : config.buttonsDock || 'top',
 			items : buttons
-		}];
+		};
+
+		//Если тулбар причален к верху, то сделать выравниваение по верху.
+		//Это сделано для того, что бы многострочные фильтры выглядели прилично.
+		//Иначе, например, фильтры занимают две строки, а стандартные кнопки выравнены по-середине. Это не красива.
+		//При выравнивании тулбара по верху tbseparator выглядит некрасиво, но мы им и не пользуемся. 
+		if(toolbar.dock == 'top')
+			toolbar.layout = {
+				type: 'hbox',
+				align: 'top'
+			}; 
+
+		config.dockedItems = [toolbar];
 
 		config.viewConfig = config.viewConfig || {
 			enableTextSelection : true
