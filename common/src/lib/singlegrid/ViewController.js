@@ -41,29 +41,29 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			'#': {
 				refreshtable: 'onRefresh'
 			}
-	   });
+		});
 	},
-
+	
 	onDelete: function(){
-        var me = this,
-        	sm = me.grid.getSelectionModel(),
-        	oldSelection = sm.getSelection(),
-        	store = me.grid.getStore(),
-        	oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
+		var me = this,
+			sm = me.grid.getSelectionModel(),
+			oldSelection = sm.getSelection(),
+			store = me.grid.getStore(),
+			oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
 				store.indexOf(oldSelection[0]) :
 				null;
-        
-        function removeRow(){
-        	var recordsCount;
-        	store.remove(oldSelection);
-        	recordsCount = store.getCount();
+		
+		function removeRow(){
+			var recordsCount;
+			store.remove(oldSelection);
+			recordsCount = store.getCount();
 			if (recordsCount > 0) {
 				sm.select(recordsCount > oldSelectionIndex ? oldSelectionIndex : oldSelectionIndex - 1);
 			}
-        };
-        
-        if(me.grid.enableDeleteDialog===true){
-        	Ext.Msg.show({
+		};
+		
+		if(me.grid.enableDeleteDialog===true){
+			Ext.Msg.show({
 				title : 'Внимание',
 				message : 'Вы действительно хотите удалить запись?',
 				buttons : Ext.Msg.YESNOCANCEL,
@@ -74,9 +74,9 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 					}
 				}
 			});
-        } else {
-        	removeRow();
-        }
+		} else {
+			removeRow();
+		}
 	},
 	
 	/**
@@ -124,9 +124,9 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	},
 	
 	onSave: function() {
-        var me = this,
-        	store = me.grid.getStore();
-        
+		var me = this,
+			store = me.grid.getStore();
+
 		if (store.hasChanges()) {
 			me.grid.getSelectionModel().deselectAll();
 			me.mainView.setLoading(true);
@@ -160,37 +160,45 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			vm = me.getView().getViewModel(),
 			sm = me.grid.getSelectionModel(),
 			store = me.grid.getStore(),
-        	oldSelection = sm.getSelection(),
-        	oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
+			oldSelection = sm.getSelection(),
+			oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
 				store.indexOf(oldSelection[0]) :
+				null,
+			oldSelectionId = (oldSelection && oldSelection.length==1) ?
+				oldSelection[0].get('id') :
 				null,
 			masterRecord;
 		
 		sm.deselectAll();
-        
-        if(me.masterGrid){
-        	masterRecord = me.masterGrid.getViewModel().get('masterRecord');
-	        if(masterRecord && !masterRecord.phantom)
-	        {
-	        	result = me.beforeRefresh(masterRecord);
-	        } else {
-	        	store.loadData([]);
-	        	result = false;
-	        }
-        } else {
-        	result = me.beforeRefresh(masterRecord);
-        }
+		
+		if(me.masterGrid){
+			masterRecord = me.masterGrid.getViewModel().get('masterRecord');
+			if(masterRecord && !masterRecord.phantom)
+			{
+				result = me.beforeRefresh(masterRecord);
+			} else {
+				store.loadData([]);
+				result = false;
+			}
+		} else {
+			result = me.beforeRefresh(masterRecord);
+		}
 		
 		if(result){
 			if (vm==null || vm.get('filterReady')!==false) {
 				me.mainView.setLoading(true);
 				store.load(
 					function(records, operation, success){
+						var r = store.getById(oldSelectionId);
 						if (!success) {
 							me.onError(operation.getError().response.responseText);
 						}
-						if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
-							sm.select(oldSelectionIndex);
+						if(r){
+							me.grid.view.scrollTo(r);
+						} else {
+							if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
+								me.grid.view.scrollTo(oldSelectionIndex);
+							}
 						}
 						me.mainView.setLoading(false);
 					}
