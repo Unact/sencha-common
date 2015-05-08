@@ -67,15 +67,19 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 				queryMode: 'local',
 				displayField: me.primaryValue,
 				valueField: me.primaryKey,
-				store: Ext.create('Ext.data.ChainedStore', {
-					source: me.store
-				}),
-				value: "",
 				column: me,
 				name: me.dataIndex,
-				triggerAction: 'all'
+				triggerAction: 'all',
+				xtype: 'combobox'
 			});
 			
+			if(fieldConfig.bind && !fieldConfig.store && !fieldConfig.bind.store){
+				fieldConfig.bind.store = {
+					source: me.store
+				};
+			}
+			
+			me.fieldConfig = fieldConfig;
 			me.field = Ext.create('Ext.form.ComboBox', fieldConfig);
 		}
 	},
@@ -89,8 +93,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 			!(
 				initConfig.field &&
 				(initConfig.field.store || (initConfig.field.bind && initConfig.field.bind.store))
-			)
-		){
+			)){
 			me.field.bindStore(Ext.create('Ext.data.ChainedStore', {
 				source: store
 			}));

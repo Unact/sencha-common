@@ -16,6 +16,7 @@ Ext.define('Ext.lib.grid.EditingCard', {
 	},
 	
 	items: [{
+		autoScroll: true,
 		xtype: 'form',
 		reference: 'editingForm',
 		padding: 5,
@@ -31,7 +32,9 @@ Ext.define('Ext.lib.grid.EditingCard', {
 	}],
 	
 	constructor: function(config) {
-		var me = this;
+		var me = this,
+			formItems = [],
+			formItem;
 		
 		me.buttons[0].handler = function(button){
 			me.completeEdit();
@@ -40,7 +43,59 @@ Ext.define('Ext.lib.grid.EditingCard', {
 			me.cancelEdit();
 		};
 		
-		me.items[0].items = me.formItems;
+		Ext.apply(me, config);
+		
+		if(me.skipAutoGenerateFields!==false){
+			me.grid.columns.forEach(function(column){
+				var initConfig;
+				if(column.xtype!='actioncolumn'){
+					formItem = {
+						name: column.dataIndex,
+						fieldLabel: column.text
+					};
+					
+					if(column.xtype=='combocolumn'){
+						Ext.apply(formItem, column.fieldConfig);
+						if(!formItem.bind){
+							formItem.bind = {};
+						}
+						
+						initConfig = column.getInitialConfig();
+						if(initConfig.field && initConfig.field.store) {
+							formItem.store = {
+								type: 'chained',
+								source: initConfig.field.store
+							};
+						} else if(initConfig.field && initConfig.field.bind && initConfig.field.bind.store){
+							formItem.bind = {
+								store: {
+									type: 'chained',
+									source: initConfig.field.bind.store
+								}
+							};
+						} else if (initConfig.bind && initConfig.bind.store){
+							formItem.bind = {
+								store: {
+									type: 'chained',
+									source: initConfig.bind.store
+								}
+							};
+						} else {
+							formItem.store = {
+								type: 'chained',
+								source: initConfig.store
+							};
+						}
+					} else {
+						Ext.apply(formItem, column.field);
+					}
+					delete formItem.width;
+					
+					formItems.push(formItem);
+				}
+			});
+		}
+		me.items[0].items = formItems;
 		
 		me.callParent(arguments);
 	},
@@ -84,5 +139,13 @@ Ext.define('Ext.lib.grid.EditingCard', {
 		
 		ctx.record = form.getRecord();	
 		return ctx;
+	},
+	
+	show: function(){
+		var me = this;
+		
+		me.setHeight(Ext.getBody().getHeight()-50);
+		
+		me.callParent();
 	}
 });
