@@ -2,7 +2,10 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 	extend : 'Ext.grid.column.Column',
 	alias : 'widget.combocolumn',
 	
-	requires: ['Ext.form.field.ComboBox'],
+	requires: [
+		'Ext.form.field.ComboBox',
+		'Ext.data.ChainedStore'
+	],
 	
 	/**
 	 * @param {Object} config Config object.
@@ -73,10 +76,17 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 				xtype: 'combobox'
 			});
 			
-			if(fieldConfig.bind && !fieldConfig.store && !fieldConfig.bind.store){
-				fieldConfig.bind.store = {
-					source: me.store
-				};
+			if(!fieldConfig.store) {
+				if (fieldConfig.bind && !fieldConfig.bind.store){
+					fieldConfig.bind.store = {
+						source: me.store
+					};
+				} else if(!fieldConfig.bind) {
+					fieldConfig.store = {
+						type: 'chained',
+						source: me.store
+					};
+				}
 			}
 			
 			me.fieldConfig = fieldConfig;
