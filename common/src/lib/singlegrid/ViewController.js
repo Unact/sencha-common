@@ -8,40 +8,21 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	 * Для методов добавления и обновления доступны "предварительные" шаблонные методы (см. ниже)
 	 * Также добавляется обработчик события обновления представления (refrehtable)
 	 */
-	init: function(){
+	init: function(view){
 		var me = this,
-			grid = me.getView(),
-			addHandler = "on" + grid.suffix + "Add",
-			deleteHandler = "on" + grid.suffix + "Delete",
-			saveHandler = "on" + grid.suffix + "Save",
-			refreshHandler = 'on' + grid.suffix + 'Refresh';
+			control = {
+				'#': {
+					refreshtable: 'onRefresh',
+				}
+			};
 		
-		me.grid = grid;
-		if(me.mainView==null){
-			me.mainView = grid;
+		me.grid = view;
+		me.mainView = me.mainView || me.grid;
+		
+		if(view.disableSelectionChangeHandler!==true){
+			control['#']['selectionchange'] = 'onChangeSelect';
 		}
-		
-		if(grid.disableDelete !== true && me[deleteHandler]==null){
-			me[deleteHandler] = me.onDelete;
-		}
-		
-		if(grid.disableAdd !== true && me[addHandler]==null){
-			me[addHandler] = me.onAdd;
-		}
-		
-		if(grid.disableSave !== true && me[saveHandler]==null){
-			me[saveHandler] = me.onSave;
-		}
-		
-		if(grid.disableRefresh !== true && me[refreshHandler]==null){
-			me[refreshHandler] = me.onRefresh;
-		}
-		
-		me.control({
-			'#': {
-				refreshtable: 'onRefresh'
-			}
-		});
+		me.control(control);
 	},
 	
 	onDelete: function(){
@@ -157,7 +138,8 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	onRefresh: function(){
 		var me = this,
 			result = true,
-			vm = me.getView().getViewModel(),
+			masterRecord,
+			vm = me.grid.getViewModel();
 			sm = me.grid.getSelectionModel(),
 			store = me.grid.getStore(),
 			oldSelection = sm.getSelection(),
@@ -166,8 +148,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 				null,
 			oldSelectionId = (oldSelection && oldSelection.length==1) ?
 				oldSelection[0].get('id') :
-				null,
-			masterRecord;
+				null;
 		
 		sm.deselectAll();
 		
@@ -210,13 +191,12 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	onChangeSelect: function(grid, selected, eOpts){
 		var me = this,
 			selectionCorrect = selected && selected.length > 0,
-			vm = me.getView().getViewModel(),
+			vm = me.grid.getViewModel(),
 			deleteButton = me.lookupReference('delete' + me.grid.suffix);
 		
 		if(deleteButton){
 			deleteButton.setDisabled(!selectionCorrect);
 		}
-		
 		if(vm){
 			vm.set('masterRecord', selectionCorrect ? selected[0] : null);
 		}
