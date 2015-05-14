@@ -12,7 +12,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		var me = this,
 			control = {
 				'#': {
-					refreshtable: 'onRefresh',
+					refreshtable: 'onRefresh'
 				}
 			};
 		
