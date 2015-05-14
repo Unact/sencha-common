@@ -45,7 +45,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				reference : 'refresh' + config.suffix,
 				icon : '/images/refresh.gif',
 				tooltip : 'Обновить',
-				handler : 'on' + config.suffix + 'Refresh'
+				handler : 'onRefresh'
 			});
 		}
 		if (config.disableSave !== true) {
@@ -53,7 +53,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				reference : 'save' + config.suffix,
 				icon : '/images/save.png',
 				tooltip : 'Сохранить',
-				handler : 'on' + config.suffix + 'Save'
+				handler : 'onSave'
 			});
 		}
 		if (config.disableAdd !== true) {
@@ -61,7 +61,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				reference : 'add' + config.suffix,
 				icon : '/images/add.gif',
 				tooltip : 'Добавить',
-				handler : 'on' + config.suffix + 'Add'
+				handler : 'onAdd'
 			});
 		}
 		if (config.disableDelete !== true) {
@@ -70,7 +70,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				icon : '/images/delete.gif',
 				disabled : true,
 				tooltip : 'Удалить',
-				handler : 'on' + config.suffix + 'Delete'
+				handler : 'onDelete'
 			});
 		}
 
