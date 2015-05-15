@@ -18,18 +18,10 @@ Ext.define('Ext.overrides.view.Table', {
 	 * @param {Number/Ext.data.Model} nodeInfo индекс или запись.
 	 */
 	scrollTo : function(nodeInfo, silentSelect) {
-		var me = this, index;
+		var me = this, record;
 		
 		if (me.bufferedRenderer) {
-			if(Ext.isNumber(nodeInfo)){
-				index = nodeInfo;
-			} else if(nodeInfo.isModel){
-				index = me.store.indexOf(nodeInfo);
-			}
-			me.bufferedRenderer.scrollTo(index, false, function(){
-				me.selModel.select(nodeInfo, false, silentSelect);
-				me.getRow(nodeInfo).scrollIntoView(me.getEl());
-			});
+			me.bufferedRenderer.scrollTo(nodeInfo, { select: true });
 		} else {
 			me.selModel.select(nodeInfo, false, silentSelect);
 			me.getRow(nodeInfo).scrollIntoView(me.getEl());

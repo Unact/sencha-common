@@ -106,7 +106,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 			)){
 			me.field.bindStore(Ext.create('Ext.data.ChainedStore', {
 				source: store
-			}));
+			}), false, true);
 		}
 	},
 	

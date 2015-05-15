@@ -10,17 +10,17 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	 */
 	init: function(view){
 		var me = this,
-			control = {
-				'#': {
-					refreshtable: 'onRefresh'
-				}
-			};
+			control = {},
+			query = '[reference="' +view.reference + '"]';
+		
+		control[query] = {};
+		control[query]['refreshtable'] = 'onRefresh';
 		
 		me.grid = view;
 		me.mainView = me.mainView || me.grid;
 		
 		if(view.disableSelectionChangeHandler!==true){
-			control['#']['selectionchange'] = 'onChangeSelect';
+			control[query]['selectionchange'] = 'onChangeSelect';
 		}
 		me.control(control);
 	},
@@ -109,10 +109,10 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			store = me.grid.getStore();
 
 		if (store.hasChanges()) {
-			me.grid.getSelectionModel().deselectAll();
 			me.mainView.setLoading(true);
 			store.sync({
 				callback : function(batch) {
+					me.grid.getSelectionModel().refresh();
 					if (batch.exceptions.length > 0) {
 						me.onError(batch.exceptions[0].getError().response.responseText);
 						me.mainView.setLoading(false);
@@ -139,7 +139,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		var me = this,
 			result = true,
 			masterRecord,
-			vm = me.grid.getViewModel();
+			vm = me.grid.getViewModel(),
 			sm = me.grid.getSelectionModel(),
 			store = me.grid.getStore(),
 			oldSelection = sm.getSelection(),
@@ -149,7 +149,6 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			oldSelectionId = (oldSelection && oldSelection.length==1) ?
 				oldSelection[0].get('id') :
 				null;
-		
 		sm.deselectAll();
 		
 		if(me.masterGrid){
