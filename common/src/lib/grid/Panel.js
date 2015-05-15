@@ -204,7 +204,7 @@ Ext.define('Ext.lib.grid.Panel', {
 			
 					if (count == 0) {
 						if (errors.length > 0) {
-							Ext.Msg.alert('Ошибка', errors.join("</br>"));
+							Ext.Msg.alert('Ошибка', errors.join("<br/>"));
 						}
 						if (callback && typeof (callback) === "function") {
 							callback((errors.length > 0) ? errors : true);
@@ -260,6 +260,10 @@ Ext.define('Ext.lib.grid.Panel', {
 				icon : '/ext/resources/themes/images/default/grid/refresh.gif',
 				tooltip: 'Обновить'
 			});
+			
+			if(config.defaultRefreshClickEvent == true)
+				me.refreshBtn.addListener("click", me.onRefreshClick);
+			
 			buttons.push(me.refreshBtn);
 		}
 
@@ -269,6 +273,10 @@ Ext.define('Ext.lib.grid.Panel', {
 				icon : '/images/save.png',
 				tooltip: 'Сохранить'
 			});
+			
+			if(config.defaultSaveClickEvent == true)
+				me.saveBtn.addListener("click", me.onSaveClick);
+			
 			buttons.push(me.saveBtn);
 		}
 
@@ -300,14 +308,36 @@ Ext.define('Ext.lib.grid.Panel', {
 		}
 	},
 	
+	onSaveClick: function(btn) {
+		var grid  = btn.up("grid"),
+		    store = grid.getStore();
+
+		if(store.hasChanges()) {
+			grid.setLoading(true);
+		
+			store.sync({
+				success: function(batch, opt){
+					grid.setLoading(false);
+				},
+				
+				failure: function(batch, opt){
+					if(batch.exceptions.length>0){
+						grid.errorMsg('Ошибка сохранения', batch.exceptions);
+					};
+					grid.setLoading(false);
+				}
+			});
+		}
+	},
+	
 	onAddClick: function(btn, fields) {
-		var grid = btn.ownerCt.ownerCt,     //btn -> toolbar -> grid
+		var grid   = btn.up("grid"),
 		    editingPlugin = grid.findPlugin('cellediting') || grid.findPlugin('rowediting'),
-		    store         = grid.getStore(),
-		    sm            = grid.getSelectionModel(),
-		    index = store.indexOf(sm.getLastSelected()),
+		    store  = grid.getStore(),
+		    sm     = grid.getSelectionModel(),
+		    index  = store.indexOf(sm.getLastSelected()),
 		    fields = fields || {},
-		    model = Ext.ModelManager.create(fields, store.model);
+		    model  = Ext.ModelManager.create(fields, store.model);
 
 		editingPlugin.cancelEdit();
 		store.insert(Math.max(index, 0), model);
@@ -318,10 +348,10 @@ Ext.define('Ext.lib.grid.Panel', {
 	},
 	
 	onDeleteClick: function(btn) {
-		var grid = btn.ownerCt.ownerCt,     //btn -> toolbar -> grid
+		var grid  = btn.up("grid"),
 		    editingPlugin = grid.findPlugin('cellediting') || grid.findPlugin('rowediting'),
-		    store         = grid.getStore(),
-		    sm            = grid.getSelectionModel(),
+		    store = grid.getStore(),
+		    sm    = grid.getSelectionModel(),
 		    index = store.indexOf(sm.getLastSelected());
 
 		if (index>=0) {
@@ -333,5 +363,56 @@ Ext.define('Ext.lib.grid.Panel', {
 				sm.select(Math.min(index, store.getCount() - 1));
 			}
 		}
+	},
+	
+	onRefreshClick: function(btn) {
+		var grid  = btn.up("grid"),
+		    store = grid.getStore(),
+		    sm    = grid.getSelectionModel(),
+		    model = sm.getLastSelected();
+
+		//model - активная модель до обновления. снять с нее выделение
+		if(model)
+			sm.deselect(model);
+
+		grid.setLoading(true);
+
+		store.load({
+			callback: function(records, operation, success){
+				if(success) {
+					//model - та же модель, которая должна стать активной после обновления. Выделить ее
+					if(model && (model = store.getById(model.getId())))
+						sm.select(model);
+				} else
+					Ext.Msg.alert('Ошибка', operation.getError().responseText);
+
+				grid.setLoading(false);		
+			}
+		});
+	},
+	
+	errorMsg: function(msg, operations) {
+		var err, tail = "", body, bodyDetail = [];
+		if(operations instanceof String) {
+			err = operations; 
+		} else {
+			if(operations instanceof Array) {
+				err = operations[0].getError();
+				tail = '<br/>Всего ошибок: ' + operations.length;
+			} else {
+				err = operations.getError();
+			}
+		}
+		
+		if(err instanceof String) {
+			body = err;
+		} else {
+			for (var key in err) {
+				bodyDetail.push(key + " = " + err[key]);
+			}
+			body = bodyDetail.join("<br/>");
+		}
+		
+		Ext.Msg.alert('Ошибка', msg + "<br/>" + body + tail);
 	}
 });
