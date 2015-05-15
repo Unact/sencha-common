@@ -44,6 +44,8 @@ Ext.define('Ext.lib.mainview.Main', {
     	items.push(mainItem);
     	me.items = items;
     	
+    	document.getElementById("browser_message").innerHTML="";
+    	
     	me.callParent(arguments);
     }
 });
