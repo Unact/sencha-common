@@ -24,11 +24,7 @@ Ext.define('Ext.lib.view.PlainTable', {
 					'</tr>',
 				'</tpl>',
 			'</tpl>',
-		'</table>', {
-			showParent: function(parent){
-				console.log(parent);
-			}
-		}],
+		'</table>'],
 	
 	constructor: function(config){
 		var me = this;
@@ -67,8 +63,8 @@ Ext.define('Ext.lib.view.PlainTable', {
 					newData.rows.push(me.data.rows[i]);
 				}
 			});
+			me.data = newData;
 		}
-		me.data = newData;
 		me.update(me.data);
 	},
 	
@@ -92,7 +88,6 @@ Ext.define('Ext.lib.view.PlainTable', {
 				
 				data.rows.push(row);
 			}
-			
 			return data;
 		}
 	}
