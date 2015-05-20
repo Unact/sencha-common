@@ -80,7 +80,7 @@ Ext.define('Ext.lib.grid.Panel', {
 			}
 		}
 		
-		if(buttons){
+		if(buttons.length>0){
 			config.dockedItems = [{
 				xtype : 'toolbar',
 				dock : config.buttonsDock || 'top',
