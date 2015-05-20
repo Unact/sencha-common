@@ -104,16 +104,35 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 			colCount = recCount ? values[0].length : 0,
 			sourceRowIdx,
 			sourceColIdx,
+			cmp = this.getCmp(),
 			view = this.getCmp().getView(),
-			maxRowIdx = view.dataSource.getCount() - 1,
 			maxColIdx = view.getVisibleColumnManager().getColumns().length - 1,
 			navModel = view.getNavigationModel(),
-			destination = new Ext.grid.CellContext(view).setPosition(0, 0),
+			store = cmp.getStore(),
+			destination = new Ext.grid.CellContext(view).setPosition(store.getCount(), 0),
 			dataIndex,
 			destinationStartColumn = destination.colIdx,
-			dataObject = {};
+			dataObject,
+			controller = cmp.getController(),
+			vm = cmp.getViewModel(),
+			masterRecord,
+			dataInitializator;
 		
-		for ( sourceRowIdx = 0; sourceRowIdx < recCount; sourceRowIdx++) {
+		if(controller){
+			if(controller.masterGrid){
+				masterRecord = controller.masterGrid.getViewModel().get('masterRecord');
+			}
+			if(controller.beforeAdd && (typeof controller.beforeAdd === "function")){
+				dataInitializator = controller.beforeAdd;
+			}
+		}
+		for ( sourceRowIdx = recCount-1; sourceRowIdx >= 0; sourceRowIdx--) {
+			dataObject = dataInitializator ? dataInitializator.call(controller, masterRecord) : {};
+			
+			store.insert(0, dataObject);
+			// Jump to next row in destination
+			destination.setPosition(0, destinationStartColumn);
+			
 			row = values[sourceRowIdx];
 			
 			// Collect new values in dataObject
@@ -142,17 +161,9 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 				}
 				destination.setColumn(destination.colIdx + 1);
 			}
-		
+			
 			// Update the record in one go.
 			destination.record.set(dataObject);
-			
-			if(destination.rowIdx != recCount-1){
-				if (destination.rowIdx > maxRowIdx) {
-					store.insert(rowIdx, {});
-				}
-				// Jump to next row in destination
-				destination.setPosition(destination.rowIdx + 1, destinationStartColumn);
-			}
 		}
 	},
 

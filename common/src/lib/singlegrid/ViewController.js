@@ -100,6 +100,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			newRec = store.insert(Math.max(index, 0), result);
 			
 			sm.select(newRec);
+			me.grid.view.scrollTo(newRec);
 		}
 		me.afterAdd(newRec[0]);
 	},
@@ -169,12 +170,12 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 				me.mainView.setLoading(true);
 				store.load(
 					function(records, operation, success){
-						var r = store.getById(oldSelectionId);
+						var recordToSelect = store.getById(oldSelectionId);
 						if (!success) {
 							me.onError(operation.getError().response.responseText);
 						}
-						if(r){
-							me.grid.view.scrollTo(r);
+						if(recordToSelect){
+							me.grid.view.scrollTo(recordToSelect);
 						} else {
 							if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
 								me.grid.view.scrollTo(oldSelectionIndex);

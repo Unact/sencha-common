@@ -79,12 +79,14 @@ Ext.define('Ext.lib.grid.Panel', {
 				buttons.push(config.afterButtons[i]);
 			}
 		}
-
-		config.dockedItems = [{
-			xtype : 'toolbar',
-			dock : config.buttonsDock || 'top',
-			items : buttons
-		}];
+		
+		if(buttons){
+			config.dockedItems = [{
+				xtype : 'toolbar',
+				dock : config.buttonsDock || 'top',
+				items : buttons
+			}];
+		}
 
 		config.viewConfig = config.viewConfig || {
 			enableTextSelection : true
