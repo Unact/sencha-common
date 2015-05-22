@@ -152,11 +152,9 @@ Ext.define('Ext.lib.grid.Panel', {
 			config.columns.push({
 				xtype : 'actioncolumn',
 				width : 20,
-				icon : '/ext/examples/shared/icons/fam/cross.gif',
+				icon : '/images/cross.gif',
 				tooltip : 'Удалить',
-				handler : function(grid, rowIndex) {
-					grid.store.removeAt(rowIndex);
-				}
+				handler : 'onDeleteByColumn'
 			});
 		}
 

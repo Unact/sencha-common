@@ -15,6 +15,51 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 			get : 'getRowData'
 		}
 	},
+	
+	// init: function(){
+		// var me = this;
+// 		
+		// me.callParent(arguments);
+	// }
+	
+	privates: {
+		finishInit: function(comp){
+			var me = this,
+				toolbar = comp.down('toolbar[dock="' + (comp.buttonsDock ? comp.buttonsDock : 'top') + '"]');
+			
+			if(Ext.browser.is('Safari')){
+				toolbar.add({
+					xtype : 'textarea',
+					width : 50,
+					fieldStyle : "min-height:20px; height:20px",
+					listeners: {
+						afterrender: me.createBufferTextArea,
+						scope: me
+					}
+				});
+			} else {
+				me.callParent(arguments);
+			}
+		}
+	},
+	
+	createBufferTextArea: function(cmp) {
+		var me = this,
+			areaEl = document.getElementById(cmp.getInputId());
+		
+		areaEl.onclick = function(){
+			areaEl.value = ' ';
+			areaEl.select();
+		};
+		areaEl.oncopy = function(event){
+			event.clipboardData.setData('text', me.getRowData('text', false));
+			event.preventDefault();
+		};
+		areaEl.onpaste = function(event){
+			me.doPaste('text', event.clipboardData.getData('text'));
+			event.preventDefault();
+		};
+	},
 
 	getRowData : function(format, erase) {
 		var cmp = this.getCmp(),
@@ -36,7 +81,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 			row = [];
 			if (isRaw) {
 				for(j = 0; j<columns.length; j++){
-					data = record.get(columns[j].dataIndex);
+					row.push(record.get(columns[j].dataIndex));
 				}
 			} else {
 				// Try to access the view node.
@@ -44,18 +89,25 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 				// If we could not, it's because it's outside of the rendered block - recreate it.
 				if (!viewNode) {
 					viewNode = Ext.fly(view.createRowElement(record, rowIdx));
+				} else {
+					viewNode = Ext.fly(viewNode);
 				}
 				
 				for(j = 0; j<columns.length; j++){
-					cell = viewNode.down(cellContext.column.getCellInnerSelector());
+					cell = viewNode.down(columns[j].getCellInnerSelector());
 					data = cell.dom.innerHTML;
 					if (isText) {
 						data = Ext.util.Format.stripTags(data);
 					}
+					if(data && data.length>0 && data.trim()=='&nbsp;'){
+						data = "";
+					}
+					
+					row.push(data);
 				}
 			}
 
-			row.push(data);
+			ret.push(row);
 			
 			if (erase && dataIndex) {
 				record.set(dataIndex, null);
@@ -66,18 +118,22 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 	},
 
 	getRows : function(format, erase) {
-		var cmp = this.getCmp(), selModel = cmp.getSelectionModel(), ret = [], dataIndex, lastRecord, record, row;
-
-		selModel.getSelected().eachCell(function(cellContext) {
-			record = cellContext.record;
-			if (lastRecord !== record) {
-				lastRecord = record;
-				ret.push( row = {
-					model : record.self,
-					fields : []
-				});
-			}
-
+		var cmp = this.getCmp(),
+			selModel = cmp.getSelectionModel(),
+			ret = [],
+			selected = selModel.getSelection(),
+			view = cmp.getView(),
+			columns = view.getVisibleColumnManager().getColumns(),
+			dataIndex, lastRecord, record, row,
+			i, j;
+		
+		for(i = 0; i<selected.length; i++){
+			record = selected[i];
+			
+			ret.push( row = {
+				model : record.self,
+				fields : []
+			});
 			dataIndex = cellContext.column.dataIndex;
 
 			row.fields.push({
@@ -88,13 +144,13 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 			if (erase && dataIndex) {
 				record.set(dataIndex, null);
 			}
-		});
+		}
 
 		return ret;
 	},
 
 	getTextData : function(format, erase) {
-		return this.getCellData(format, erase);
+		return this.getRowData(format, erase);
 	},
 
 	putRowData : function(data, format) {
@@ -106,17 +162,17 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 			sourceColIdx,
 			cmp = this.getCmp(),
 			view = this.getCmp().getView(),
-			maxColIdx = view.getVisibleColumnManager().getColumns().length - 1,
-			navModel = view.getNavigationModel(),
+			columns = view.getVisibleColumnManager().getColumns(),
 			store = cmp.getStore(),
-			destination = new Ext.grid.CellContext(view).setPosition(store.getCount(), 0),
 			dataIndex,
-			destinationStartColumn = destination.colIdx,
 			dataObject,
 			controller = cmp.getController(),
 			vm = cmp.getViewModel(),
+			sm = cmp.getSelectionModel(),
 			masterRecord,
 			dataInitializator;
+		
+		sm.deselectAll();
 		
 		if(controller){
 			if(controller.masterGrid){
@@ -129,15 +185,11 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 		for ( sourceRowIdx = recCount-1; sourceRowIdx >= 0; sourceRowIdx--) {
 			dataObject = dataInitializator ? dataInitializator.call(controller, masterRecord) : {};
 			
-			store.insert(0, dataObject);
-			// Jump to next row in destination
-			destination.setPosition(0, destinationStartColumn);
-			
 			row = values[sourceRowIdx];
 			
 			// Collect new values in dataObject
-			for ( sourceColIdx = 0; sourceColIdx < colCount; sourceColIdx++) {
-				dataIndex = destination.column.dataIndex;
+			for ( sourceColIdx = 0; sourceColIdx < colCount && sourceColIdx < columns.length; sourceColIdx++) {
+				dataIndex = columns[sourceColIdx].dataIndex;
 				if (dataIndex) {
 					switch (format) {
 					// Raw field values
@@ -155,15 +207,9 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 						break;
 					}
 				}
-				// If we are at the end of the destination row, break the column loop.
-				if (destination.colIdx === maxColIdx) {
-					break;
-				}
-				destination.setColumn(destination.colIdx + 1);
 			}
-			
-			// Update the record in one go.
-			destination.record.set(dataObject);
+			records = store.insert(0, dataObject);
+			sm.select(records);
 		}
 	},
 

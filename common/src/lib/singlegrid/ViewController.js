@@ -60,6 +60,24 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		}
 	},
 	
+	onDeleteByColumn: function(grid, rowIndex, colIndex, item, e, record, row) {
+		if(me.grid.enableDeleteDialog===true){
+			Ext.Msg.show({
+				title : 'Внимание',
+				message : 'Вы действительно хотите удалить запись?',
+				buttons : Ext.Msg.YESNOCANCEL,
+				icon : Ext.Msg.QUESTION,
+				fn : function(btn) {
+					if (btn === 'yes') {
+						grid.store.remove(record);
+					}
+				}
+			});
+		} else {
+			grid.store.remove(record);
+		}
+	},
+	
 	/**
 	 * Функция должна возвратить объект для вставки в хранилище.
 	 * Если объект не будет возвращен, то в хранилище ничего не вставится.
@@ -99,8 +117,8 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		if(result){
 			newRec = store.insert(Math.max(index, 0), result);
 			
-			sm.select(newRec);
 			me.grid.view.scrollTo(newRec);
+			sm.select(newRec);
 		}
 		me.afterAdd(newRec[0]);
 	},
