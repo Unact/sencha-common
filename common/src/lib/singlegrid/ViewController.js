@@ -61,6 +61,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	},
 	
 	onDeleteByColumn: function(grid, rowIndex, colIndex, item, e, record, row) {
+		var me = this;
 		if(me.grid.enableDeleteDialog===true){
 			Ext.Msg.show({
 				title : 'Внимание',
