@@ -149,13 +149,13 @@ Ext.define('Ext.lib.grid.Panel', {
 		config.reference = config.suffix + 'Table';
 
 		if (config.disableDeleteColumn !== true) {
-			config.columns.push({
+			config.columns.push(Ext.apply({
 				xtype : 'actioncolumn',
 				width : 20,
 				icon : '/images/cross.gif',
 				tooltip : 'Удалить',
 				handler : 'onDeleteByColumn'
-			});
+			}, config.deleteColumnConfig));
 		}
 
 		Ext.apply(this, config);
