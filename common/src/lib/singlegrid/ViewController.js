@@ -105,6 +105,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			sm = me.grid.getSelectionModel(),
 			store = me.grid.getStore(),
 			index = store.indexOf(sm.getLastSelected()),
+			storeInsertionIndex,
 			newRec,
 			masterRecord;
 		
@@ -115,8 +116,11 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		result = me.beforeAdd(masterRecord);
 		
 		if(result){
-			newRec = store.insert(Math.max(index, 0), result);
-			
+			if(store.isSorted()){
+				newRec = store.add(result)[0];
+			} else {
+				newRec = store.insert(Math.max(index, 0), result)[0];
+			}
 			me.grid.view.scrollTo(newRec);
 			sm.select(newRec);
 		}
