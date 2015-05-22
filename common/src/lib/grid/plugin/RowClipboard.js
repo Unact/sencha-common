@@ -16,12 +16,6 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 		}
 	},
 	
-	// init: function(){
-		// var me = this;
-// 		
-		// me.callParent(arguments);
-	// }
-	
 	privates: {
 		finishInit: function(comp){
 			var me = this,

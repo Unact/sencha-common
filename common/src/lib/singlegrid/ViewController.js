@@ -124,7 +124,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			me.grid.view.scrollTo(newRec);
 			sm.select(newRec);
 		}
-		me.afterAdd(newRec[0]);
+		me.afterAdd(newRec);
 	},
 	
 	onSave: function() {
