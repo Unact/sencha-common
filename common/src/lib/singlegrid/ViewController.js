@@ -99,7 +99,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	 * Функция должна возвратить объект для вставки в хранилище.
 	 * Если объект не будет возвращен, то в хранилище ничего не вставится.
 	 */
-	onAdd : function(button) {
+	onAdd : function() {
 		var me = this,
 			result = {},
 			sm = me.grid.getSelectionModel(),
