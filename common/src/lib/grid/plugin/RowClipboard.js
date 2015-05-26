@@ -16,15 +16,23 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 		}
 	},
 	
+	enabledActions: ['copy', 'paste', 'cut'],
+	
 	privates: {
 		finishInit: function(comp){
 			var me = this,
-				toolbar = comp.down('toolbar[dock="' + (comp.buttonsDock ? comp.buttonsDock : 'top') + '"]');
+				toolbar,
+				binding,
+				i;
 			
 			if(Ext.browser.is('Safari')){
+				toolbar = comp.down('toolbar[dock="' + (comp.buttonsDock ? comp.buttonsDock : 'top') + '"]');
+				
 				toolbar.add({
 					xtype : 'textarea',
-					width : 50,
+					width : 350,
+					labelWidth: 290,
+					fieldLabel: 'Перед копированием-вставкой нажмите сюда',
 					fieldStyle : "min-height:20px; height:20px",
 					listeners: {
 						afterrender: me.createBufferTextArea,
@@ -32,7 +40,41 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 					}
 				});
 			} else {
-				me.callParent(arguments);
+				binding = [];
+				if(me.enabledActions.indexOf('cut')!=-1){
+					binding.push({
+						ctrl : true,
+						key : 'x',
+						fn : me.onCut,
+						scope : me
+					});
+				}
+				if(me.enabledActions.indexOf('copy')!=-1){
+					binding.push({
+						ctrl : true,
+						key : 'c',
+						fn : me.onCopy,
+						scope : me
+					});
+				}
+				if(me.enabledActions.indexOf('paste')!=-1){
+					binding.push({
+						ctrl : true,
+						key : 'v',
+						fn : me.onPaste,
+						scope : me
+					});
+				}
+				me.keyMap = new Ext.util.KeyMap({
+					target : comp.el,
+
+					binding : binding
+				}); ++me.shared.counter;
+
+				comp.on({
+					destroy : 'destroy',
+					scope : me
+				});
 			}
 		}
 	},
@@ -45,21 +87,32 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 			areaEl.value = ' ';
 			areaEl.select();
 		};
-		areaEl.oncopy = function(event){
-			event.clipboardData.setData('text', me.getRowData('text', false));
-			event.preventDefault();
-		};
-		areaEl.onpaste = function(event){
-			me.doPaste('text', event.clipboardData.getData('text'));
-			event.preventDefault();
-		};
+		if(me.enabledActions.indexOf('copy')!=-1){
+			areaEl.oncopy = function(event){
+				event.clipboardData.setData('text', me.getRowData('text', false));
+				event.preventDefault();
+			};
+		}
+		if(me.enabledActions.indexOf('paste')!=-1){
+			areaEl.onpaste = function(event){
+				me.doPaste('text', event.clipboardData.getData('text'));
+				event.preventDefault();
+			};
+		}
+		if(me.enabledActions.indexOf('cut')!=-1){
+			areaEl.oncut = function(event){
+				event.clipboardData.setData('text', me.getRowData('text', true));
+				event.preventDefault();
+			};
+		}
 	},
 
 	getRowData : function(format, erase) {
 		var cmp = this.getCmp(),
 			selModel = cmp.getSelectionModel(),
-			selected = selModel.getSelection(),
 			store = cmp.getStore(),
+			selected = selModel.getSelection(),
+			copyAll = selModel.getSelectionMode()!=='MULTI' || store.getCount()==selected.length,
 			ret = [],
 			isRaw = format === 'raw',
 			isText = format === 'text',
@@ -69,9 +122,10 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 			columns = view.getVisibleColumnManager().getColumns(),
 			i, j;
 		
+		selected =  copyAll ? store.getData().items : selected;
+		
 		for(i = 0; i<selected.length; i++){
 			record = selected[i];
-			rowIdx = store.indexOf(record);
 			row = [];
 			if (isRaw) {
 				for(j = 0; j<columns.length; j++){
@@ -82,7 +136,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 				viewNode = view.getNodeByRecord(record);
 				// If we could not, it's because it's outside of the rendered block - recreate it.
 				if (!viewNode) {
-					viewNode = Ext.fly(view.createRowElement(record, rowIdx));
+					viewNode = Ext.fly(view.createRowElement(record, copyAll ? i : store.indexOf(record)));
 				} else {
 					viewNode = Ext.fly(viewNode);
 				}
@@ -115,11 +169,13 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 		var cmp = this.getCmp(),
 			selModel = cmp.getSelectionModel(),
 			ret = [],
+			store = cmp.getStore(),
 			selected = selModel.getSelection(),
-			view = cmp.getView(),
-			columns = view.getVisibleColumnManager().getColumns(),
-			dataIndex, lastRecord, record, row,
+			copyAll = selModel.getSelectionMode()!=='MULTI' || store.getCount()==selected.length,
+			dataIndex, record, row,
 			i, j;
+		
+		selected =  copyAll ? store.getData().items : selected;
 		
 		for(i = 0; i<selected.length; i++){
 			record = selected[i];
@@ -128,15 +184,18 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 				model : record.self,
 				fields : []
 			});
-			dataIndex = cellContext.column.dataIndex;
-
-			row.fields.push({
-				name : dataIndex,
-				value : record.data[dataIndex]
-			});
-
-			if (erase && dataIndex) {
-				record.set(dataIndex, null);
+			
+			for(j = 0; j<columns.length; j++){
+				dataIndex = columns[j].dataIndex;
+				
+				row.fields.push({
+					name : dataIndex,
+					value : record.data[dataIndex]
+				});
+				
+				if (erase && dataIndex) {
+					record.set(dataIndex, null);
+				}
 			}
 		}
 

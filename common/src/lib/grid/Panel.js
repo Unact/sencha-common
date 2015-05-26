@@ -8,6 +8,15 @@ Ext.define('Ext.lib.grid.Panel', {
 		'Ext.grid.plugin.CellEditing',
 		'Ext.grid.plugin.RowEditing'],
 	// @formatter:on
+	
+	config: {
+		enabledButtons: [
+			'refresh',
+			'save',
+			'add',
+			'delete'
+		]
+	},
 
 	/**
 	 * @param {Object} config Config object.
@@ -22,7 +31,8 @@ Ext.define('Ext.lib.grid.Panel', {
 	 */
 	constructor : function(currentConfig) {
 		// @formatter:off
-		var config = {},
+		var me = this,
+			config = {},
 			plugins,
 			buttons = [],
 			i;
@@ -30,7 +40,7 @@ Ext.define('Ext.lib.grid.Panel', {
 
 		Ext.apply(config, this.getInitialConfig());
 		Ext.apply(config, currentConfig);
-		Ext.apply(config, this.cfg);
+		Ext.apply(config, me.cfg);
 
 		plugins = config.plugins || [];
 
@@ -39,8 +49,8 @@ Ext.define('Ext.lib.grid.Panel', {
 				buttons.push(config.beforeButtons[i]);
 			}
 		}
-
-		if (config.disableRefresh !== true) {
+		
+		if (config.enabledButtons.indexOf('refresh')!=-1 && !config.disableRefresh) {
 			buttons.push({
 				reference : 'refresh' + config.suffix,
 				icon : '/images/refresh.gif',
@@ -48,7 +58,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				handler : 'onRefresh'
 			});
 		}
-		if (config.disableSave !== true) {
+		if (config.enabledButtons.indexOf('save')!=-1 && !config.disableSave) {
 			buttons.push({
 				reference : 'save' + config.suffix,
 				icon : '/images/save.png',
@@ -56,7 +66,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				handler : 'onSave'
 			});
 		}
-		if (config.disableAdd !== true) {
+		if (config.enabledButtons.indexOf('add')!=-1 && !config.disableAdd) {
 			buttons.push({
 				reference : 'add' + config.suffix,
 				icon : '/images/add.gif',
@@ -64,7 +74,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				handler : 'onAdd'
 			});
 		}
-		if (config.disableDelete !== true) {
+		if (config.enabledButtons.indexOf('delete')!=-1 && !config.disableDelete) {
 			buttons.push({
 				reference : 'delete' + config.suffix,
 				icon : '/images/delete.gif',
@@ -157,7 +167,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				handler : 'onDeleteByColumn'
 			}, config.deleteColumnConfig));
 		}
-
+		
 		Ext.apply(this, config);
 
 		this.callParent(arguments);
