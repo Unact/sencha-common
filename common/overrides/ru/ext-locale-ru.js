@@ -16,3 +16,14 @@ Ext.define("Ext.locale.ru.window.MessageBox", {
 		cancel : 'Отмена'
 	}
 });
+
+if (Ext.util && Ext.util.Format) {
+	Ext.apply(Ext.util.Format, {
+		thousandSeparator : ' ',
+		decimalSeparator: '.',
+		
+		ruMoney: function(value){
+			return Ext.util.Format.number(value, '0,000.00').replace(/\./g, ' ');
+		}
+	});
+}
