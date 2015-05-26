@@ -32,10 +32,12 @@ Ext.define('Ext.lib.app.Routing', {
 	},
 
 	onNavigate : function(id) {
-		var me = this;
-
-		newCard = me.cards.setActiveItem(id);
-		document.title = newCard.lookupViewModel().get('title');
+		var me = this,
+			newCard = me.cards.setActiveItem(id);
+		
+		if(newCard){
+			document.title = newCard.lookupViewModel().get('title');
+		}
 	},
 	
 	onLaunch : function() {
