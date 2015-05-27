@@ -30,7 +30,9 @@ Ext.define('Ext.overrides.view.Table', {
 				me.handleUpdate.apply(me, arguments);
 			}
 		}
-		me.scrollTo(record);
+		if(me.isVisible()){
+			me.scrollTo(record);
+		}
 	},
 
 	/**
