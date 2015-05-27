@@ -28,6 +28,14 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 			if(Ext.browser.is('Safari')){
 				toolbar = comp.down('toolbar[dock="' + (comp.buttonsDock ? comp.buttonsDock : 'top') + '"]');
 				
+				if(!toolbar){
+					toolbar = comp.addDocked({
+						xtype : 'toolbar',
+						overflowHandler: 'scroller',
+						dock : 'top'
+					})[0];
+				}
+				
 				toolbar.add({
 					xtype : 'textarea',
 					width : 350,

@@ -31,6 +31,7 @@ Ext.define('Ext.lib.mainview.Main', {
     		items.push({
 		    	xtype : 'toolbar',
 				width : '100%',
+				overflowHandler: 'scroller',
 				items : Ext.JSON.decode(Ext.get('menu').getValue(), true)
 		    });
 		    

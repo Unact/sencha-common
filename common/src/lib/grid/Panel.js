@@ -93,6 +93,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		if(buttons.length>0){
 			config.dockedItems = [{
 				xtype : 'toolbar',
+				overflowHandler: 'scroller',
 				dock : config.buttonsDock || 'top',
 				items : buttons
 			}];
