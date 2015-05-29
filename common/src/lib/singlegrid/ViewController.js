@@ -214,18 +214,19 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	onChangeSelect: function(grid, selected, eOpts){
 		var me = this,
 			selectionCorrect = selected && selected.length > 0,
+			selectedOne = selectionCorrect && selected.length==1,
 			vm = me.grid.getViewModel(),
 			deleteButton = me.lookupReference('delete' + me.grid.suffix);
 		
 		if(deleteButton){
-			deleteButton.setDisabled(!selectionCorrect);
+			deleteButton.setDisabled(!selectedOne);
 		}
 		if(vm){
-			vm.set('masterRecord', selectionCorrect ? selected[0] : null);
+			vm.set('masterRecord', selectedOne ? selected[0] : null);
 		}
 		
 		if(me.detailGrid){
-			me.detailGrid.setDisabled(!selectionCorrect || selected[0].phantom);
+			me.detailGrid.setDisabled(!selectedOne || selected[0].phantom);
 			me.detailGrid.fireEvent('refreshtable');
 		}
 	},

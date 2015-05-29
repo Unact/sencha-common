@@ -15,7 +15,12 @@ Ext.define('Ext.lib.grid.Panel', {
 			'save',
 			'add',
 			'delete'
-		]
+		],
+		
+		selModel: {
+			type: 'rowmodel',
+			mode: 'MULTI'
+		}
 	},
 
 	/**
