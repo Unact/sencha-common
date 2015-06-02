@@ -130,21 +130,43 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	
 	onSave: function() {
 		var me = this,
-			store = me.grid.getStore();
+			grid = me.grid,
+			store = grid.getStore(),
+			messages,
+			i, j, fieldName, errors = [];
 
 		if (store.hasChanges()) {
-			me.mainView.setLoading(true);
-			store.sync({
-				callback : function(batch) {
-					me.grid.getSelectionModel().refresh();
-					if (batch.exceptions.length > 0) {
-						me.onError(batch.exceptions[0].getError().response.responseText);
-						me.mainView.setLoading(false);
-					} else {
-						me.onRefresh();
+			messages = store.getValidationMessages();
+			if(messages.length==0){
+				me.mainView.setLoading(true);
+				store.sync({
+					callback : function(batch) {
+						me.grid.getSelectionModel().refresh();
+						if (batch.exceptions.length > 0) {
+							me.onError(batch.exceptions[0].getError().response.responseText);
+							me.mainView.setLoading(false);
+						} else {
+							me.onRefresh();
+						}
+					}
+				});
+			} else {
+				for(i = 0; i<messages.length; i++){
+					for(field in messages[i]){
+						fieldName = null;
+						for(j = 0; j<grid.columns.length && !fieldName; j++){
+							if(grid.columns[j].dataIndex==field){
+								fieldName = grid.columns[j].text;
+							}
+						}
+						
+						fieldName = fieldName ? fieldName: field;
+						errors.push('Поле "' + fieldName + '" ' + messages[i][field]);
 					}
 				}
-			});
+				
+				Ext.Msg.alert("Некорректные значения", errors.join("\n"));
+			}
 		}
 	},
 	

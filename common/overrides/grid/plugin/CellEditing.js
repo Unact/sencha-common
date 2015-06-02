@@ -32,6 +32,8 @@ Ext.define('Ext.overrides.grid.plugin.CellEditing', {
             // Prevent this field from being included in an Ext.form.Basic
             // collection, if the grid happens to be used inside a form
             editor.field.excludeForm = true;
+            
+            editor.field.validationField = record.self.getField(column.dataIndex);
 
             // If the editor is new to this grid, then add it to the grid, and ensure it tells us about its lifecycle.
             if (editor.ownerCt !== editorOwner) {
