@@ -165,7 +165,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 					}
 				}
 				
-				Ext.Msg.alert("Некорректные значения", errors.join("\n"));
+				Ext.Msg.alert("Некорректные значения", errors.join("<br/>"));
 			}
 		}
 	},
