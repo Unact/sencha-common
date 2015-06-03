@@ -105,7 +105,8 @@ Ext.define('Ext.lib.grid.Panel', {
 		}
 
 		config.viewConfig = config.viewConfig || {
-			enableTextSelection : true
+			enableTextSelection : true,
+			loadMask: false
 		};
 
 		if (config.disableEditing !== true) {
