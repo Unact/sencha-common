@@ -79,12 +79,25 @@ Ext.define('Ext.lib.grid.Panel', {
 		if (config.disableEditing !== true) {
 			var hasEditingPlugin = false, hasBufferPlugin = false;
 
+			//Это лажа, потому что по спецификации может быть много вариантов, а мы завязались только на конфигу
+			//http://docs.sencha.com/extjs/4.2.2/#!/api/Ext.AbstractComponent-cfg-plugins
 			for ( i = 0; i < plugins.length; i++) {
-				if (plugins[i].ptype == 'rowediting' || plugins[i].ptype == 'cellediting') {
-					hasEditingPlugin = true;
+				var plugin = Ext.PluginManager.create(plugins[i], null, me);
+				var pluginParent = plugin.superclass;
+
+				while(pluginParent !== undefined) {
+					if(pluginParent.self.getName() =='Ext.grid.plugin.Editing') {
+						hasEditingPlugin = true;
+						break;
+					}
+					
+					pluginParent = pluginParent.superclass;	
+				};
+				
+				if(hasEditingPlugin)
 					break;
-				}
 			}
+			
 			if (!hasEditingPlugin) {
 				plugins.push((config.editing == 'row') ? {
 					ptype : 'rowediting',
@@ -332,7 +345,7 @@ Ext.define('Ext.lib.grid.Panel', {
 	
 	onAddClick: function(btn, fields) {
 		var grid   = btn.up("grid"),
-		    editingPlugin = grid.findPlugin('cellediting') || grid.findPlugin('rowediting'),
+		    editingPlugin = grid.findPlugin('cellediting') || grid.findPlugin('rowediting') || grid.findPlugin('arrowablecellediting'),
 		    store  = grid.getStore(),
 		    sm     = grid.getSelectionModel(),
 		    index  = store.indexOf(sm.getLastSelected()),
@@ -349,7 +362,7 @@ Ext.define('Ext.lib.grid.Panel', {
 	
 	onDeleteClick: function(btn) {
 		var grid  = btn.up("grid"),
-		    editingPlugin = grid.findPlugin('cellediting') || grid.findPlugin('rowediting'),
+		    editingPlugin = grid.findPlugin('cellediting') || grid.findPlugin('rowediting') || grid.findPlugin('arrowablecellediting'),
 		    store = grid.getStore(),
 		    sm    = grid.getSelectionModel(),
 		    index = store.indexOf(sm.getLastSelected());
