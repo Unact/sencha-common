@@ -8,8 +8,6 @@ Ext.define('Ext.lib.grid.plugin.ArrowableCellEditing', {
 		me.callParent(arguments);
 		
 		if(e.getKey()===e.DOWN){
-            console.log('down');
-           
 			e.stopEvent();
 			
 			sm = ed.up('tablepanel').getSelectionModel();
@@ -19,8 +17,6 @@ Ext.define('Ext.lib.grid.plugin.ArrowableCellEditing', {
        };
         
         if(e.getKey()===e.UP){
-            console.log('up');
-           
 			e.stopEvent();
 			
 			sm = ed.up('tablepanel').getSelectionModel();
