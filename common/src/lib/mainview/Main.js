@@ -3,6 +3,8 @@ Ext.define('Ext.lib.mainview.Main', {
     
     referenceHolder: true,
     
+    viewModel: Ext.create('Ext.app.ViewModel'),
+    
     constructor: function(config){
     	var me = this,
     		items = [],

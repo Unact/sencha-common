@@ -94,6 +94,10 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 		}
 	},
 	
+	getStore: function(){
+		return this.store;
+	},
+	
 	setStore: function(store){
 		var me = this,
 			initConfig = me.getInitialConfig();
@@ -115,7 +119,10 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 		var me = this, fields, fieldPresent = false;
 		
 		if(model==null){
-			model = me.up('grid').store.getModel();
+			model = me.up('grid').getStore().getModel();
+			if(model==null){
+				return;
+			}
 		}
 		
 		fields = model.getFields();
@@ -130,7 +137,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 				name: me.fieldName,
 				convert: function(v, rec) {
 					var matching = null,
-						data = me.store.snapshot || me.store.data,
+						data = me.getStore().snapshot || me.getStore().data,
 						foreignKey = rec.get(me.dataIndex);
 					
 					data.each(function(record) {
