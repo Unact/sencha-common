@@ -1,6 +1,8 @@
 Ext.define('Ext.lib.mainview.Main', {
     extend : 'Ext.container.Container',
     
+    requires: ['Ext.state.CookieProvider'],
+    
     referenceHolder: true,
     
     viewModel: Ext.create('Ext.app.ViewModel'),
@@ -24,6 +26,7 @@ Ext.define('Ext.lib.mainview.Main', {
 			    }]
 		    },
 		    i;
+    	Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
     	
     	if(me.disableMenu!==true){
     		me.layout = {
