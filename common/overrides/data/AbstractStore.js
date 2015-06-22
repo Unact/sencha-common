@@ -20,7 +20,7 @@ Ext.define('Ext.overrides.data.AbstractStore', {
 		
 		me.each(function(record){
 			var validation = record.getValidation();
-			if(validation.dirty){
+			if(validation.dirty && (record.dirty || record.phantom)) {
 				validations.push(validation.data);
 			}
 		});
