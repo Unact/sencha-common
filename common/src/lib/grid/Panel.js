@@ -144,6 +144,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		config.plugins = plugins;
 
 		config.id = config.suffix + 'Table';
+		config.stateful = true;
 		config.stateId = config.suffix + 'StateId';
 
 		if (config.disableDeleteColumn !== true) {
