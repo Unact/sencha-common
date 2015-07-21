@@ -19,13 +19,27 @@ Ext.define('Ext.lib.app.ViewController', {
 	
 	onStoresLoaded: Ext.emptyFn,
     
-    onError : function(msg, callback) {
-        var parser = new DOMParser(),
-        	xmlDoc = parser.parseFromString(Ext.util.Format.htmlDecode(msg), "text/xml"),
-        	errorTags = xmlDoc.getElementsByTagName("error"),
-        	error = (errorTags && errorTags.length>0) ?
-        		errorTags[0].childNodes[0].nodeValue :
-        		"Сервер не отвечает";
+    onError : function(response, callback) {
+    	var me = this;
+    	var responseContentType = response.getResponseHeader("Content-Type");
+    	var error = null;
+    	
+    	if(responseContentType.indexOf('text/xml') >= 0){
+			var parser = new DOMParser();
+	        var xmlDoc = parser.parseFromString(Ext.util.Format.htmlDecode(response.responseText), "text/xml");
+	        var errorTags = xmlDoc.getElementsByTagName(me.defaultErrorTag ? me.defaultErrorTag : "error");
+	        error = (errorTags && errorTags.length>0) ?
+	        		errorTags[0].childNodes[0].nodeValue :
+	        		response.responseText;
+    	}
+    	if(error==null && responseContentType.indexOf('text/json') >= 0){
+			var data = Ext.JSON.decode(response.responseText);
+			error = data[me.defaultErrorTag ? me.defaultErrorTag : "error"];
+    	}
+    	if(error==null){
+    		error = response.responseText;
+    	}
+        
         Ext.Msg.alert("Ошибка", error, callback);
     }
 });

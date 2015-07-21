@@ -143,7 +143,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 					callback : function(batch) {
 						me.grid.getSelectionModel().refresh();
 						if (batch.exceptions.length > 0) {
-							me.onError(batch.exceptions[0].getError().response.responseText);
+							me.onError(batch.exceptions[0].getError().response);
 							me.mainView.setLoading(false);
 						} else {
 							me.onRefresh();
@@ -217,7 +217,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 					function(records, operation, success){
 						var recordToSelect = store.getById(oldSelectionId);
 						if (!success) {
-							me.onError(operation.getError().response.responseText);
+							me.onError(operation.getError().response);
 						}
 						if(recordToSelect){
 							me.grid.view.scrollTo(recordToSelect);
@@ -274,7 +274,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			callback: function(records, operation, success){
 				sm.select(record);
 				if (!success) {
-					me.onError(operation.getError().response.responseText,
+					me.onError(operation.getError().response,
 					function(){
 						editor.startEdit(record);
 					});

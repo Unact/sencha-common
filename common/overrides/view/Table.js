@@ -31,7 +31,9 @@ Ext.define('Ext.overrides.view.Table', {
 			}
 		}
 		if(me.isVisible()){
-			me.scrollTo(record);
+			if(store.indexOf(record)>=0){
+				me.scrollTo(record);
+			}
 		}
 	},
 
