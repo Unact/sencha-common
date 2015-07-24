@@ -9,7 +9,11 @@ Ext.onReady(function() {
                 //positive number: as you were
                 return this.originalNumberFormatter(v, formatString);
             }
+        },
+        percent: function(v, formatString) {
+            return Ext.util.Format.number(v*100, '0,0.0 %');
         }
-    });
+    }
+    );
 });
 
