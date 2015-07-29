@@ -24,7 +24,10 @@ Ext.define('Ext.lib.app.ViewController', {
     	var responseContentType = response.getResponseHeader("Content-Type");
     	var error = null;
     	
-    	if(responseContentType.indexOf('text/xml') >= 0){
+    	if(responseContentType==null){
+    		error = "Сервер не отвечает";
+    	}
+    	if(error!=null && responseContentType.indexOf('xml') >= 0){
 			var parser = new DOMParser();
 	        var xmlDoc = parser.parseFromString(Ext.util.Format.htmlDecode(response.responseText), "text/xml");
 	        var errorTags = xmlDoc.getElementsByTagName(me.defaultErrorTag ? me.defaultErrorTag : "error");
@@ -32,7 +35,7 @@ Ext.define('Ext.lib.app.ViewController', {
 	        		errorTags[0].childNodes[0].nodeValue :
 	        		response.responseText;
     	}
-    	if(error==null && responseContentType.indexOf('text/json') >= 0){
+    	if(error==null && responseContentType.indexOf('json') >= 0){
 			var data = Ext.JSON.decode(response.responseText);
 			error = data[me.defaultErrorTag ? me.defaultErrorTag : "error"];
     	}

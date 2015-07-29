@@ -114,9 +114,11 @@ Ext.define('Ext.lib.grid.EditingCard', {
 			ctx = me.getEditingContext(),
 			form = me.lookupReference('editingForm').getForm();
 		
-		me.hide();
-		form.updateRecord(me.context.record);
-		me.grid.fireEvent('edit', me, ctx);
+		if(form.isValid()){
+			me.hide();
+			form.updateRecord(me.context.record);
+			me.grid.fireEvent('edit', me, ctx);
+		}
 	},
 	
 	cancelEdit: function(){
