@@ -28,26 +28,43 @@ Ext.define('Ext.overrides.grid.plugin.CellEditing', {
                     field: editor
                 }, column.editorConfig));
             }
+            
             // Add the Editor as a floating child of the grid
             // Prevent this field from being included in an Ext.form.Basic
             // collection, if the grid happens to be used inside a form
             editor.field.excludeForm = true;
             
-            editor.field.validationField = record.self.getField(column.dataIndex);
+            if(Ext.getVersion().isLessThan('6')){
+            	editor.field.validationField = record.self.getField(column.dataIndex);
 
-            // If the editor is new to this grid, then add it to the grid, and ensure it tells us about its lifecycle.
-            if (editor.ownerCt !== editorOwner) {
-                editorOwner.add(editor);
-                editor.on({
-                    scope: me,
-                    specialkey: me.onSpecialKey,
-                    complete: me.onEditComplete,
-                    canceledit: me.cancelEdit
-                });
-                column.on('removed', me.onColumnRemoved, me);
+	            // If the editor is new to this grid, then add it to the grid, and ensure it tells us about its lifecycle.
+	            if (editor.ownerCt !== editorOwner) {
+	                editorOwner.add(editor);
+	                editor.on({
+	                    scope: me,
+	                    specialkey: me.onSpecialKey,
+	                    complete: me.onEditComplete,
+	                    canceledit: me.cancelEdit
+	                });
+	                column.on('removed', me.onColumnRemoved, me);
+	            }
+            } else {
+            	// If the editor is new to this grid, then add it to the grid, and ensure it tells us about its life cycle.
+	            if (editor.column !== column) {
+	                editor.column = column;
+	                editor.on({
+	                    scope: me,
+	                    complete: me.onEditComplete,
+	                    canceledit: me.cancelEdit
+	                });
+	                column.on('removed', me.onColumnRemoved, me);
+	            }
             }
             editors.add(editor);
         }
+        
+        // Inject an upward link to its owning grid even though it is not an added child.
+        editor.ownerCmp = me.grid.ownerGrid;
 
         if (column.isTreeColumn) {
             editor.isForTree = column.isTreeColumn;
