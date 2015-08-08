@@ -16,6 +16,10 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 		}
 	},
 	
+	config: {
+		copyColumnHeaders: false
+	},
+	
 	enabledActions: ['copy', 'paste', 'cut'],
 	
 	privates: {
@@ -116,19 +120,28 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 	},
 
 	getRowData : function(format, erase) {
-		var cmp = this.getCmp(),
-			selModel = cmp.getSelectionModel(),
-			store = cmp.getStore(),
-			selected = selModel.getSelection(),
-			copyAll = selModel.getSelectionMode()!=='MULTI' || store.getCount()==selected.length,
-			ret = [],
-			isRaw = format === 'raw',
-			isText = format === 'text',
-			viewNode,
-			cell, data, record, row,
-			view = cmp.getView(),
-			columns = view.getVisibleColumnManager().getColumns(),
-			i, j;
+		var me = this;
+		var cmp = me.getCmp();
+		var selModel = cmp.getSelectionModel();
+		var store = cmp.getStore();
+		var selected = selModel.getSelection();
+		var copyAll = selModel.getSelectionMode()!=='MULTI' || store.getCount()==selected.length;
+		var ret = [];
+		var isRaw = format === 'raw';
+		var isText = format === 'text';
+		var viewNode;
+		var cell, data, record, row;
+		var view = cmp.getView();
+		var columns = view.getVisibleColumnManager().getColumns();
+		var i, j;
+		
+		if(me.copyColumnHeaders){
+			row = [];
+			for(j = 0; j<columns.length; j++){
+				row.push(columns[j].text);
+			}
+			ret.push(row);
+		}
 		
 		selected =  copyAll ? store.getData().items : selected;
 		
@@ -174,14 +187,23 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 	},
 
 	getRows : function(format, erase) {
-		var cmp = this.getCmp(),
-			selModel = cmp.getSelectionModel(),
-			ret = [],
-			store = cmp.getStore(),
-			selected = selModel.getSelection(),
-			copyAll = selModel.getSelectionMode()!=='MULTI' || store.getCount()==selected.length,
-			dataIndex, record, row,
-			i, j;
+		var me = this;
+		var cmp = me.getCmp();
+		var selModel = cmp.getSelectionModel();
+		var ret = [];
+		var store = cmp.getStore();
+		var selected = selModel.getSelection();
+		var copyAll = selModel.getSelectionMode()!=='MULTI' || store.getCount()==selected.length;
+		var dataIndex, record, row;
+		var i, j;
+		
+		if(me.copyColumnHeaders){
+			row = [];
+			for(j = 0; j<columns.length; j++){
+				row.push(columns[j].text);
+			}
+			ret.push(row);
+		}
 		
 		selected =  copyAll ? store.getData().items : selected;
 		
