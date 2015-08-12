@@ -117,6 +117,9 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		result = me.beforeAdd(masterRecord);
 		
 		if(result){
+			var editingColumn,
+				editingPlugin;
+
 			if(store.isSorted()){
 				newRec = store.add(result)[0];
 			} else {
@@ -125,8 +128,8 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			me.grid.view.scrollTo(newRec);
 			sm.select(newRec);
 
-			var editingColumn = me.grid.getConfig('autoEditOnAdd');
-			var editingPlugin = me.grid.findPlugin('cellediting');
+			editingColumn = me.grid.getConfig('autoEditOnAdd');
+			editingPlugin = me.grid.findPlugin('cellediting');
 			if (editingColumn !== false && editingPlugin) {
 				editingPlugin.startEdit(newRec, editingColumn);
 			}
