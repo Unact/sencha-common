@@ -124,6 +124,12 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			}
 			me.grid.view.scrollTo(newRec);
 			sm.select(newRec);
+
+			var editingColumn = me.grid.getConfig('autoEditOnAdd');
+			var editingPlugin = me.grid.findPlugin('cellediting');
+			if (editingColumn !== false && editingPlugin) {
+				editingPlugin.startEdit(newRec, editingColumn);
+			}
 		}
 		me.afterAdd(newRec);
 	},

@@ -22,7 +22,8 @@ Ext.define('Ext.lib.grid.Panel', {
 			mode: 'MULTI'
 		},
 		
-		stateful: true
+		stateful: true,
+		autoEditOnAdd: false
 	},
 
 	/**
