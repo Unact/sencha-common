@@ -38,18 +38,18 @@ Ext.define('Ext.lib.grid.Panel', {
 	 * extraPlugins - дополнительные плагины помимо плагинов редактирования и буферизованного вывода.
 	 */
 	constructor : function(currentConfig) {
-		// @formatter:off
-		var me = this,
-			config = {},
-			plugins,
-			buttons = [],
-			i;
-		// @formatter:on
+		var me = this;
+		var config = {};
+		var plugins;
+		var buttons = [];
+		var i;
+		var suffix;
 
-		Ext.apply(config, this.getInitialConfig());
+		Ext.apply(config, me.getInitialConfig());
 		Ext.apply(config, currentConfig);
 		Ext.apply(config, me.cfg);
-
+		
+		suffix = config.suffix || me.xtype;
 		plugins = config.plugins || [];
 
 		if (config.beforeButtons != null) {
@@ -60,7 +60,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		
 		if (config.enabledButtons.indexOf('refresh')!=-1 && !config.disableRefresh) {
 			buttons.push({
-				reference : 'refresh' + config.suffix,
+				reference : 'refresh' + suffix,
 				icon : '/images/refresh.gif',
 				tooltip : 'Обновить',
 				handler : 'onRefresh'
@@ -68,7 +68,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		}
 		if (config.enabledButtons.indexOf('save')!=-1 && !config.disableSave) {
 			buttons.push({
-				reference : 'save' + config.suffix,
+				reference : 'save' + suffix,
 				icon : '/images/save.png',
 				tooltip : 'Сохранить',
 				handler : 'onSave'
@@ -76,7 +76,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		}
 		if (config.enabledButtons.indexOf('add')!=-1 && !config.disableAdd) {
 			buttons.push({
-				reference : 'add' + config.suffix,
+				reference : 'add' + suffix,
 				icon : '/images/add.gif',
 				tooltip : 'Добавить',
 				handler : 'onAdd'
@@ -84,7 +84,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		}
 		if (config.enabledButtons.indexOf('delete')!=-1 && !config.disableDelete) {
 			buttons.push({
-				reference : 'delete' + config.suffix,
+				reference : 'delete' + suffix,
 				icon : '/images/delete.gif',
 				disabled : true,
 				tooltip : 'Удалить',
@@ -160,14 +160,14 @@ Ext.define('Ext.lib.grid.Panel', {
 
 		for ( i = 0; i < plugins.length; i++) {
 			if (plugins[i].pluginId == null) {
-				plugins[i].pluginId = plugins[i].ptype + config.suffix;
+				plugins[i].pluginId = plugins[i].ptype + suffix;
 			}
 		}
 
 		config.plugins = plugins;
 
-		config.reference = config.suffix + 'Table';
-		config.stateId = config.suffix + 'StateId';
+		config.reference = suffix + 'Table';
+		config.stateId = suffix + 'StateId';
 
 		if (config.disableDeleteColumn !== true) {
 			config.columns.push(Ext.apply({
