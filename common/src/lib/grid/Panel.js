@@ -44,12 +44,15 @@ Ext.define('Ext.lib.grid.Panel', {
 		var buttons = [];
 		var i;
 		var suffix;
+		
+		suffix = config.suffix || me.xtype;
+		config.suffix = suffix;
 
 		Ext.apply(config, me.getInitialConfig());
 		Ext.apply(config, currentConfig);
 		Ext.apply(config, me.cfg);
 		
-		suffix = config.suffix || me.xtype;
+		
 		plugins = config.plugins || [];
 
 		if (config.beforeButtons != null) {
