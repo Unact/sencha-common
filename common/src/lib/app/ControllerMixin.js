@@ -79,7 +79,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
 								Ext.Msg.alert("Ошибка", "Ошибка при загрузке " + properties[0]);
 							}
 							if (( typeof dictionaries[properties[0]]) === "function") {
-								dictionaries[properties[0]](records, operation, success);
+								dictionaries[properties[0]].call(store, records, operation, success);
 							} else if (Array.isArray(dictionaries[properties[0]])) {
 								me.load(dictionaries[properties[0]]);
 							}
