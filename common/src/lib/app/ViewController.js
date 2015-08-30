@@ -27,7 +27,9 @@ Ext.define('Ext.lib.app.ViewController', {
     	var error = null;
     	
     	if(responseContentType==null){
-    		error = "Сервер не отвечает";
+    		error = response.responseText && response.responseText!="" ?
+    			response.responseText :
+    			"Сервер не отвечает";
     	}
     	if(error==null && responseContentType.indexOf('xml') >= 0){
 			var parser = new DOMParser();

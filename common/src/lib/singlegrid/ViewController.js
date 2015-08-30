@@ -9,12 +9,14 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	 * Также добавляется обработчик события обновления представления (refrehtable)
 	 */
 	init: function(view){
-		var me = this,
-			control = {},
-			query = '[reference="' +view.reference + '"]';
+		var me = this;
+		var control = {};
+		var query = '[reference="' +view.reference + '"]';
 		
-		control[query] = {};
-		control[query]['refreshtable'] = 'onRefresh';
+		control[query] = {
+			refreshtable: 'onRefresh',
+			savetable: 'onSave'
+		};
 		
 		me.grid = view;
 		me.mainView = me.mainView || me.grid;
@@ -138,11 +140,21 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	},
 	
 	onSave: function() {
-		var me = this,
-			grid = me.grid,
-			store = grid.getStore(),
-			messages,
-			i, j, fieldName, errors = [];
+		var me = this;
+		var grid = me.grid;
+		var store = grid.getStore();
+		var messages;
+		var i, j, fieldName, errors = [];
+		var callback;
+		var callbackScope;
+		
+		if (arguments[0] && (typeof arguments[0]==='function')) {
+			callback = arguments[0];
+			callbackScope = arguments[1] || me;
+		} else {
+			callback = me.onRefresh;
+			callbackScope = me;
+		}
 
 		if (store.hasChanges()) {
 			messages = store.getValidationMessages();
@@ -155,7 +167,11 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 							me.onError(batch.exceptions[0].getError().response);
 							me.mainView.setLoading(false);
 						} else {
-							me.onRefresh();
+							if(me.detailGrid && grid.saveDetail){
+								me.detailGrid.fireEvent('savetable', callback, callbackScope);
+							} else {
+								callback.call(callbackScope);
+							}
 						}
 					}
 				});
@@ -176,6 +192,8 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 				
 				Ext.Msg.alert("Некорректные значения", errors.join("<br/>"));
 			}
+		} else if(me.detailGrid && grid.saveDetail){
+			me.detailGrid.fireEvent('savetable');
 		}
 	},
 	
