@@ -3,6 +3,21 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	extend : 'Ext.lib.app.ViewController',
 	alias : 'controller.singlegrid',
 	
+	config: {
+		// массив окон детализации
+		detailGrids: [],
+		masterGrid: null
+	},
+	
+	setDetailGrids: function(v){
+		var me = this;
+		
+		me.detailGrids = v;
+		v.forEach(function(detail){
+			detail.getController().masterGrid = me.grid;
+		});
+	},
+	
 	/**
 	 * Добавляются обработчики для кнопок обновления, добавления, удаления и сохранения.
 	 * Для методов добавления и обновления доступны "предварительные" шаблонные методы (см. ниже)
@@ -167,8 +182,10 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 							me.onError(batch.exceptions[0].getError().response);
 							me.mainView.setLoading(false);
 						} else {
-							if(me.detailGrid && grid.saveDetail){
-								me.detailGrid.fireEvent('savetable', callback, callbackScope);
+							if(me.detailGrids && grid.saveDetail){
+								me.detailGrids.forEach(function(detail){
+									detail.fireEvent('savetable', callback, callbackScope);
+								});
 							} else {
 								callback.call(callbackScope);
 							}
@@ -192,8 +209,10 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 				
 				Ext.Msg.alert("Некорректные значения", errors.join("<br/>"));
 			}
-		} else if(me.detailGrid && grid.saveDetail){
-			me.detailGrid.fireEvent('savetable');
+		} else if(me.detailGrids && grid.saveDetail){
+			me.detailGrids.forEach(function(detail){
+				detail.fireEvent('savetable');
+			});
 		}
 	},
 	
@@ -274,9 +293,11 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			vm.set('masterRecord', selectedOne ? selected[0] : null);
 		}
 		
-		if(me.detailGrid){
-			me.detailGrid.setDisabled(!selectedOne || selected[0].phantom);
-			me.detailGrid.fireEvent('refreshtable');
+		if(me.detailGrids){
+			me.detailGrids.forEach(function(detail){
+				detail.setDisabled(!selectedOne || selected[0].phantom);
+				detail.fireEvent('refreshtable');
+			});
 		}
 	},
 	
