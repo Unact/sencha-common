@@ -9,11 +9,12 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		masterGrid: null
 	},
 	
-	setDetailGrids: function(v){
+	setDetailGrids: function(detailGrids){
 		var me = this;
 		
-		me.detailGrids = v;
-		v.forEach(function(detail){
+		me.detailGrids = detailGrids;
+		
+		me.detailGrids.forEach(function(detail){
 			detail.getController().masterGrid = me.grid;
 		});
 	},
