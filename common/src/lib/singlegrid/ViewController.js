@@ -179,9 +179,9 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 				store.sync({
 					callback : function(batch) {
 						me.grid.getSelectionModel().refresh();
+						me.mainView.setLoading(false);
 						if (batch.exceptions.length > 0) {
 							me.onError(batch.exceptions[0].getError().response);
-							me.mainView.setLoading(false);
 						} else {
 							if(me.detailGrids && grid.saveDetail){
 								me.detailGrids.forEach(function(detail){
@@ -214,6 +214,8 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			me.detailGrids.forEach(function(detail){
 				detail.fireEvent('savetable');
 			});
+		} else if(arguments.length==2) {
+			callback.call(callbackScope);
 		}
 	},
 	
