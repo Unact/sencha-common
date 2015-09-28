@@ -60,11 +60,13 @@ Ext.define('Ext.lib.app.ControllerMixin', {
 						dictionary = dictionaries[i];
 						store = getStore(dictionary);
 						if(store) {
-							store.load(function(records, operation, success) {
-								if(success!==true && !me.skipDictionaryAlert){
-									Ext.Msg.alert("Ошибка", "Ошибка при загрузке " + this.self.getName());
+							store.load({
+								callback: function(records, operation, success) {
+									if(success!==true && !me.skipDictionaryAlert){
+										Ext.Msg.alert("Ошибка", "Ошибка при загрузке " + this.self.getName());
+									}
+									me.updateDictionariesLoadingCount();
 								}
-								me.updateDictionariesLoadingCount();
 							});
 						} else {
 							me.load(dictionary);
@@ -74,7 +76,8 @@ Ext.define('Ext.lib.app.ControllerMixin', {
 					properties = Object.getOwnPropertyNames(dictionaries);
 					if (properties.length >= 1) {
 						store = getStore(properties[0]);
-						store.load(function(records, operation, success) {
+						store.load({
+							callback: function(records, operation, success) {
 							if(success!==true && !me.skipDictionaryAlert){
 								Ext.Msg.alert("Ошибка", "Ошибка при загрузке " + properties[0]);
 							}
@@ -85,6 +88,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
 							}
 							
 							me.updateDictionariesLoadingCount();
+						}
 						});
 					}
 				}

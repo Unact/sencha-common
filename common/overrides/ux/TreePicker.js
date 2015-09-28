@@ -63,7 +63,7 @@ Ext.define('Ext.overrides.ux.TreePicker', {
         
         picker.selectPath(node.getPath());
     },
-
+    
     /**
      * Sets the specified value into the field
      * @param {Mixed} value
@@ -73,6 +73,7 @@ Ext.define('Ext.overrides.ux.TreePicker', {
         var me = this;
         var store = me.getStore();
         var record;
+        var bind;
 
         me.value = value;
 
@@ -82,18 +83,21 @@ Ext.define('Ext.overrides.ux.TreePicker', {
         }
             
         // try to find a record in the store that matches the value
-        record = value ? store.getNodeById(value) : store.getRoot();
-        if (value === undefined) {
+        if (value) {
+            record = store.getNodeById(value);
+        } else {
             record = store.getRoot();
             me.value = record.getId();
-        } else {
-            record = store.getNodeById(value);
         }
-
+        
         // set the raw value to the record's display field if a record was found
         me.setRawValue(record ? record.get(me.displayField) : '');
-
+        
+        bind = me.getBind();
+        if(bind.value){
+        	bind.value.setValue(value);
+        }
+        
         return me;
     }
 });
-
