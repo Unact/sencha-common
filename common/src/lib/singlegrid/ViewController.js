@@ -226,6 +226,8 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		return true;
 	},
 	
+	afterRefresh: Ext.emptyFn,
+	
 	/**
 	 * вызывает при наличии функцию beforeRefresh.
 	 * Функция должна возвратить "истину" для продолжения обновления
@@ -276,6 +278,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 							}
 						}
 						me.mainView.setLoading(false);
+						me.afterRefresh.call(me);
 					}
 				);
 			}
