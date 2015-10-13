@@ -8,6 +8,8 @@ Ext.define('Ext.overrides.ux.TreePicker', {
         'Ext.util.StoreHolder'
     ],
     
+    editable: true,
+    
     getStoreListeners: function(){
     	var me = this;
     	
