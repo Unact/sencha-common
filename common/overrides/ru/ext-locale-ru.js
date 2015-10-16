@@ -1,3 +1,8 @@
+Ext.define("Ext.locale.ru.Date", {
+	override: "Ext.Date",
+	defaultFormat: 'd.m.Y'
+});
+
 Ext.define("Ext.locale.ru.grid.RowEditor", {
 	override : "Ext.grid.RowEditor",
 	saveBtnText : 'Сохранить',
