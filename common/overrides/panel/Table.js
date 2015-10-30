@@ -13,7 +13,7 @@ Ext.define('Ext.overrides.panel.Table', {
 		var me = this;
 		var store = arguments[0];
 		
-		if(arguments && arguments.length>1){
+		if(arguments.length>1){
 			me.reconfigure(arguments[0], arguments[1]);
 		} else {
 			me.reconfigure(store);
@@ -76,6 +76,8 @@ Ext.define('Ext.overrides.panel.Table', {
         	case 1:
         		if(Ext.isArray(arguments[0])){
         			columns = arguments[0];
+        		} else {
+        			store = arguments[0];
         		}
         	break;
         	case 2:
