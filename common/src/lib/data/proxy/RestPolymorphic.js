@@ -6,7 +6,7 @@ Ext.define('Ext.lib.data.proxy.RestPolymorphic', {
         var url = this.getUrl(request);
         var params = request.getParams() || {};
 
-        url = '/' + params.polymorphic_type + '/' + params.polymorphic_id + '/' + url;
+        url = '/' + params.polymorphic_type + '/' + params.polymorphic_id + url;
         
         delete params.polymorphic_type;
         delete params.polymorphic_id;
