@@ -164,6 +164,16 @@ Ext.define('Ext.lib.grid.Panel', {
 		this.callParent(arguments);
 	},
 
+	onResize: function() {
+		var me = this;
+		var editingPlugin = me.findPlugin('cellediting') || me.findPlugin('rowediting') || me.findPlugin('arrowablecellediting')
+
+		if (editingPlugin) {
+			editingPlugin.cancelEdit();
+		}
+		me.callParent(arguments);
+	},
+
 	getSelected : function(f) {
 		var selected = this.getSelectionModel().getSelection()[0];
 		return ((selected != null) ? selected.get(f) : null);
