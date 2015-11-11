@@ -6,17 +6,11 @@ Ext.define('Ext.lib.grid.Panel', {
 	requires: [
 		'Ext.button.Button',
 		'Ext.grid.plugin.CellEditing',
-		'Ext.grid.plugin.RowEditing'],
+		'Ext.grid.plugin.RowEditing',
+		'Ext.lib.shared.Toolbar'],
 	// @formatter:on
 	
 	config: {
-		enabledButtons: [
-			'refresh',
-			'save',
-			'add',
-			'delete'
-		],
-		
 		selModel: {
 			type: 'rowmodel',
 			mode: 'MULTI'
@@ -42,7 +36,6 @@ Ext.define('Ext.lib.grid.Panel', {
 		var me = this;
 		var config = {};
 		var plugins;
-		var buttons = [];
 		var i;
 		var suffix;
 		
@@ -55,61 +48,31 @@ Ext.define('Ext.lib.grid.Panel', {
 		
 		
 		plugins = config.plugins || [];
-
-		if (config.beforeButtons != null) {
-			for ( i = 0; i < config.beforeButtons.length; i++) {
-				buttons.push(config.beforeButtons[i]);
-			}
-		}
 		
-		if (config.enabledButtons.indexOf('refresh')!=-1 && !config.disableRefresh) {
-			buttons.push({
-				reference : 'refresh' + suffix,
-				icon : '/images/refresh.gif',
-				tooltip : 'Обновить',
-				handler : 'onRefresh'
-			});
-		}
-		if (config.enabledButtons.indexOf('save')!=-1 && !config.disableSave) {
-			buttons.push({
-				reference : 'save' + suffix,
-				icon : '/images/save.png',
-				tooltip : 'Сохранить',
-				handler : 'onSave'
-			});
-		}
-		if (config.enabledButtons.indexOf('add')!=-1 && !config.disableAdd) {
-			buttons.push({
-				reference : 'add' + suffix,
-				icon : '/images/add.gif',
-				tooltip : 'Добавить',
-				handler : 'onAdd'
-			});
-		}
-		if (config.enabledButtons.indexOf('delete')!=-1 && !config.disableDelete) {
-			buttons.push({
-				reference : 'delete' + suffix,
-				icon : '/images/delete.gif',
-				disabled : true,
-				tooltip : 'Удалить',
-				handler : 'onDelete'
-			});
-		}
 
-		if (config.afterButtons != null) {
-			for ( i = 0; i < config.afterButtons.length; i++) {
-				buttons.push(config.afterButtons[i]);
-			}
-		}
+        var toolbarConfig = {
+            xtype: 'sharedtoolbar',
+            
+            beforeButtons: config.beforeButtons,
+            afterButtons: config.afterButtons,
+            
+            disableDelete: config.disableDelete,
+            disableAdd: config.disableAdd,
+            disableSave: config.disableSave,
+            disableRefresh: config.disableRefresh,
+            
+            suffix: config.suffix
+        };
+        
+        if(config.enabledButtons) {
+            toolbarConfig['enabledButtons'] = config.enabledButtons;
+        };
+        if(config.buttonsDock) {
+            toolbarConfig['buttonsDock'] = config.buttonsDock;
+        }
+                
+        config.dockedItems = [toolbarConfig];
 		
-		if(buttons.length>0){
-			config.dockedItems = [{
-				xtype : 'toolbar',
-				overflowHandler: 'scroller',
-				dock : config.buttonsDock || 'top',
-				items : buttons
-			}];
-		}
 
 		config.viewConfig = config.viewConfig || {
 			enableTextSelection : true,
@@ -117,7 +80,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		};
 
 		if (config.disableEditing !== true) {
-			var hasEditingPlugin = false, hasBufferPlugin = false;
+			var hasEditingPlugin = false;
 
 			for ( i = 0; i < plugins.length; i++) {
 				if (plugins[i].ptype == 'rowediting' || plugins[i].ptype == 'cellediting') {
@@ -186,58 +149,5 @@ Ext.define('Ext.lib.grid.Panel', {
 		Ext.apply(this, config);
 
 		this.callParent(arguments);
-	},
-
-	getRecsFromCsv : function(csv) {
-		// @formatter:off
-        var grid = this,
-        	rows = csv.split("\n"),
-        	record,
-        	records = [],
-        	columns = grid.columns,
-        	j, cols, l;
-        // @formatter:on
-
-		rows.every(function(row) {
-			if (row.length > 0) {
-				cols = row.split("\t");
-				record = {};
-				l = Math.min(cols.length, columns.length);
-
-				for ( j = 0; j < l; j++) {
-					if (columns[j].config.field.xtype === "numberfield") {
-						cols[j] = cols[j].replace(new RegExp(String.fromCharCode(160), "g"), "").replace(/,/g, ".");
-					};
-					record[columns[j].dataIndex] = cols[j];
-				}
-
-				records.push(record);
-			}
-
-			return true;
-		});
-
-		return records;
-	},
-
-	getCsvDataFromRecs : function() {
-		// @formatter:off
-        var grid = this,
-        	store = grid.store,
-        	rows = [];
-        // @formatter:on
-
-		grid.getSelectionModel().getSelection().every(function(record) {
-			var row = [];
-			grid.columns.every(function(column) {
-				row.push(record.get(column.dataIndex));
-				
-				return true;
-			});
-			rows.push(row.join("\t"));
-			
-			return true;
-		});
-		return rows.length>0 ? rows.join("\n") : null;
 	}
 });
