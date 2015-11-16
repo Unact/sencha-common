@@ -29,6 +29,10 @@ if (Ext.util && Ext.util.Format) {
 		
 		ruMoney: function(value){
 			return Ext.util.Format.number(value, '0,000.00').replace(/\./g, ' ');
+		},
+
+		withoutDecimal: function(value){
+			return Ext.util.Format.number(value, '0,000').replace(/\./g, ' ');
 		}
 	});
 }
