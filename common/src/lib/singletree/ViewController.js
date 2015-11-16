@@ -46,7 +46,7 @@ Ext.define('Ext.lib.singletree.ViewController', {
     },
 
 
-
+    //TODO: у метода load() нет колбэка. надо что-то придумать. 
     onRefresh: function(){
         var me = this,
             result = true,
@@ -76,28 +76,71 @@ Ext.define('Ext.lib.singletree.ViewController', {
             result = me.beforeRefresh(masterRecord);
         }
         
+        
         if(result){
             if (vm==null || vm.get('filterReady')!==false) {
-                me.mainView.setLoading(true);
-                store.load(
-                    function(records, operation, success){
-                        var recordToSelect = store.getById(oldSelectionId);
-                        if (!success) {
-                            me.onError(operation.getError().response);
-                        }
-                        if(recordToSelect){
-                            me.grid.view.scrollTo(recordToSelect);
-                        } else {
-                            if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
-                                me.grid.view.scrollTo(oldSelectionIndex);
-                            }
-                        }
-                        me.mainView.setLoading(false);
-                        me.afterRefresh.call(me);
-                    }
-                );
+                store.load();
             }
         }
     },
     
+    onDelete: function(){
+        var me = this,
+            sm = me.grid.getSelectionModel(),
+            oldSelection = sm.getSelection(),
+            store = me.grid.getStore(),
+            oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
+                store.indexOf(oldSelection[0]) :
+                null;
+        
+        function removeRow(){
+            var recordsCount;
+            oldSelection[0].parentNode.removeChild(oldSelection[0]);
+            
+            recordsCount = store.getCount();
+            
+            console.log(oldSelection[0], recordsCount);
+            if (recordsCount > 0) {
+                sm.select(recordsCount > oldSelectionIndex ? oldSelectionIndex : oldSelectionIndex - 1);
+            }
+        };
+        
+        if(me.grid.enableDeleteDialog===true){
+            Ext.Msg.show({
+                title : 'Внимание',
+                message : 'Вы действительно хотите удалить запись?',
+                buttons : Ext.Msg.YESNOCANCEL,
+                icon : Ext.Msg.QUESTION,
+                fn : function(btn) {
+                    if (btn === 'yes') {
+                        removeRow();
+                    }
+                }
+            });
+        } else {
+            removeRow();
+        }
+    },
+    
+    onChangeSelect: function(grid, selected, eOpts){
+        var me = this,
+            selectionCorrect = selected && selected.length > 0,
+            selectedOne = selectionCorrect && selected.length==1,
+            vm = me.grid.getViewModel(),
+            deleteButton = me.lookupReference('delete' + me.grid.suffix);
+        
+        if(deleteButton){
+            deleteButton.setDisabled(!selectedOne || !selected[0].get('leaf'));
+        }
+        if(vm){
+            vm.set('masterRecord', selectedOne ? selected[0] : null);
+        }
+        
+        if(me.detailGrids){
+            me.detailGrids.forEach(function(detail){
+                detail.setDisabled(!selectedOne || selected[0].phantom);
+                detail.fireEvent('refreshtable');
+            });
+        }
+    },
 });;

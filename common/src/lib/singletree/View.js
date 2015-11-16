@@ -1,6 +1,6 @@
 Ext.define('Ext.lib.singletree.View', {
     extend : 'Ext.tree.Panel',
-    alias : 'widget.singlegrid',
+    alias : 'widget.singletree',
 
     requires : [
         'Ext.lib.singletree.ViewController',
@@ -27,6 +27,32 @@ Ext.define('Ext.lib.singletree.View', {
      * @cfg {boolean} enableDeleteDialog
      * Показывать диалог подтверждения удаления или нет
      */
+    
+    
+    config: {
+        checkableStore: null
+    },
+    
+    applyCheckableStore: function(store) {
+        console.log('applyChackableStore', this.getStore());
+        
+        var me = this;
+        
+        //Если панель имеет checkableStore то надо всем узлам дерева
+        //после его загрузки добавить checkbox-ы
+        me.getStore().on("load", me.onLoadStore, me);
+
+        return store;
+    },
+    
+    onLoadStore: function(treeStore, loadedNode, records, successful, eOpts) {
+        console.log('onLoadStore', arguments);
+        
+        //После загрузки корневого элемента, везде проставить чекбоксы
+        loadedNode[0].cascadeBy(function(node) {
+            node.set('checked', false);
+        });
+    },
     
     initComponent: function() {
         var me = this;
