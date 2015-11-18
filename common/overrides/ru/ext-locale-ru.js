@@ -28,7 +28,7 @@ Ext.onReady(function() {
             thousandSeparator : ' ',
             currencySign: '\u20bd',
             
-            ruMoney: function(value){
+            ruMoney: function(v){
                 return Ext.util.Format.currency(v, null, 2, true);
             },
             
