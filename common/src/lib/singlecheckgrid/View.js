@@ -1,13 +1,13 @@
-Ext.define('Ext.lib.singletree.View', {
-    extend : 'Ext.tree.Panel',
-    alias : 'widget.singletree',
+Ext.define('Ext.lib.singlecheckgrid.View', {
+    extend : 'Ext.grid.Panel',
+    alias : 'widget.singlecheckgrid',
 
     requires : [
-        'Ext.lib.singletree.ViewController',
-        'Ext.lib.shared.Toolbar'
+        'Ext.lib.singlecheckgrid.ViewController',
+        'Ext.lib.shared.CheckmarkToolbar'
     ],
 
-    controller : 'singletree',
+    controller : 'singlecheckgrid',
 
     // Для методов добавления и обновления доступны "предварительные" шаблонные методы
 
@@ -30,30 +30,22 @@ Ext.define('Ext.lib.singletree.View', {
     
     
     config: {
-        autoEditOnAdd: false
-    },
-    
-    onLoadStore: function(treeStore, loadedNode, records, successful, eOpts) {
-        console.log('onLoadStore', arguments);
-        
-        //После загрузки корневого элемента, везде проставить чекбоксы
-        loadedNode[0].cascadeBy(function(node) {
-            node.set('checked', false);
-        });
+        autoEditOnAdd: false,
+        checkmarkStore: null
     },
     
     initComponent: function() {
         var me = this;
         var toolbarConfig = {
-            xtype: 'sharedtoolbar',
+            xtype: 'sharedcheckmarktoolbar',
             
             beforeButtons: me.beforeButtons,
             afterButtons: me.afterButtons,
-            
-            disableDelete: me.disableDelete,
-            disableAdd: me.disableAdd,
-            disableSave: me.disableSave,
+
             disableRefresh: me.disableRefresh,
+            disableSave: me.disableSave,
+            disableFilterCheck: me.disableFilterCheck,
+            disableBranch: true,
             
             suffix: me.suffix
         };
