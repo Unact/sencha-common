@@ -64,6 +64,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
             vm.set('masterRecord', selectedOne ? selected[0] : null);
         }
         
+        me.beforeChangeSelect(sm, selected, eOpts);
+        
         if(me.detailGrids){
             me.detailGrids.forEach(function(detail){
                 detail.setDisabled(!selectedOne || selected[0].phantom);
@@ -71,6 +73,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
             });
         }
     },
+    
+    beforeChangeSelect: Ext.emptyFn,
     
     /**
      * Функция должна возвратить "истину" для продолжения обновления
