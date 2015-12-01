@@ -30,7 +30,6 @@ Ext.define('Ext.lib.singlechecktree.View', {
     
     
     config: {
-        autoEditOnAdd: false,
         checkmarkStore: null
     },
     

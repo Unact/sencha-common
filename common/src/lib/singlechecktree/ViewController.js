@@ -64,6 +64,11 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         }
         
         counter = stores.length;
+        
+        if(counter == 0) {
+            return;
+        }
+        
         me.mainView.setLoading(true);
         
         Ext.Array.each(stores, function(store) {
@@ -202,12 +207,15 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         var me = this;
         var ids=[];
         var rootNode = me.getView().getRootNode();
-        var store = me.getView().getCheckmarkStore();
+        var checkmarkStore = me.getView().getCheckmarkStore();
+        var store = me.getView().getStore();
+        var filters = store.getFilters().clone();
 
-        store.each(function(record) {
+        checkmarkStore.each(function(record) {
             ids.push(record.get(me.checkmarkLink));
         });
-
+        
+        store.clearFilter();
         rootNode.cascadeBy(function(node) {
             var index;
             if((index = ids.indexOf(node.get('id'))) >= 0) {
@@ -217,6 +225,8 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                 node.set('checked', false);
             }
         });
+        
+        store.filter(filters.getRange());
     },
     
     onCheckchange: function(node, checked, eOpts) {

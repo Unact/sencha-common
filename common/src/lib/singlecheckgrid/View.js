@@ -30,9 +30,9 @@ Ext.define('Ext.lib.singlecheckgrid.View', {
     
     
     config: {
-        autoEditOnAdd: false,
         checkmarkStore: null
     },
+
     
     initComponent: function() {
         var me = this;
@@ -64,7 +64,7 @@ Ext.define('Ext.lib.singlecheckgrid.View', {
         if (me.disableEditing !== true) {
             var hasEditingPlugin = false;
 
-            for ( i = 0; i < plugins.length; i++) {
+            for (i = 0; i < plugins.length; i++) {
                 if (plugins[i].ptype == 'rowediting' || plugins[i].ptype == 'cellediting') {
                     hasEditingPlugin = true;
                     break;
