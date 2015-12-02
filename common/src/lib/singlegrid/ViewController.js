@@ -18,8 +18,6 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			detail.getController().masterGrid = me.grid;
 		});
 	},
-	
-
 
 	init: function(view){
 		var me = this;
@@ -30,7 +28,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		me.callParent(arguments);
 	},
 	
-	deleteModel: function(store, records, index, sm){
+	deleteRecords: function(store, records, index, sm){
         var recordsCount;
         
         store.remove(records);
@@ -40,7 +38,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         }
 	},
 	
-    addModel: function(store, sm, result) {
+    addRecord: function(store, sm, result) {
         var index = store.indexOf(sm.getLastSelected());
         var newRec;
     
@@ -55,9 +53,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	
 
     isDisableDeleteButton: function(records){
-        var isOne = records && records.length==1;
-       
-        return !isOne;
+        return !(records && records.length==1);
     },
 
 	onDeleteByColumn: function(grid, rowIndex, colIndex, item, e, record, row) {
@@ -88,10 +84,10 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	},
 	
 	onCompleteEdit: function(editor, ctx, eOpts){
-		var me = this,
-			grid = ctx.grid,
-			record = ctx.record,
-			sm = grid.getSelectionModel();
+		var me = this;
+		var grid = ctx.grid;
+		var record = ctx.record;
+		var sm = grid.getSelectionModel();
 		
 		me.mainView.setLoading(true);
 		sm.deselectAll();
