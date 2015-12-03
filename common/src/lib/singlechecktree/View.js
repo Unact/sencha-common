@@ -7,7 +7,7 @@ Ext.define('Ext.lib.singlechecktree.View', {
         'Ext.lib.shared.CheckmarkToolbar'
     ],
 
-    controller : 'singletree',
+    controller : 'singlechecktree',
 
     // Для методов добавления и обновления доступны "предварительные" шаблонные методы
 
@@ -30,15 +30,13 @@ Ext.define('Ext.lib.singlechecktree.View', {
     
     
     config: {
-        checkableStore: null,
-        autoEditOnAdd: false,
         checkmarkStore: null
     },
     
     applyCheckmarkStore: function(store) {
         var me = this;
         
-        //Если панель имеет checkableStore то надо всем узлам дерева
+        //Если панель имеет checkmarkStore то надо всем узлам дерева
         //после его загрузки добавить checkbox-ы
         me.getStore().on("load", me.onLoadStore, me);
 
@@ -104,6 +102,4 @@ Ext.define('Ext.lib.singlechecktree.View', {
         
         me.callParent();
     }
-
-
 });

@@ -1,39 +1,47 @@
-Ext.define('Ext.lib.singlechecktree.ViewController', {
+Ext.define('Ext.lib.singlecheckgrid.ViewController', {
     extend: 'Ext.lib.app.ViewController',
-    alias : 'controller.singlechecktree',
-    
-    isProcessBranch: false,
+    alias : 'controller.singlecheckgrid',
 
     init: function(view){
         var me = this;
         
         me.mainView = me.mainView || view;      
         
-        view.on('refreshtable', me.onCheckmarkRefresh, me);
+        view.on('refreshtable', me.sharedRefresh, me);  
         view.on('savetable', me.onSave, me);
-        view.on('checkchange', me.onCheckchange, me);
+        
+        //Добавить в экземпляр панели метод
+        view.getChecked = function() {
+            var checked = [];
+            this.getStore().each(function(rec){
+                if (rec.get('checked')) {
+                    checked.push(rec);
+                }
+            });
+            return checked;
+        };
     },
 
-    onCheckmarkRefresh: function() {
-        this.sharedRefresh(false, true);
-    },
-    
     onRefresh: function() {
-        this.sharedRefresh(true, true);
+        var me = this;
+        var view = me.getView();
+        
+        view.setAvailableRowsFK(null);
+        me.sharedRefresh();
     },
 
-    sharedRefresh: function(isRefreshTree, isRefreshCheckmark) {
+    sharedRefresh: function() {
         var me = this;
         var result = true;
+        var resultCheckmark = true;
         var masterRecord;
-        var view = me.getView();
-        var vm = view.getViewModel();
-        var sm = view.getSelectionModel();
-        var treeStore = view.getStore();  //?
-        var checkmarkStore = view.getCheckmarkStore(); 
+        var vm = me.getView().getViewModel();
+        var sm = me.getView().getSelectionModel();
+        var store = me.getView().getStore();
+        var checkmarkStore = me.getView().getCheckmarkStore(); 
         var oldSelection = sm.getSelection();
         var oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
-                treeStore.indexOf(oldSelection[0]) :
+                store.indexOf(oldSelection[0]) :
                 null;
         var oldSelectionId = (oldSelection && oldSelection.length==1) ?
                 oldSelection[0].get('id') :
@@ -45,31 +53,33 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             masterRecord = me.masterGrid.getViewModel().get('masterRecord');
             if(masterRecord && !masterRecord.phantom)
             {
-                result = me.beforeRefresh(masterRecord);
+                resultCheckmark = me.beforeRefresh(masterRecord);
+                result = me.beforeAvailableRowsRefresh(masterRecord);
             } else {
                 checkmarkStore.loadData([]);
+                resultCheckmark = false;
                 result = false;
             }
         } else {
-            result = me.beforeRefresh(masterRecord);
+            resultCheckmark = me.beforeRefresh(masterRecord);
+            result = me.beforeAvailableRowsRefresh(masterRecord);
         }
-        
-        if(isRefreshTree) {
-            stores.push(treeStore);
-        }
-        
-        if(isRefreshCheckmark) {
-            if(result && (vm==null || vm.get('filterReady')!==false)) {
+
+
+        if(vm==null || vm.get('filterReady')!==false) {
+            if(resultCheckmark)
                 stores.push(checkmarkStore);
-            }    
-        }
-        
+                
+            if(result)
+                stores.push(store);
+        }    
+
+
         counter = stores.length;
-        
         if(counter == 0) {
             return;
         }
-        
+
         me.mainView.setLoading(true);
         
         Ext.Array.each(stores, function(store) {
@@ -81,19 +91,19 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                     
                     counter--;
                     if(counter == 0) {
-                        var recordToSelect = treeStore.getById(oldSelectionId);
+                        var recordToSelect = store.getById(oldSelectionId);
         
                         //afterRefresh изменяет выделенную строку, поэтому
                         //вызовим его до установки фокуса на строку 
                         me.afterRefresh.call(me, records, operation, success);
             
                         if(recordToSelect){
-                            view.view.scrollTo(recordToSelect);
+                            me.getView().view.scrollTo(recordToSelect);
                         } else {
-                            if(oldSelectionIndex && treeStore.getCount()>oldSelectionIndex){
-                                view.view.scrollTo(oldSelectionIndex);
+                            if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
+                                me.getView().view.scrollTo(oldSelectionIndex);
                             }
-                            view.view.scrollTo(0);
+                            me.getView().view.scrollTo(0);
                         }
                         
                         me.mainView.setLoading(false);
@@ -103,15 +113,18 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         });
     },
     
-    onSave: function() {
+   onSave: function() {
         var me = this;
-        var view = me.getView();
-        var recordsChecked = view.getChecked();
-        var store = view.getCheckmarkStore();
+        var recordsChecked = me.getView().getChecked();
+        var store = me.getView().getCheckmarkStore();
         var records = [];
         var recordsDel = [];
         var recordsAdd = [];
         var masterRecord = me.masterGrid.getViewModel().get('masterRecord');
+
+        if(masterRecord == null) {
+            return;
+        }
 
         //найти где сняли галочки. (нет recordsChecked)
         store.each(function(record) {
@@ -128,6 +141,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                 recordsDel.push(record);
         });
         store.remove(recordsDel);
+
 
         Ext.Array.each(recordsChecked, function(recordChecked) {
             var isExists = false;
@@ -165,75 +179,45 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         }
     },
 
-    onFilterCheck: function(btn) {
-        var me = this;
-        var store = me.getView().getStore();
-        
-        if(btn.pressed) {
-            store.filterBy(function(node) {
-                var isVisible = false;
-
-                node.cascadeBy({
-                    before: function(n) {
-                        if(n.get('checked')) {
-                            isVisible = true;
-                        }
-                        
-                        return !isVisible; //Это немножко сократит кол-во итераций  
-                    }
-                });
-                              
-                return isVisible;
-            });
-        } else {
-            store.clearFilter();
-        }
-    },
-    
-    onBranch: function(btn) {
-        this.isProcessBranch = btn.pressed;
-    },
-
-    /**
-     * Функция должна возвратить "истину" для продолжения обновления
-     */
     beforeRefresh: function(masterRecord){
         return true;
     },
-    
+
     afterRefresh: function() {
         var me = this;
         var ids=[];
-        var view = me.getView();        
-        var rootNode = view.getRootNode();
-        var checkmarkStore = view.getCheckmarkStore();
-        var store = view.getStore();
+        var store = me.getView().getStore();
+        var checkmarkStore = me.getView().getCheckmarkStore();
         var filters = store.getFilters().clone();
 
         checkmarkStore.each(function(record) {
             ids.push(record.get(me.checkmarkLink));
         });
-        
+
         store.clearFilter();
-        rootNode.cascadeBy(function(node) {
+        store.each(function(record) {
             var index;
-            if((index = ids.indexOf(node.get('id'))) >= 0) {
-                node.set('checked', true);
+            if((index = ids.indexOf(record.get('id'))) >= 0) {
+                record.set('checked', true);
                 ids.splice(index, 1);
             } else {
-                node.set('checked', false);
+                record.set('checked', false);
             }
         });
         
         store.filter(filters.getRange());
     },
     
-    onCheckchange: function(node, checked, eOpts) {
+    onFilterCheck: function(btn) {
         var me = this;
-
-        node.cascadeBy(function(n) {
-            if(me.isProcessBranch)
-                n.set('checked', checked);
-        });    
+        var store = me.getView().getStore();
+        
+        if(btn.pressed) {
+            store.filterBy(function(record) {
+                return record.get('checked');
+            });
+        } else {
+            store.clearFilter();
+        }
     }
 });
