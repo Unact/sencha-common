@@ -30,9 +30,9 @@ Ext.define('Ext.lib.singlecheckgrid.View', {
     
     
     config: {
-        checkmarkStore: null
+        checkmarkStore: null,
+        availableRowsFK: null
     },
-
     
     initComponent: function() {
         var me = this;

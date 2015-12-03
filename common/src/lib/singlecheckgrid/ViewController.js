@@ -7,8 +7,7 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
         
         me.mainView = me.mainView || view;      
         
-        view.on('refreshtable', me.onCheckmarkRefresh, me);
-        view.on('refreshavailablerows', me.onAvailableRowsRefresh, me);        
+        view.on('refreshtable', me.sharedRefresh, me);  
         view.on('savetable', me.onSave, me);
         
         //Добавить в экземпляр панели метод
@@ -22,34 +21,23 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
             return checked;
         };
     },
-    
-    //Обновить только галочки
-    //Выполняется, например, при срабатывании события refreshtable
-    //refreshtable срабатывает, например, при смене строки в мастере
-    onCheckmarkRefresh: function() {
-        this.sharedRefresh(false, true);
-    },
-    
-    //Обновить оба стора.
-    //Выполняется, например, при нажатии кнопки обновить
+
     onRefresh: function() {
-        this.sharedRefresh(true, true);
-    },
-    
-    //Обносить доступные строки
-    //Предполагается, что этот строр обнавляется реже, чем стор с галочками
-    onAvailableRowsRefresh: function(masterRecord) {
-        this.beforeAvailableRowsRefresh(masterRecord);
-        this.sharedRefresh(true, false);
+        var me = this;
+        var view = me.getView();
+        
+        view.setAvailableRowsFK(null);
+        me.sharedRefresh();
     },
 
-    sharedRefresh: function(isRefreshAvailableRows, isRefreshCheckmark) {
+    sharedRefresh: function() {
         var me = this;
         var result = true;
+        var resultCheckmark = true;
         var masterRecord;
         var vm = me.getView().getViewModel();
         var sm = me.getView().getSelectionModel();
-        var store = me.getView().getStore();  //?
+        var store = me.getView().getStore();
         var checkmarkStore = me.getView().getCheckmarkStore(); 
         var oldSelection = sm.getSelection();
         var oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
@@ -65,27 +53,29 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
             masterRecord = me.masterGrid.getViewModel().get('masterRecord');
             if(masterRecord && !masterRecord.phantom)
             {
-                result = me.beforeRefresh(masterRecord);
+                resultCheckmark = me.beforeRefresh(masterRecord);
+                result = me.beforeAvailableRowsRefresh(masterRecord);
             } else {
                 checkmarkStore.loadData([]);
+                resultCheckmark = false;
                 result = false;
             }
         } else {
-            result = me.beforeRefresh(masterRecord);
+            resultCheckmark = me.beforeRefresh(masterRecord);
+            result = me.beforeAvailableRowsRefresh(masterRecord);
         }
-        
-        if(isRefreshAvailableRows) {
-            stores.push(store);
-        }
-        
-        if(isRefreshCheckmark) {
-            if(result && (vm==null || vm.get('filterReady')!==false)) {
-                stores.push(checkmarkStore);
-            }    
-        }
-        
-        counter = stores.length;
 
+
+        if(vm==null || vm.get('filterReady')!==false) {
+            if(resultCheckmark)
+                stores.push(checkmarkStore);
+                
+            if(result)
+                stores.push(store);
+        }    
+
+
+        counter = stores.length;
         if(counter == 0) {
             return;
         }
@@ -216,10 +206,6 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
         });
         
         store.filter(filters.getRange());
-        
-        //костыль!
-        //Наблюдались случаи, когда панель оставалась задизейбленной.
-        me.getView().setDisabled(false); 
     },
     
     onFilterCheck: function(btn) {
