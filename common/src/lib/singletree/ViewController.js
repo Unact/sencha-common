@@ -2,7 +2,7 @@ Ext.define('Ext.lib.singletree.ViewController', {
     extend : 'Ext.lib.singletable.ViewController',
     alias : 'controller.singletree',
 
-    addModel: function(store, sm, result){
+    addRecord: function(store, sm, result){
         var selectedNode = sm.getLastSelected() || store.getRoot();
         var newRec;
         
@@ -14,9 +14,8 @@ Ext.define('Ext.lib.singletree.ViewController', {
         
         return newRec;       
     },
-
     
-    deleteModel: function(store, records, index, sm){
+    deleteRecords: function(store, records, index, sm){
         var recordsCount;
         var record = records[0]; 
 
@@ -30,8 +29,6 @@ Ext.define('Ext.lib.singletree.ViewController', {
     },
     
     isDisableDeleteButton: function(records){
-        var isOne = records && records.length==1;
-
-        return !isOne || !records[0].get('leaf');
+        return !(records && records.length==1 && records[0].get('leaf'));
     },
-});;
+});

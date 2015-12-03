@@ -17,23 +17,15 @@ Ext.define('Ext.lib.singletable.ViewController', {
 
     onDelete: function(){
         var me = this;
-        var sm = me.getView().getSelectionModel();
+        var view = me.getView();
+        var sm = view.getSelectionModel();
         var oldSelection = sm.getSelection();
-        var store = me.getView().getStore();
+        var store = view.getStore();
         var oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
                 store.indexOf(oldSelection[0]) :
                 null;
         
-        function removeRow(){
-            var recordsCount;
-            store.remove(oldSelection);
-            recordsCount = store.getCount();
-            if (recordsCount > 0) {
-                sm.select(recordsCount > oldSelectionIndex ? oldSelectionIndex : oldSelectionIndex - 1);
-            }
-        };
-        
-        if(me.getView().enableDeleteDialog===true){
+        if(view.enableDeleteDialog===true){
             Ext.Msg.show({
                 title : 'Внимание',
                 message : 'Вы действительно хотите удалить запись?',
@@ -41,21 +33,21 @@ Ext.define('Ext.lib.singletable.ViewController', {
                 icon : Ext.Msg.QUESTION,
                 fn : function(btn) {
                     if (btn === 'yes') {
-                        me.deleteModel(store, oldSelection, oldSelectionIndex, sm);
+                        me.deleteRecords(store, oldSelection, oldSelectionIndex, sm);
                     }
                 }
             });
         } else {
-            me.deleteModel(store, oldSelection, oldSelectionIndex, sm);
+            me.deleteRecords(store, oldSelection, oldSelectionIndex, sm);
         }
     },
-
 
     onChangeSelect: function(sm, selected, eOpts){
         var me = this;
         var selectedOne = selected && selected.length==1;
-        var vm = me.getView().getViewModel();
-        var deleteButton = me.lookupReference('delete' + me.getView().suffix);
+        var view = me.getView();
+        var vm = view.getViewModel();
+        var deleteButton = me.lookupReference('delete' + view.suffix);
     
         if(deleteButton){
             deleteButton.setDisabled(me.isDisableDeleteButton(selected));
@@ -93,9 +85,10 @@ Ext.define('Ext.lib.singletable.ViewController', {
         var me = this;
         var result = true;
         var masterRecord;
-        var vm = me.getView().getViewModel();
-        var sm = me.getView().getSelectionModel();
-        var store = me.getView().getStore();
+        var view = me.getView();
+        var vm = view.getViewModel();
+        var sm = view.getSelectionModel();
+        var store = view.getStore();
         var oldSelection = sm.getSelection();
         var oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
                 store.indexOf(oldSelection[0]) :
@@ -107,8 +100,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         
         if(me.masterGrid){
             masterRecord = me.masterGrid.getViewModel().get('masterRecord');
-            if(masterRecord && !masterRecord.phantom)
-            {
+            if(masterRecord && !masterRecord.phantom) {
                 result = me.beforeRefresh(masterRecord);
             } else {
                 store.loadData([]);
@@ -117,7 +109,6 @@ Ext.define('Ext.lib.singletable.ViewController', {
         } else {
             result = me.beforeRefresh(masterRecord);
         }
-        
         
         if(result){
             if (vm==null || vm.get('filterReady')!==false) {
@@ -129,11 +120,9 @@ Ext.define('Ext.lib.singletable.ViewController', {
                             me.onError(operation.getError().response);
                         }
                         if(recordToSelect){
-                            me.getView().view.scrollTo(recordToSelect);
-                        } else {
-                            if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
-                                me.getView().view.scrollTo(oldSelectionIndex);
-                            }
+                            view.view.scrollTo(recordToSelect);
+                        } else if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
+                            view.view.scrollTo(oldSelectionIndex);
                         }
                         me.mainView.setLoading(false);
                         me.afterRefresh.call(me);
@@ -158,7 +147,6 @@ Ext.define('Ext.lib.singletable.ViewController', {
     afterAdd: function(record){
     },
     
-    
     /**
      * 
      * вызывает функцию beforeAdd.
@@ -168,24 +156,26 @@ Ext.define('Ext.lib.singletable.ViewController', {
     onAdd : function() {
         var me = this;
         var result = {};
-        var sm = me.getView().getSelectionModel();
-        var store = me.getView().getStore();
+        var view = me.getView();
+        var sm = view.getSelectionModel();
+        var store = view.getStore();
         var masterRecord;
+        var editingColumn;
+        var editingPlugin;
+        var newRec;
 
         if(me.masterGrid){
             masterRecord = me.masterGrid.getViewModel().get('masterRecord');
         }
 
         result = me.beforeAdd(masterRecord);
-        
-
-        
+                
         if(result){
-            var editingColumn = me.getView().getAutoEditOnAdd();
-            var editingPlugin = me.getView().findPlugin('cellediting');
-            var newRec = me.addModel(store, sm, result); 
+            editingColumn = view.getAutoEditOnAdd();
+            editingPlugin = view.findPlugin('cellediting');
+            newRec = me.addRecord(store, sm, result); 
     
-            me.getView().view.scrollTo(newRec);
+            view.view.scrollTo(newRec);
             sm.select(newRec);
 
             if (editingColumn !== false && editingPlugin) {
@@ -197,8 +187,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
     
     onSave: function() {
         var me = this;
-        var table = me.getView();
-        var store = table.getStore();
+        var view = me.getView();
+        var store = view.getStore();
         var messages;
         var i, j, fieldName, errors = [];
         var callback;
@@ -218,12 +208,12 @@ Ext.define('Ext.lib.singletable.ViewController', {
                 me.mainView.setLoading(true);
                 store.sync({
                     callback : function(batch) {
-                        table.getSelectionModel().refresh();
+                        view.getSelectionModel().refresh();
                         me.mainView.setLoading(false);
                         if (batch.exceptions.length > 0) {
                             me.onError(batch.exceptions[0].getError().response);
                         } else {
-                            if(me.detailGrids && table.saveDetail){
+                            if(me.detailGrids && view.saveDetail){
                                 me.detailGrids.forEach(function(detail){
                                     detail.fireEvent('savetable', callback, callbackScope);
                                 });
@@ -237,9 +227,9 @@ Ext.define('Ext.lib.singletable.ViewController', {
                 for(i = 0; i<messages.length; i++){
                     for(field in messages[i]){
                         fieldName = null;
-                        for(j = 0; j<table.columns.length && !fieldName; j++){
-                            if(table.columns[j].dataIndex==field){
-                                fieldName = table.columns[j].text;
+                        for(j = 0; j<view.columns.length && !fieldName; j++){
+                            if(view.columns[j].dataIndex==field){
+                                fieldName = view.columns[j].text;
                             }
                         }
                         
@@ -250,7 +240,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
                 
                 Ext.Msg.alert("Некорректные значения", errors.join("<br/>"));
             }
-        } else if(me.detailGrids && table.saveDetail){
+        } else if(me.detailGrids && view.saveDetail){
             me.detailGrids.forEach(function(detail){
                 detail.fireEvent('savetable');
             });
@@ -259,8 +249,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         }
     },
 
-
-    deleteModel: Ext.emptyFn,
-    addModel: Ext.emptyFn,
+    deleteRecords: Ext.emptyFn,
+    addRecord: Ext.emptyFn,
     isDisableDeleteButton: Ext.emptyFn
 });

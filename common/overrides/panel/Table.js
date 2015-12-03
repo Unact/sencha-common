@@ -100,24 +100,12 @@ Ext.define('Ext.overrides.panel.Table', {
         		binding = arguments[2];
         	break;
         }
-        
-        // Allow optional store argument to be fully omitted, and the columns argument to be solo
-        if ((arguments.length===1 || arguments.length===2) && Ext.isArray(arguments[0])) {
-            columns = store;
-            store = null;
-            
-            if(arguments.length===2){
-            	binding = arguments[1];
-            }
-        } else if (arguments.length>=2){
-        	store = arguments[0];
-        }
 
         // Make copy in case the beforereconfigure listener mutates it.
         if (columns) {
             columns = Ext.Array.slice(columns);
         }
-
+        
         me.reconfiguring = true;
         if (store) {
             store = Ext.StoreManager.lookup(store);

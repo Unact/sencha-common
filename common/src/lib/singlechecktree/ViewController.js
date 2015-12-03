@@ -26,10 +26,11 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         var me = this;
         var result = true;
         var masterRecord;
-        var vm = me.getView().getViewModel();
-        var sm = me.getView().getSelectionModel();
-        var treeStore = me.getView().getStore();  //?
-        var checkmarkStore = me.getView().getCheckmarkStore(); 
+        var view = me.getView();
+        var vm = view.getViewModel();
+        var sm = view.getSelectionModel();
+        var treeStore = view.getStore();  //?
+        var checkmarkStore = view.getCheckmarkStore(); 
         var oldSelection = sm.getSelection();
         var oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
                 treeStore.indexOf(oldSelection[0]) :
@@ -87,12 +88,12 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                         me.afterRefresh.call(me, records, operation, success);
             
                         if(recordToSelect){
-                            me.getView().view.scrollTo(recordToSelect);
+                            view.view.scrollTo(recordToSelect);
                         } else {
                             if(oldSelectionIndex && treeStore.getCount()>oldSelectionIndex){
-                                me.getView().view.scrollTo(oldSelectionIndex);
+                                view.view.scrollTo(oldSelectionIndex);
                             }
-                            me.getView().view.scrollTo(0);
+                            view.view.scrollTo(0);
                         }
                         
                         me.mainView.setLoading(false);
@@ -101,17 +102,16 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             });
         });
     },
-
-
+    
     onSave: function() {
         var me = this;
-        var recordsChecked = me.getView().getChecked();
-        var store = me.getView().getCheckmarkStore();
+        var view = me.getView();
+        var recordsChecked = view.getChecked();
+        var store = view.getCheckmarkStore();
         var records = [];
         var recordsDel = [];
         var recordsAdd = [];
         var masterRecord = me.masterGrid.getViewModel().get('masterRecord');
-
 
         //найти где сняли галочки. (нет recordsChecked)
         store.each(function(record) {
@@ -128,7 +128,6 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                 recordsDel.push(record);
         });
         store.remove(recordsDel);
-
 
         Ext.Array.each(recordsChecked, function(recordChecked) {
             var isExists = false;
@@ -165,7 +164,6 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             });
         }
     },
-
 
     onFilterCheck: function(btn) {
         var me = this;
@@ -206,9 +204,10 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
     afterRefresh: function() {
         var me = this;
         var ids=[];
-        var rootNode = me.getView().getRootNode();
-        var checkmarkStore = me.getView().getCheckmarkStore();
-        var store = me.getView().getStore();
+        var view = me.getView();        
+        var rootNode = view.getRootNode();
+        var checkmarkStore = view.getCheckmarkStore();
+        var store = view.getStore();
         var filters = store.getFilters().clone();
 
         checkmarkStore.each(function(record) {
@@ -231,10 +230,9 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
     
     onCheckchange: function(node, checked, eOpts) {
         var me = this;
-        var isProcessBranch = me.isProcessBranch;
 
         node.cascadeBy(function(n) {
-            if(isProcessBranch)
+            if(me.isProcessBranch)
                 n.set('checked', checked);
         });    
     }
