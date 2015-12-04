@@ -21,6 +21,38 @@ Ext.define('Ext.overrides.ux.TreePicker', {
     },
 
     /**
+     * Creates and returns the tree panel to be used as this field's picker.
+     */
+    createPicker: function() {
+        var me = this,
+            picker = new Ext.tree.Panel({
+                shrinkWrapDock: 2,
+                store: me.store,
+                doFocus: true,
+                floating: true,
+                displayField: me.displayField,
+                columns: me.columns,
+                maxHeight: me.maxPickerHeight,
+                manageHeight: true,
+                shadow: false,
+                listeners: {
+                    scope: me,
+                    itemclick: me.onItemClick,
+                    afteritemexpand: me.onAfterItemExpand,
+                    afteritemcollapse: me.onAfterItemCollapse
+                },
+                viewConfig: {
+                    listeners: {
+                        scope: me,
+                        render: me.onViewRender
+                    }
+                }
+            }),
+            view = picker.getView(); 
+
+        return picker;
+    },
+    /**
      * @event select
      * Fires when a tree node is selected
      * @param {Ext.ux.TreePicker} picker        This tree picker
@@ -43,6 +75,24 @@ Ext.define('Ext.overrides.ux.TreePicker', {
     	}
     },
     
+    onAfterItemCollapse: function(node, eOpts) {
+        // Since onItemCollapse scrolls to top, we have to scroll back to
+        // the node which we collapsed.
+        // Ugly but works!
+        var me = this,
+            view = me.picker.getView();
+        view.scrollTo(node);
+    },
+
+    onAfterItemExpand: function(node, eOpts) {
+        // Since onItemExpand scrolls to top, we have to scroll back to
+        // the node which we expanded.
+        // Ugly but works!
+        var me = this,
+            view = me.picker.getView();
+        view.scrollTo(node);
+    },
+
     /**
      * Runs when the picker is expanded.  Selects the appropriate tree node based on the value of the input element,
      * and focuses the picker so that keyboard navigation will work.
