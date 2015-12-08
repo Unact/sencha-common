@@ -81,26 +81,45 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                     
                     counter--;
                     if(counter == 0) {
-                        var recordToSelect = treeStore.getById(oldSelectionId);
-        
                         //afterRefresh изменяет выделенную строку, поэтому
                         //вызовим его до установки фокуса на строку 
                         me.afterRefresh.call(me, records, operation, success);
-            
-                        if(recordToSelect){
-                            view.view.scrollTo(recordToSelect);
-                        } else {
-                            if(oldSelectionIndex && treeStore.getCount()>oldSelectionIndex){
-                                view.view.scrollTo(oldSelectionIndex);
-                            }
-                            view.view.scrollTo(0);
-                        }
-                        
+
+                        me.callbackRefresh(view, treeStore, oldSelectionId);
+
                         me.mainView.setLoading(false);
                     }
                 }
             });
         });
+    },
+    
+    callbackRefresh: function(tree, store, oldSelectionId) {
+        var me = this;
+        var record;
+        var pathProperty; //Если поле с названием pathProperty не String, то могут быть проблемы
+
+        store.getRootNode().cascadeBy(function(node) {
+            if(node.getId() == oldSelectionId) {
+                record = node;
+            }
+        });
+        
+        if(!record) {
+            record = store.getRoot();
+        }
+
+        if(record) {
+            pathProperty = record.pathProperty || record.idProperty;
+            //Раскрыть ветвь, выделить узел, проскроллить к узлу
+            //решени со скроллом взято отсюда: http://www.sencha.com/forum/showthread.php?251980-scrolling-to-specific-node-in-tree-panel&p=923068&viewfull=1#post923068 
+            tree.selectPath(record.getPath(pathProperty), pathProperty, null, function (s, n) {
+                if(s) {
+                    var nodeEl = Ext.get(tree.view.getNode(n));
+                    nodeEl.scrollIntoView(tree.view.el, false, true);
+                }
+            });
+        }
     },
     
     onSave: function() {

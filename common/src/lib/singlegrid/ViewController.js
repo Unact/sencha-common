@@ -104,5 +104,21 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 				me.mainView.setLoading(false);
 			}
 		});
-	}
+	},
+	
+	/*
+	 * По идентификатору находится модель
+	 * Если модель найдена, то поставить фокус на нее
+	 * иначе поставить фокус на строку тем же порядковым номером, что и был ранее  
+	 */
+    callbackRefresh: function(grid, store, oldSelectionId, oldSelectionIndex) {
+        var me = this;
+        var recordToSelect = store.getById(oldSelectionId);
+
+        if(recordToSelect){
+            grid.view.scrollTo(recordToSelect);
+        } else if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
+            grid.view.scrollTo(oldSelectionIndex);
+        }
+    }
 });

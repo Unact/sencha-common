@@ -76,6 +76,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
     },
     
     afterRefresh: Ext.emptyFn,
+
     
     /**
      * вызывает при наличии функцию beforeRefresh.
@@ -90,12 +91,15 @@ Ext.define('Ext.lib.singletable.ViewController', {
         var sm = view.getSelectionModel();
         var store = view.getStore();
         var oldSelection = sm.getSelection();
-        var oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
-                store.indexOf(oldSelection[0]) :
-                null;
-        var oldSelectionId = (oldSelection && oldSelection.length==1) ?
-                oldSelection[0].get('id') :
-                null;
+        
+        var oldSelectionIndex = null;
+        var oldSelectionId = null;
+        if(oldSelection && oldSelection.length==1) {
+            var r = oldSelection[0];
+            oldSelectionIndex = store.indexOf(r);
+            oldSelectionId = r.get('id');
+        }
+
         sm.deselectAll();
         
         if(me.masterGrid){
@@ -115,15 +119,12 @@ Ext.define('Ext.lib.singletable.ViewController', {
                 me.mainView.setLoading(true);
                 store.load({
                     callback: function(records, operation, success){
-                        var recordToSelect = store.getById(oldSelectionId);
                         if (!success) {
                             me.onError(operation.getError().response);
                         }
-                        if(recordToSelect){
-                            view.view.scrollTo(recordToSelect);
-                        } else if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
-                            view.view.scrollTo(oldSelectionIndex);
-                        }
+                        
+                        me.callbackRefresh(view, store, oldSelectionId, oldSelectionIndex);
+
                         me.mainView.setLoading(false);
                         me.afterRefresh.call(me);
                     }
