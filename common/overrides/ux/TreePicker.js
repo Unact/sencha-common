@@ -3,16 +3,16 @@
  */
 Ext.define('Ext.overrides.ux.TreePicker', {
 	override : 'Ext.ux.TreePicker',
-    
+
     mixins: [
         'Ext.util.StoreHolder'
     ],
-    
+
     editable: true,
-    
+
     getStoreListeners: function(){
     	var me = this;
-    	
+
     	return {
     		scope: me,
 	    	load: me.onLoad,
@@ -48,7 +48,7 @@ Ext.define('Ext.overrides.ux.TreePicker', {
                     }
                 }
             }),
-            view = picker.getView(); 
+            view = picker.getView();
 
         return picker;
     },
@@ -61,20 +61,20 @@ Ext.define('Ext.overrides.ux.TreePicker', {
 
     initComponent: function() {
         var me = this;
-        
+
         me.bindStore(me.store || 'ext-empty-store', true);
-        
+
         me.callParent(arguments);
     },
-    
+
     onBindStore: function(store, initial, propertyName, oldStore){
     	var me = this;
-    	
+
     	if(me.picker){
     		me.picker.setStore(store);
     	}
     },
-    
+
     onAfterItemCollapse: function(node, eOpts) {
         // Since onItemCollapse scrolls to top, we have to scroll back to
         // the node which we collapsed.
@@ -104,18 +104,20 @@ Ext.define('Ext.overrides.ux.TreePicker', {
         var store = picker.getStore();
         var value = me.value;
         var node;
-                
+		var view = picker.getView();
+
         if (value) {
             node = store.getNodeById(value);
         }
-        
+
         if (!node) {
             node = store.getRoot();
         }
-        
+
         picker.selectPath(node.getPath());
+		view.scrollTo(node);
     },
-    
+
     /**
      * Sets the specified value into the field
      * @param {Mixed} value
@@ -133,7 +135,7 @@ Ext.define('Ext.overrides.ux.TreePicker', {
             // Called while the Store is loading. Ensure it is processed by the onLoad method.
             return me;
         }
-            
+
         // try to find a record in the store that matches the value
         if (value) {
             record = store.getNodeById(value);
@@ -141,15 +143,15 @@ Ext.define('Ext.overrides.ux.TreePicker', {
             record = store.getRoot();
             me.value = record.getId();
         }
-        
+
         // set the raw value to the record's display field if a record was found
         me.setRawValue(record ? record.get(me.displayField) : '');
-        
+
         bind = me.getBind();
         if(bind.value){
         	bind.value.setValue(value);
         }
-        
+
         return me;
     }
 });
