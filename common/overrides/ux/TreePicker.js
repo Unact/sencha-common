@@ -81,7 +81,7 @@ Ext.define('Ext.overrides.ux.TreePicker', {
         // Ugly but works!
         var me = this,
             view = me.picker.getView();
-        view.scrollTo(node);
+        view.scrollToRecord(node);
     },
 
     onAfterItemExpand: function(node, eOpts) {
@@ -90,7 +90,7 @@ Ext.define('Ext.overrides.ux.TreePicker', {
         // Ugly but works!
         var me = this,
             view = me.picker.getView();
-        view.scrollTo(node);
+        view.scrollToRecord(node);
     },
 
     /**
@@ -115,7 +115,7 @@ Ext.define('Ext.overrides.ux.TreePicker', {
         }
 
         picker.selectPath(node.getPath());
-		view.scrollTo(node);
+		view.scrollToRecord(node);
     },
 
     /**

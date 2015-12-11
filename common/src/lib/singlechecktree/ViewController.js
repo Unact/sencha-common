@@ -201,7 +201,10 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                         return !isVisible; //Это немножко сократит кол-во итераций  
                     }
                 });
-                              
+                
+                if(!node.isLeaf()) { 
+                    node.set('expanded', isVisible);
+                }             
                 return isVisible;
             });
         } else {
