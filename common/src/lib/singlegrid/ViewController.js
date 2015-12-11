@@ -116,9 +116,9 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         var recordToSelect = store.getById(oldSelectionId);
 
         if(recordToSelect){
-            grid.view.scrollTo(recordToSelect);
+            grid.view.scrollToRecord(recordToSelect);
         } else if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
-            grid.view.scrollTo(oldSelectionIndex);
+            grid.view.scrollToRecord(oldSelectionIndex);
         }
     }
 });

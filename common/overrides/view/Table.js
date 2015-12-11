@@ -1,18 +1,6 @@
 Ext.define('Ext.overrides.view.Table', {
 	override : 'Ext.view.Table',
 
-	// handleUpdate : function(store, record, operation, changedFieldNames) {
-	// var me = this;
-	//
-	// me.callParent(arguments);
-	//
-	// if (me.viewReady) {
-	// if (me.selModel.isRowModel) {
-	// me.scrollTo(record, true);
-	// }
-	// }
-	// },
-
 	onUpdate : function(store, record, operation, modifiedFieldNames, details) {
 		var me = this,
 			isFiltered = details && details.filtered;
@@ -32,7 +20,7 @@ Ext.define('Ext.overrides.view.Table', {
 		}
 		if(me.isVisible()){
 			if(store.indexOf(record)>=0){
-				me.scrollTo(record);
+				me.scrollToRecord(record);
 			}
 		}
 	},
@@ -41,7 +29,7 @@ Ext.define('Ext.overrides.view.Table', {
 	 * Переход и фокусировка к строке по индексу или записи
 	 * @param {Number/Ext.data.Model} nodeInfo индекс или запись.
 	 */
-	scrollTo : function(nodeInfo, silentSelect) {
+	scrollToRecord : function(nodeInfo, silentSelect) {
 		var me = this,
 			record;
 		if (me.bufferedRenderer) {

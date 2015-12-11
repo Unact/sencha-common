@@ -98,12 +98,12 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
                         me.afterRefresh.call(me, records, operation, success);
             
                         if(recordToSelect){
-                            me.getView().view.scrollTo(recordToSelect);
+                            me.getView().view.scrollToRecord(recordToSelect);
                         } else {
                             if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
-                                me.getView().view.scrollTo(oldSelectionIndex);
+                                me.getView().view.scrollToRecord(oldSelectionIndex);
                             }
-                            me.getView().view.scrollTo(0);
+                            me.getView().view.scrollToRecord(0);
                         }
                         
                         me.mainView.setLoading(false);

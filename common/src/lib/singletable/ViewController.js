@@ -176,7 +176,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
             editingPlugin = view.findPlugin('cellediting');
             newRec = me.addRecord(store, sm, result); 
     
-            view.view.scrollTo(newRec);
+            view.view.scrollToRecord(newRec);
             sm.select(newRec);
 
             if (editingColumn !== false && editingPlugin) {
