@@ -1,81 +1,52 @@
 Ext.define('Ext.lib.app.ViewController', {
 	extend : 'Ext.app.Controller',
 	
-	/*
-	 * Загрузчик словарей.
-	 * dictionaries - массив. Элементом может являться строка или объект.
-	 * Строка трактуется как идентификатор хранилища 
-	 * Объект должен содержать идентификатор хранилища в качестве ключа и
-	 * функцию обратного вызова или массив в качестве значения.
-	 * callback - функция обратного вызова после загрузки всех словарей
-	 */
-	loadDictionaries : function(dictionaries, callback) {
-		var controller = this, i, properties, loader;
+	mixins: ['Ext.lib.app.ControllerMixin'],
+	
+	onAppStoresLoaded: function(){
+		var me = this;
 		
-		loader = {
-			dictionaryCount : 0,
-			mainContainer: controller.mainContainer,
-			callback: callback,
-			updateDictionariesLoadingCount: function(){
-				var me = this;
-				
-				me.checkDictionariesLoading(--me.dictionaryCount);
-			},
-			checkDictionariesLoading : function(val) {
-				var me = this;
-				
-				if (val == 0) {
-					if(me.callback && ( typeof me.callback)=="function"){
-						me.callback();
-					}
-					me.mainContainer.setLoading(false);
-				}
-			},
-			load: function(dictionaries){
-				var me = this;
-				if (Array.isArray(dictionaries)) {
-					me.dictionaryCount += dictionaries.length;
-		
-					me.mainContainer.setLoading(true);
-		
-					for ( i = 0; i < dictionaries.length; i++) {
-						if (( typeof dictionaries[i]) === "string") {
-							Ext.data.StoreManager.lookup(dictionaries[i]).load(function(records, operation, success) {
-								if(success!==true && me.skipDictionaryAlert){
-									Ext.Msg.alert("Ошибка", "Ошибка при загрузке " + dictionaries[i]);
-								}
-								me.updateDictionariesLoadingCount();
-							});
-						} else {
-							me.load(dictionaries[i]);
-						}
-					}
-				} else {
-					properties = Object.getOwnPropertyNames(dictionaries);
-					if (properties.length >= 1) {
-						Ext.data.StoreManager.lookup(properties[0]).load(function(records, operation, success) {
-							if(success!==true && me.skipDictionaryAlert){
-								Ext.Msg.alert("Ошибка", "Ошибка при загрузке " + properties[0]);
-							}
-							if (( typeof dictionaries[properties[0]]) === "function") {
-								dictionaries[properties[0]](records, operation, success);
-							} else if (Array.isArray(dictionaries[properties[0]])) {
-								me.load(dictionaries[properties[0]]);
-							}
-							
-							me.updateDictionariesLoadingCount();
-						});
-					}
-				}
-			}
-		};
-		
-		loader.load(dictionaries);
+		me.onStoresLoaded();
 	},
-
-	showServerError: function(response, options) {
-		var controller=this;
-		Ext.Msg.alert('Ошибка', response.responseText);
-		controller.mainContainer.setLoading(false);
-	}
+	
+	onOwnStoresLoaded: function(){
+		var me = this;
+		var vm = me.getView().getViewModel();
+		
+		vm.set('ownStoresLoaded', true);
+		me.onStoresLoaded();
+	},
+	
+	onStoresLoaded: Ext.emptyFn,
+    
+    onError : function(response, callback) {
+    	var me = this;
+    	var responseContentType = response && response.getResponseHeader ?
+    		response.getResponseHeader("Content-Type") :
+    		null;
+    	var error = null;
+    	
+    	if(responseContentType==null){
+    		error = response.responseText && response.responseText!="" ?
+    			response.responseText :
+    			"Сервер не отвечает";
+    	}
+    	if(error==null && responseContentType.indexOf('xml') >= 0){
+			var parser = new DOMParser();
+	        var xmlDoc = parser.parseFromString(Ext.util.Format.htmlDecode(response.responseText), "text/xml");
+	        var errorTags = xmlDoc.getElementsByTagName(me.defaultErrorTag ? me.defaultErrorTag : "error");
+	        error = (errorTags && errorTags.length>0) ?
+	        		errorTags[0].childNodes[0].nodeValue :
+	        		response.responseText;
+    	}
+    	if(error==null && responseContentType.indexOf('json') >= 0){
+			var data = Ext.JSON.decode(response.responseText);
+			error = data[me.defaultErrorTag ? me.defaultErrorTag : "error"];
+    	}
+    	if(error==null){
+    		error = response.responseText;
+    	}
+        
+        Ext.Msg.alert("Ошибка", error, callback);
+    }
 });
