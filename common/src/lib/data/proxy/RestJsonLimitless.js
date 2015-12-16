@@ -5,8 +5,6 @@ Ext.define('Ext.lib.data.proxy.RestJsonLimitless', {
 	limitParam : '',
 	pageParam : '',
 	
-	format: 'json',
-	
 	headers : {
 		'Accept': 'application/json',
 		'Content-Type' : 'application/json'
