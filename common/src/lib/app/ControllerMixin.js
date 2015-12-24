@@ -32,15 +32,10 @@ Ext.define('Ext.lib.app.ControllerMixin', {
 			callback: callback,
 			updateDictionariesLoadingCount: function(){
 				var me = this;
-				
-				me.checkDictionariesLoading(--me.dictionaryCount);
-			},
-			checkDictionariesLoading : function(val) {
-				var me = this;
 				var errorsTxt;
 				var i;
 				
-				if (val == 0) {
+				if (--me.dictionaryCount == 0) {
 					if(errors.length>0 && !controller.skipDictionaryAlert){
 						errorsTxt = [];
 						
@@ -91,6 +86,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
 				var dictionary;
 				var properties;
 				var i;
+				var simpleStoreConf;
 				
 				if (Array.isArray(dictionaries)) {
 					me.dictionaryCount += dictionaries.length;
@@ -108,13 +104,14 @@ Ext.define('Ext.lib.app.ControllerMixin', {
 					}
 				} else {
 					properties = Object.getOwnPropertyNames(dictionaries);
-					if (properties.length >= 1) {
-						dictionary = properties[0];
+					if (properties.length>=1) {
+						simpleStoreConf = properties.length==1;
+						
+						dictionary = simpleStoreConf ? properties[0] : dictionaries.store;
 						store = getStore(dictionary);
 						
 						if(store) {
-							me.dictionaryCount++;
-							me.loadStore(store, dictionaries[dictionary]);
+							me.loadStore(store, simpleStoreConf ? dictionaries[dictionary] : dictionaries.data);
 						}
 					}
 				}

@@ -210,13 +210,33 @@ Ext.define('Ext.lib.singletable.ViewController', {
         var i, j, fieldName, errors = [];
         var callback;
         var callbackScope;
+        var detailsToProcess = 0;
         
         if (arguments[0] && (typeof arguments[0]==='function')) {
             callback = arguments[0];
             callbackScope = arguments[1] || me;
         } else {
-            callback = me.onRefresh;
+            callback = function(){
+            	if(--detailsToProcess==0){
+            		me.onRefresh();
+            	}
+            };
             callbackScope = me;
+        }
+        
+        function saveDetails(makeCallback, refreshSelf){
+        	if(me.detailGrids && view.saveDetail){
+            	detailsToProcess = me.detailGrids.length;
+                me.detailGrids.forEach(function(detail){
+                	if(refreshSelf){
+                		detail.fireEvent('savetable', callback, callbackScope);
+                	} else {
+                		detail.fireEvent('savetable');
+                	}
+                });
+            } else if (makeCallback){
+                callback.call(callbackScope);
+            }
         }
 
         if (store.hasChanges()) {
@@ -230,13 +250,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
                         if (batch.exceptions.length > 0) {
                             me.onError(batch.exceptions[0].getError().response);
                         } else {
-                            if(me.detailGrids && view.saveDetail){
-                                me.detailGrids.forEach(function(detail){
-                                    detail.fireEvent('savetable', callback, callbackScope);
-                                });
-                            } else {
-                                callback.call(callbackScope);
-                            }
+                        	saveDetails(true, callback, callbackScope);
                         }
                     }
                 });
@@ -257,12 +271,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
                 
                 Ext.Msg.alert("Некорректные значения", errors.join("<br/>"));
             }
-        } else if(me.detailGrids && view.saveDetail){
-            me.detailGrids.forEach(function(detail){
-                detail.fireEvent('savetable');
-            });
-        } else if(arguments.length==2) {
-            callback.call(callbackScope);
+        } else {
+        	saveDetails(arguments.length==2, callback, callbackScope);
         }
     },
 
