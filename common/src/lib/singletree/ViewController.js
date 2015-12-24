@@ -17,19 +17,22 @@ Ext.define('Ext.lib.singletree.ViewController', {
     
     deleteRecords: function(store, records, index, sm){
         var recordsCount;
-        var record = records[0]; 
+        var record = records[0];
+        var parentRecord = record.parentNode;  
 
-        record.parentNode.removeChild(record);
+        parentRecord.removeChild(record);
         
         recordsCount = store.getCount();
+        
+        parentRecord.set('leaf', !parentRecord.hasChildNodes());
         
         if (recordsCount > 0) {
             sm.select(recordsCount > index ? index : index - 1);
         }
     },
     
-    isDisableDeleteButton: function(records){
-        return !(records && records.length==1 && records[0].get('leaf'));
+    isDisableDeleteButton: function(record){
+        return !(record && record.isLeaf());
     },
     
     callbackRefresh: function(tree, store, oldSelectionId, oldSelectionIndex) {

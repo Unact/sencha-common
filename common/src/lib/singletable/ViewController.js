@@ -1,6 +1,21 @@
 Ext.define('Ext.lib.singletable.ViewController', {
     extend: 'Ext.lib.app.ViewController',
 
+    config: {
+        // массив окон детализации
+        detailGrids: [],
+        masterGrid: null
+    },
+    
+    setDetailGrids: function(detailGrids){
+        var me = this;
+        
+        me.detailGrids = detailGrids;
+        
+        me.detailGrids.forEach(function(detail){
+            detail.getController().masterGrid = me.getView();
+        });
+    },
 
     init: function(view){
         var me = this;
@@ -48,19 +63,20 @@ Ext.define('Ext.lib.singletable.ViewController', {
         var view = me.getView();
         var vm = view.getViewModel();
         var deleteButton = me.lookupReference('delete' + view.suffix);
+        var master = selectedOne ? selected[0] : null;
     
         if(deleteButton){
-            deleteButton.setDisabled(me.isDisableDeleteButton(selected));
+            deleteButton.setDisabled(me.isDisableDeleteButton(master));
         }
         if(vm){
-            vm.set('masterRecord', selectedOne ? selected[0] : null);
+            vm.set('masterRecord', master);
         }
         
         me.beforeChangeSelect(sm, selected, eOpts);
         
         if(me.detailGrids){
             me.detailGrids.forEach(function(detail){
-                detail.setDisabled(!selectedOne || selected[0].phantom);
+                detail.setDisabled(detail.getController().isDisableTable(master));
                 detail.fireEvent('refreshtable');
             });
         }
@@ -252,5 +268,25 @@ Ext.define('Ext.lib.singletable.ViewController', {
 
     deleteRecords: Ext.emptyFn,
     addRecord: Ext.emptyFn,
-    isDisableDeleteButton: Ext.emptyFn
+    
+
+    /**
+     * Возвращает true, если надо задизейблить кнопку "Удалить".
+     * @abstract
+     * @param {Ext.data.Model} record - Выбранный строка, если никакая строка не выбрана, то null
+     * @return {Boolean}
+     */    
+    isDisableDeleteButton: Ext.emptyFn,
+    
+    /**
+     * Возвращает true, если надо задизейблить таблицу (грид или дерево)
+     * @param {Ext.data.Model} master - Выбранный мастер, если мастера нет, то null
+     * @return {Boolean}
+     */
+    isDisableTable: function(master) {
+        if(master == null) {
+            return true;
+        }
+        return master.phantom;
+    }
 });
