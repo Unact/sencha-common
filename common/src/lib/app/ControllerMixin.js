@@ -10,12 +10,11 @@ Ext.define('Ext.lib.app.ControllerMixin', {
 	 */
 	loadDictionaries : function(dictionaries, callback) {
 		var controller = this;
-		var i;
-		var properties;
 		var loader;
 		var view = (controller.getMainView && (typeof controller.getMainView) === "function") ?
 			controller.getMainView() :
 			controller.getView();
+		var errors = [];
 		
 		function getStore(obj){
 			var store;
@@ -38,18 +37,60 @@ Ext.define('Ext.lib.app.ControllerMixin', {
 			},
 			checkDictionariesLoading : function(val) {
 				var me = this;
+				var errorsTxt;
+				var i;
 				
 				if (val == 0) {
-					if(me.callback && ( typeof me.callback)=="function"){
-						me.callback.call(controller);
+					if(errors.length>0 && !controller.skipDictionaryAlert){
+						errorsTxt = [];
+						
+						for(i = 0; i<errors.length; i++){
+							errorsTxt.push("Хранилище: " + errors[i].storeName + "<br/>" +
+							"Ресурс: " + errors[i].url + "<br/>" +
+							"Ошибка: " + errors[i].error);
+						}
+						Ext.Msg.alert("Ошибки при загрузке", errorsTxt.join('<br/><br/>'), function(){
+							if(me.callback && ( typeof me.callback)=="function"){
+								me.callback.call(controller, errors);
+							}
+							me.mainContainer.setLoading(false);
+						});
+					} else {
+						if(me.callback && ( typeof me.callback)=="function"){
+							me.callback.call(controller, errors);
+						}
+						me.mainContainer.setLoading(false);
 					}
-					me.mainContainer.setLoading(false);
 				}
+			},
+			loadStore: function(store, dictionaryData){
+				var me = this;
+				
+				store.load({
+					callback: function(records, operation, success) {
+						if(success!==true){
+							errors.push({
+								storeName: store.self.getName(),
+								url: this.getProxy().getUrl(),
+								error: controller.getError(operation.getError().response)
+							});
+						}
+						if (( typeof dictionaryData) === "function") {
+							dictionaryData.call(store, records, operation, success);
+						} else if (Array.isArray(dictionaryData)) {
+							me.load(dictionaryData);
+						}
+						
+						me.updateDictionariesLoadingCount();
+					}
+				});
 			},
 			load: function(dictionaries){
 				var me = this;
 				var store;
 				var dictionary;
+				var properties;
+				var i;
 				
 				if (Array.isArray(dictionaries)) {
 					me.dictionaryCount += dictionaries.length;
@@ -60,14 +101,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
 						dictionary = dictionaries[i];
 						store = getStore(dictionary);
 						if(store) {
-							store.load({
-								callback: function(records, operation, success) {
-									if(success!==true && !me.skipDictionaryAlert){
-										Ext.Msg.alert("Ошибка", "Ошибка при загрузке " + this.self.getName());
-									}
-									me.updateDictionariesLoadingCount();
-								}
-							});
+							me.loadStore(getStore(dictionary));
 						} else {
 							me.load(dictionary);
 						}
@@ -75,26 +109,58 @@ Ext.define('Ext.lib.app.ControllerMixin', {
 				} else {
 					properties = Object.getOwnPropertyNames(dictionaries);
 					if (properties.length >= 1) {
-						store = getStore(properties[0]);
-						store.load({
-							callback: function(records, operation, success) {
-							if(success!==true && !me.skipDictionaryAlert){
-								Ext.Msg.alert("Ошибка", "Ошибка при загрузке " + properties[0]);
-							}
-							if (( typeof dictionaries[properties[0]]) === "function") {
-								dictionaries[properties[0]].call(store, records, operation, success);
-							} else if (Array.isArray(dictionaries[properties[0]])) {
-								me.load(dictionaries[properties[0]]);
-							}
-							
-							me.updateDictionariesLoadingCount();
+						dictionary = properties[0];
+						store = getStore(dictionary);
+						
+						if(store) {
+							me.dictionaryCount++;
+							me.loadStore(store, dictionaries[dictionary]);
 						}
-						});
 					}
 				}
 			}
 		};
 		
 		loader.load(dictionaries);
-	}
+	},
+	
+	getError: function(response) {
+		var me = this;
+    	var responseContentType = response && response.getResponseHeader ?
+    		response.getResponseHeader("Content-Type") :
+    		null;
+    	var error = null;
+    	var parser, xmlDoc, errorTags;
+    	var data;
+    	
+    	if(responseContentType==null){
+    		error = response.responseText && response.responseText!="" ?
+    			response.responseText :
+    			"Сервер не отвечает";
+    	}
+    	if(error==null && responseContentType.indexOf('xml') >= 0){
+			parser = new DOMParser();
+	        xmlDoc = parser.parseFromString(Ext.util.Format.htmlDecode(response.responseText), "text/xml");
+	        errorTags = xmlDoc.getElementsByTagName(me.defaultErrorTag ? me.defaultErrorTag : "error");
+	        error = (errorTags && errorTags.length>0) ?
+	        		errorTags[0].childNodes[0].nodeValue :
+	        		response.responseText;
+    	}
+    	if(error==null && responseContentType.indexOf('json') >= 0){
+			data = Ext.JSON.decode(response.responseText);
+			error = data[me.defaultErrorTag ? me.defaultErrorTag : "error"];
+    	}
+    	if(error==null){
+    		error = response.responseText;
+    	}
+    	
+    	return error;
+	},
+	
+	onError : function(response, callback) {
+    	var me = this;
+    	var error = me.getError(response);
+        
+        Ext.Msg.alert("Ошибка", error, callback);
+    }
 });
