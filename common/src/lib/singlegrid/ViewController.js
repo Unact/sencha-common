@@ -2,22 +2,6 @@
 Ext.define('Ext.lib.singlegrid.ViewController', {
 	extend: 'Ext.lib.singletable.ViewController',
 	alias: 'controller.singlegrid',
-	
-	config: {
-		// массив окон детализации
-		detailGrids: [],
-		masterGrid: null
-	},
-	
-	setDetailGrids: function(detailGrids){
-		var me = this;
-		
-		me.detailGrids = detailGrids;
-		
-		me.detailGrids.forEach(function(detail){
-			detail.getController().masterGrid = me.grid;
-		});
-	},
 
 	init: function(view){
 		var me = this;
@@ -52,8 +36,8 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
     },
 	
 
-    isDisableDeleteButton: function(records){
-        return !(records && records.length==1);
+    isDisableDeleteButton: function(record){
+        return !record;
     },
 
 	onDeleteByColumn: function(grid, rowIndex, colIndex, item, e, record, row) {
