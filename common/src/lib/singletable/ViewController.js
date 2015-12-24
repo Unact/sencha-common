@@ -66,7 +66,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         var master = selectedOne ? selected[0] : null;
     
         if(deleteButton){
-            deleteButton.setDisabled(me.isDisableDeleteButton(master));
+            deleteButton.setDisabled(me.isDisableDeleteButton(selected));
         }
         if(vm){
             vm.set('masterRecord', master);

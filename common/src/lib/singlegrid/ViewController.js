@@ -36,8 +36,8 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
     },
 	
 
-    isDisableDeleteButton: function(record){
-        return !record;
+    isDisableDeleteButton: function(records){
+        return !records;
     },
 
 	onDeleteByColumn: function(grid, rowIndex, colIndex, item, e, record, row) {
