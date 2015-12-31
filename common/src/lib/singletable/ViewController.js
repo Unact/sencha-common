@@ -66,7 +66,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         var master = selectedOne ? selected[0] : null;
     
         if(deleteButton){
-            deleteButton.setDisabled(me.isDisableDeleteButton(selected));
+            deleteButton.setDisabled(me.isDisabledDeleteButton(selected));
         }
         if(vm){
             vm.set('masterRecord', master);
@@ -286,7 +286,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
      * @param {Ext.data.Model} record - Выбранный строка, если никакая строка не выбрана, то null
      * @return {Boolean}
      */    
-    isDisableDeleteButton: Ext.emptyFn,
+    isDisabledDeleteButton: Ext.emptyFn,
     
     /**
      * Возвращает true, если надо задизейблить таблицу (грид или дерево)

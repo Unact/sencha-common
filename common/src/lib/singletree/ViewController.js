@@ -31,8 +31,8 @@ Ext.define('Ext.lib.singletree.ViewController', {
         }
     },
     
-    isDisableDeleteButton: function(record){
-        return !(record && record.isLeaf());
+    isDisableDeleteButton: function(records){
+        return !(records && records.length==1 && records[0].isLeaf());
     },
     
     callbackRefresh: function(tree, store, oldSelectionId, oldSelectionIndex) {
