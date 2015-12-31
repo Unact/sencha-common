@@ -12,6 +12,16 @@ Ext.onReady(function() {
 	            statusText: response.statusText,
 	            responseText: response.responseText
 	        });
-	    }
+	    },
+	    
+	    setExtraParamAndRemoveIfNull : function(extraParam, value) {
+			var me = this;
+			
+			if(value!=null){
+				me.setExtraParam(extraParam, value);
+			} else {
+				delete me.extraParams[extraParam];
+			}
+		}
     });
 }); 
