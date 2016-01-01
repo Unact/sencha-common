@@ -2,7 +2,7 @@
 // возвращают истину, если значение верно и сообщение или ложь, если неправильное
 Ext.define('Ext.lib.Checkers', {
 	statics: {
-		checkInnWIthMessage: function(value){
+		checkInnWithMessage: function(value){
 			var check=false;
 			if(value==null || value.replace('\s', '')==''){
 				return 'Введите ИНН';
