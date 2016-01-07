@@ -2,6 +2,8 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
     extend: 'Ext.lib.app.ViewController',
     alias : 'controller.singlechecktree',
     
+    mixins: ['Ext.lib.shared.Detailable'],
+    
     isProcessBranch: false,
 
     init: function(view){

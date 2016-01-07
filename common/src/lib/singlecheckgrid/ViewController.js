@@ -1,6 +1,8 @@
 Ext.define('Ext.lib.singlecheckgrid.ViewController', {
     extend: 'Ext.lib.app.ViewController',
     alias : 'controller.singlecheckgrid',
+    
+    mixins: ['Ext.lib.shared.Detailable'],
 
     init: function(view){
         var me = this;

@@ -1,6 +1,8 @@
 Ext.define('Ext.lib.singletable.ViewController', {
     extend: 'Ext.lib.app.ViewController',
 
+    mixins: ['Ext.lib.shared.Detailable'],
+
     config: {
         // массив окон детализации
         detailGrids: [],
@@ -76,7 +78,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         
         if(me.detailGrids){
             me.detailGrids.forEach(function(detail){
-                detail.setDisabled(detail.getController().isDisableTable(master));
+                detail.setDisabled(detail.getController().isDisabledTable(master));
                 detail.fireEvent('refreshtable');
             });
         }
@@ -286,17 +288,5 @@ Ext.define('Ext.lib.singletable.ViewController', {
      * @param {Ext.data.Model} record - Выбранный строка, если никакая строка не выбрана, то null
      * @return {Boolean}
      */    
-    isDisabledDeleteButton: Ext.emptyFn,
-    
-    /**
-     * Возвращает true, если надо задизейблить таблицу (грид или дерево)
-     * @param {Ext.data.Model} master - Выбранный мастер, если мастера нет, то null
-     * @return {Boolean}
-     */
-    isDisableTable: function(master) {
-        if(master == null) {
-            return true;
-        }
-        return master.phantom;
-    }
+    isDisabledDeleteButton: Ext.emptyFn
 });
