@@ -4,7 +4,7 @@ Ext.define('Ext.overrides.view.Table', {
 	onUpdate : function(store, record, operation, modifiedFieldNames, details) {
 		var me = this,
 			isFiltered = details && details.filtered;
-
+			
 		// If, due to filtering or buffered rendering, or node collapse, the updated record is not
 		// represented in the rendered structure, this is a no-op.
 		// The correct, new values will be rendered the next time the record becomes visible and is rendered.
@@ -19,7 +19,7 @@ Ext.define('Ext.overrides.view.Table', {
 			}
 		}
 		if(me.isVisible()){
-			if(store.indexOf(record)>=0){
+			if(store.indexOf(record)>=0 && me.selModel.getSelection().length == 1){
 				me.scrollToRecord(record);
 			}
 		}
