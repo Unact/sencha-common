@@ -133,6 +133,13 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         var recordsDel = [];
         var recordsAdd = [];
         var masterRecord = me.masterGrid.getViewModel().get('masterRecord');
+        var callback;
+        var callbackScope;
+        
+        if (arguments[0] && (typeof arguments[0]==='function')) {
+            callback = arguments[0];
+            callbackScope = arguments[1] || me;
+        }
 
         //найти где сняли галочки. (нет recordsChecked)
         store.each(function(record) {
@@ -174,6 +181,9 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             store.sync({
                 success: function(batch, opt){
                     me.mainView.setLoading(false);
+                    if(callback) {
+                        callback.call(callbackScope);
+                    }
                 },
 
                 failure: function(batch, opt){
@@ -181,8 +191,15 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                         me.onError(batch.exceptions[0].getError().response);
                     }
                     me.mainView.setLoading(false);
+                    if(callback) {
+                        callback.call(callbackScope);
+                    }
                 }
             });
+        } else {
+            if(callback) {
+                callback.call(callbackScope);
+            }
         }
     },
 
