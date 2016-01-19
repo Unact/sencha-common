@@ -69,6 +69,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         counter = stores.length;
         
         if(counter == 0) {
+            me.afterRefresh();
             return;
         }
         
@@ -85,7 +86,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                     if(counter == 0) {
                         //afterRefresh изменяет выделенную строку, поэтому
                         //вызовим его до установки фокуса на строку 
-                        me.afterRefresh.call(me, records, operation, success);
+                        me.afterRefresh();
 
                         me.callbackRefresh(view, treeStore, oldSelectionId);
 

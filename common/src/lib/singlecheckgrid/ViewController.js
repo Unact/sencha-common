@@ -79,6 +79,7 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
 
         counter = stores.length;
         if(counter == 0) {
+            me.afterRefresh();
             return;
         }
 
@@ -96,8 +97,8 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
                         var recordToSelect = store.getById(oldSelectionId);
         
                         //afterRefresh изменяет выделенную строку, поэтому
-                        //вызовим его до установки фокуса на строку 
-                        me.afterRefresh.call(me, records, operation, success);
+                        //вызовим его до установки фокуса на строку
+                        me.afterRefresh();
             
                         if(recordToSelect){
                             me.getView().view.scrollToRecord(recordToSelect);
@@ -204,16 +205,20 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
 
     afterRefresh: function() {
         var me = this;
-        var ids=[];
-        var store = me.getView().getStore();
-        var checkmarkStore = me.getView().getCheckmarkStore();
-        var filters = store.getFilters().clone();
-
+        var ids=[];                                              //Массив внешних ключей на допустимые значения
+        var store = me.getView().getStore();                     //Стор допустимых значений
+        var checkmarkStore = me.getView().getCheckmarkStore();   //Стор отмеченных значений
+        var filters = store.getFilters().clone();                //Фильтр, примененный к допустимым значениям.
+                                                                 //В начала метода фиьтр снимается, а в конце - возвращается 
+                                                                 
+        //Для отмеченных значений заполнить массив ids внешними ключами на допустимые значения
         checkmarkStore.each(function(record) {
             ids.push(record.get(me.checkmarkLink));
         });
 
         store.clearFilter();
+        
+        //Приветси галочки в допустимых значениях к состоянию отмеченных значений
         store.each(function(record) {
             var index;
             if((index = ids.indexOf(record.get('id'))) >= 0) {
