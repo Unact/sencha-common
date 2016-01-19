@@ -2,6 +2,7 @@
 "классического" приложения extjs. Для "неклассических" приложений необходимо вручную загружать классы.
 
 Реализованные возможности:
+
 1. [Базовые возможности контроллеров](https://github.com/Unact/sencha-common/tree/master/common/src/lib/app):
  - [примесь для контроллеров с возможностями загрузки хранилищ и обработки ошибок сервера](https://github.com/Unact/sencha-common/blob/master/common/src/lib/app/ControllerMixin.js)
  - [заготовка контроллера маршрутизации для работы с меню и карточным режимом вывода](https://github.com/Unact/sencha-common/blob/master/common/src/lib/app/Routing.js)
