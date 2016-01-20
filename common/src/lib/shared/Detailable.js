@@ -6,7 +6,7 @@ Ext.define('Ext.lib.shared.Detailable', {
      * @param {Ext.data.Model} master - Выбранный мастер, если мастера нет, то null
      * @return {Boolean}
      */
-    isDisabledTable: function(master) {
+    isDisabledView: function(master) {
         if(master == null) {
             return true;
         }

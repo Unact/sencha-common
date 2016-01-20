@@ -78,7 +78,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         
         if(me.detailGrids){
             me.detailGrids.forEach(function(detail){
-                detail.setDisabled(detail.getController().isDisabledTable(master));
+                detail.setDisabled(detail.getController().isDisabledView(master));
                 detail.fireEvent('refreshtable');
             });
         }
