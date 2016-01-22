@@ -202,6 +202,15 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
     beforeRefresh: function(masterRecord){
         return true;
     },
+    
+    //Обновлять ли стор допустимых значений.
+    //Предполагается, что этот стор должен загружаться один раз,
+    //А при смене мастера должны меняться только галочки.
+    //
+    //Поэтому, по-умолчанию false.
+    beforeAvailableRowsRefresh: function(masterRecord) {
+        return false;
+    },
 
     afterRefresh: function() {
         var me = this;
