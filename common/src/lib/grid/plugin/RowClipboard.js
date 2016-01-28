@@ -253,7 +253,9 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 			vm = cmp.getViewModel(),
 			sm = cmp.getSelectionModel(),
 			masterRecord,
-			dataInitializator;
+			dataInitializator,
+			pasteComplete,
+			records = [];
 		
 		sm.deselectAll();
 		
@@ -264,6 +266,10 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 			if(controller.beforeAdd && (typeof controller.beforeAdd === "function")){
 				dataInitializator = controller.beforeAdd;
 			}
+			
+			if(controller.afterPaste && (typeof controller.afterPaste === "function")){
+                pasteComplete = controller.afterPaste;
+            }
 		}
 		for ( sourceRowIdx = recCount-1; sourceRowIdx >= 0; sourceRowIdx--) {
 			dataObject = dataInitializator ? dataInitializator.call(controller, masterRecord) : {};
@@ -291,12 +297,18 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 					}
 				}
 			}
-			records = store.insert(0, dataObject);
-			sm.select(records);
+			record = store.insert(0, dataObject);
+			sm.select(record);
+			records.push(record[0]);
+			
 		}
+		if (pasteComplete) {
+           pasteComplete.call(controller, records); 
+        }
 	},
 
 	putTextData : function(data, format) {
 		this.putRowData(data, format);
 	}
 });
+
