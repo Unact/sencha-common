@@ -237,7 +237,8 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 	},
 
 	putRowData : function(data, format) {
-		var values = Ext.util.TSV.decode(data),
+		var 	raw_values = Ext.util.TSV.decode(data),
+			values = raw_values.filter(function (e) {  return !(e.length == 1 && e[0]=="");}), //по умолчанию пустые строки вставляются, но нам-то они не нужны
 			row,
 			recCount = values.length,
 			colCount = recCount ? values[0].length : 0,
