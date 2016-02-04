@@ -14,7 +14,7 @@ Ext.define('Ext.lib.imagegallery.ViewController', {
         var me = this,
             view = me.getView();
 
-        view.windowForImage.show();
+        view.fullImageWindow.show();
         me.setImage(record);
     },
 
@@ -30,7 +30,7 @@ Ext.define('Ext.lib.imagegallery.ViewController', {
 
     onImageLoaded: function() {
         var me = this;
-        me.getView().windowForImage.down('#imageContainer').setLoading(false);
+        me.getView().getByRef('imageContainer').setLoading(false);
     },
 
     onBeforeFullImageClose: function(panel) {
@@ -45,9 +45,9 @@ Ext.define('Ext.lib.imagegallery.ViewController', {
             var me = this,
                 view = me.getView();
 
-            view.windowForImage.down('#imageContainer').setLoading(true);
+            view.getByRef('imageContainer').setLoading(true);
             if (record)
-                view.fullImage.setSrc(view.fullImagesUri + record.get(view.imageField));
+                view.getByRef('img').setSrc(view.fullImagesUri + record.get(view.imageField));
         },
 
         selectNextImage: function(direction) {
@@ -56,16 +56,11 @@ Ext.define('Ext.lib.imagegallery.ViewController', {
                 sm = view.getSelectionModel(),
                 store = view.getStore(),
                 index = store.indexOf(sm.getSelection()[0]) + direction,
-                ringIndeces = [];
+                count = store.count();
 
-            ringIndeces[-1] = store.count() - 1;
-            for (var i = 0; i < store.count(); ++i)
-                ringIndeces.push(i);
-            ringIndeces.push(0);
-
-            if (index !== -2) {
-                sm.select(ringIndeces[index]);
-            }
+            sm.select(
+                index == count ? 0 : (index == -1 ? count - 1 : index)
+            );
         }
     }
 });

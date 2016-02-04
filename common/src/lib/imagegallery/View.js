@@ -29,63 +29,58 @@ Ext.define('Ext.lib.imagegallery.View', {
 
     initComponent: function() {
         var me = this,
-            controller = me.getController(),
-            leftButton,
-            rightButton,
-            imageContainer;
+            controller = me.getController();
 
-        leftButton = new Ext.Button({
-            text: '<',
-            listeners: {
-                click: 'onLeftButtonClick',
-                scope: controller
-            }
-        });
-
-        rightButton = new Ext.Button({
-            text: '>',
-            listeners: {
-                click: 'onRightButtonClick',
-                scope: controller
-            }
-        });
-
-        me.fullImage = new Ext.Img({
-            alt: 'Изображение',
-            style: {
-                maxHeight: '100%',
-                maxWidth: '100%',
-                display: 'block',
-                margin: 'auto'
-            },
-            listeners: {
-                load: {
-                    element: 'el',
-                    fn: 'onImageLoaded',
-                    scope: controller
-                }
-            }
-        });
-
-        imageContainer = new Ext.container.Container({
-            itemId: 'imageContainer',
-            flex: 1,
-            layout: 'container',
-            items: [me.fullImage]
-        });
-
-        me.windowForImage = new Ext.window.Window({
+        me.fullImageWindow = new Ext.window.Window({
             title: me.windowName ? me.windowName : 'Фотография',
             width: '66%',
             height: '66%',
+            referenceHolder: true,
             layout: {
                 type: 'hbox',
                 align: 'stretch'
             },
             items: [
-                leftButton,
-                imageContainer,
-                rightButton
+                {
+                    reference: 'leftButton',
+                    xtype: 'button',
+                    text: '<',
+                    listeners: {
+                        click: 'onLeftButtonClick',
+                        scope: controller
+                    }
+                }, {
+                    reference: 'imageContainer',
+                    xtype: 'container',
+                    flex: 1,
+                    layout: 'container',
+                    items: [{
+                        reference: 'img',
+                        xtype: 'image',
+                        alt: 'Изображение',
+                        style: {
+                            maxHeight: '100%',
+                            maxWidth: '100%',
+                            display: 'block',
+                            margin: 'auto'
+                        },
+                        listeners: {
+                            load: {
+                                element: 'el',
+                                fn: 'onImageLoaded',
+                                scope: controller
+                            }
+                        }
+                    }]
+                }, {
+                    reference: 'rightButton',
+                    xtype: 'button',
+                    text: '>',
+                    listeners: {
+                        click: 'onRightButtonClick',
+                        scope: controller
+                    }
+                },
             ],
             listeners: {
                 beforeclose: 'onBeforeFullImageClose',
@@ -98,7 +93,7 @@ Ext.define('Ext.lib.imagegallery.View', {
                 '<div class="thumb-wrap">',
                     '<div class="thumb">',
                         '<div class="centered_image" style="background-image:url(' +
-                            me.config.smallImagesUri + '{' + me.config.imageField + '})">',
+                            me.smallImagesUri + '{' + me.imageField + '})">',
                         '</div>',
                     '</div>',
                 '</div>',
@@ -113,5 +108,9 @@ Ext.define('Ext.lib.imagegallery.View', {
     	changepicture: 'onChangePicture',
         beforeselect: 'onItemClick',
         scope: 'controller'
+    },
+
+    getByRef: function(refName) {
+        return this.fullImageWindow.lookupReference(refName);
     }
 });
