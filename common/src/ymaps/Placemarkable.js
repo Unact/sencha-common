@@ -1,6 +1,5 @@
-//Только для ExtJS 4
 Ext.define('Renew.ymaps.Placemarkable', {
-    options: ['iconLayout', 'iconImageHref', 'iconImageSize', 'iconImageOffset'],
+    options: ['iconLayout', 'iconImageHref', 'iconImageSize', 'iconImageOffset', 'preset'],
 
     getPlacemark: function() {
         var me = this;
