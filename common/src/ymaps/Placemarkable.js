@@ -1,7 +1,7 @@
 Ext.define('Renew.ymaps.Placemarkable', {
     extend: 'Ext.Mixin',
 
-    options: ['iconLayout', 'iconImageHref', 'iconImageSize', 'iconImageOffset'],
+    options: ['iconLayout', 'iconImageHref', 'iconImageSize', 'iconImageOffset', 'preset'],
 
     getPlacemark: function() {
         var me = this;
