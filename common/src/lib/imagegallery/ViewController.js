@@ -30,6 +30,7 @@ Ext.define('Ext.lib.imagegallery.ViewController', {
 
     onImageLoaded: function() {
         var me = this;
+        me.fitImageWindowWidth();
         me.getView().getByRef('imageContainer').setLoading(false);
     },
 
@@ -61,6 +62,23 @@ Ext.define('Ext.lib.imagegallery.ViewController', {
             sm.select(
                 index == count ? 0 : (index == -1 ? count - 1 : index)
             );
+        },
+
+        fitImageWindowWidth: function() {
+            var me = this;
+            var view = me.getView();
+            var wnd = view.fullImageWindow;
+            var img = view.getByRef('imageContainer').items.get(0);
+            var newWidth = Math.ceil(
+                img.getWidth()/img.getHeight() * wnd.body.getHeight()   // ширина изображения
+                + 2 * view.getByRef('leftButton').getWidth()            // плюс ширина кнопок
+                + wnd.getSize().width - wnd.getSize(true).width         // плюс ширина рамки
+            );
+
+            if (newWidth !== wnd.getWidth())
+                wnd.setX(Ext.getBody().getWidth()/2.0-newWidth/2.0, true);
+
+            wnd.setWidth(newWidth);
         }
     }
 });
