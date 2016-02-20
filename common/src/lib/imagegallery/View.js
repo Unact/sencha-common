@@ -90,9 +90,9 @@ Ext.define('Ext.lib.imagegallery.View', {
 
         me.tpl = new Ext.XTemplate(
             '<tpl for=".">',
-                '<div class="thumb-wrap">',
-                    '<div class="thumb">',
-                        '<div class="centered_image" style="background-image:url(' +
+                '<div class="x-gallery-thumb-wrap">',
+                    '<div class="x-gallery-thumb">',
+                        '<div class="x-gallery-centered-image" style="background-image:url(' +
                             me.smallImagesUri + '{' + me.imageField + '})">',
                         '</div>',
                     '</div>',
@@ -102,8 +102,9 @@ Ext.define('Ext.lib.imagegallery.View', {
 
         me.callParent();
     },
-    itemSelector: 'div.thumb-wrap',
-    emptyText: '<div class="empty_text">Нет фотографий для отображения</div>',
+    itemSelector: 'div.x-gallery-thumb-wrap',
+    deferEmptyText: false,
+    emptyText: '<div class="x-gallery-empty-text">Нет фотографий для отображения</div>',
     listeners: {
     	changepicture: 'onChangePicture',
         beforeselect: 'onItemClick',
