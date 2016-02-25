@@ -41,6 +41,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		
 		suffix = config.suffix || me.xtype;
 		config.suffix = suffix;
+		config.dockedItems = [];
 
 		Ext.apply(config, me.getInitialConfig());
 		Ext.apply(config, currentConfig);
@@ -71,9 +72,20 @@ Ext.define('Ext.lib.grid.Panel', {
             toolbarConfig['buttonsDock'] = config.buttonsDock;
         }
                 
-        config.dockedItems = [toolbarConfig];
-		
+        if(config.beforeToolbar){
+        	for (i = 0; i < config.beforeToolbar.length; i++) {
+                config.dockedItems.push(config.beforeToolbar[i]);
+            }
+        }
+                
+        config.dockedItems.push(toolbarConfig);
 
+        if(config.afterToolbar){
+        	for (i = 0; i < config.afterToolbar.length; i++) {
+                config.dockedItems.push(config.afterToolbar[i]);
+            }
+        }
+		
 		config.viewConfig = config.viewConfig || {
 			enableTextSelection : true,
 			loadMask: false
