@@ -3,6 +3,10 @@ Ext.define('Renew.ymaps.Placemarkable', {
 
     options: ['iconLayout', 'iconImageHref', 'iconImageSize', 'iconImageOffset', 'preset'],
 
+    mixins: [
+        'Renew.ymaps.Defaults'
+    ],
+
     getPlacemark: function() {
         var me = this;
 
@@ -14,6 +18,10 @@ Ext.define('Renew.ymaps.Placemarkable', {
         var coord = [me.get('latitude'), me.get('longitude')];
         var properties = {model: me};
         var options = {};
+        
+        if(!me.validCoord(coord)) {
+            coord = Renew.ymaps.Defaults.center;
+        }
          
         me.getFields().forEach(function(field) {
             var fieldName = field.getName();
