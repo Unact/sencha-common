@@ -4,7 +4,7 @@ Ext.define('Renew.ymaps.Placemarkable', {
     options: ['iconLayout', 'iconImageHref', 'iconImageSize', 'iconImageOffset', 'preset'],
 
     mixins: [
-        'Renew.ymaps.Defaults'
+        'Renew.ymaps.Bound'
     ],
 
     getPlacemark: function() {
@@ -48,7 +48,7 @@ Ext.define('Renew.ymaps.Placemarkable', {
         
         return me.placemark;
     },
-    
+
     appendProperties: Ext.emptyFn,
     
     appendOptions: Ext.emptyFn
