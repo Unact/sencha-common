@@ -240,6 +240,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 		var 	raw_values = Ext.util.TSV.decode(data),
 			values = raw_values.filter(function (e) {  return !(e.length == 1 && e[0]=="");}), //по умолчанию пустые строки вставляются, но нам-то они не нужны
 			row,
+			rowIdx,
 			recCount = values.length,
 			colCount = recCount ? values[0].length : 0,
 			sourceRowIdx,
@@ -278,18 +279,22 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 			row = values[sourceRowIdx];
 			
 			// Collect new values in dataObject
-			for ( sourceColIdx = 0; sourceColIdx < colCount && sourceColIdx < columns.length; sourceColIdx++) {
+			for ( sourceColIdx = 0, rowIdx = 0; sourceColIdx < colCount && sourceColIdx < columns.length; sourceColIdx++, rowIdx++) {	
+				if (columns[sourceColIdx].xtype == 'rownumberer'){
+					sourceColIdx++;
+					colCount++;
+				}
 				dataIndex = columns[sourceColIdx].dataIndex;
 				if (dataIndex) {
 					switch (format) {
 					// Raw field values
 					case 'raw':
-						dataObject[dataIndex] = row[sourceColIdx];
+						dataObject[dataIndex] = row[rowIdx];
 						break;
 
 					// Textual data with HTML tags stripped
 					case 'text':
-						dataObject[dataIndex] = row[sourceColIdx];
+						dataObject[dataIndex] = row[rowIdx];
 						break;
 
 					// innerHTML from the cell inner
