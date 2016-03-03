@@ -251,7 +251,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
                     callback : function(batch) {
                         view.getSelectionModel().refresh();
                         me.mainView.setLoading(false);
-                        me.afterSave().call(me);
+                        me.afterSave();
                         if (batch.exceptions.length > 0) {
                             me.onError(batch.exceptions[0].getError().response);
                         } else {
