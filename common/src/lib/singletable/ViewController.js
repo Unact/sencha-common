@@ -204,7 +204,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
         me.afterAdd(newRec);
     },
 
-    afterSave: Ext.emptyFn,
+    afterSave: function(batch){
+    },
     
     onSave: function() {
         var me = this;
@@ -251,7 +252,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
                     callback : function(batch) {
                         view.getSelectionModel().refresh();
                         me.mainView.setLoading(false);
-                        me.afterSave();
+                        me.afterSave(batch);
                         if (batch.exceptions.length > 0) {
                             me.onError(batch.exceptions[0].getError().response);
                         } else {
