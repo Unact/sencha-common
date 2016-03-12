@@ -159,5 +159,17 @@ Ext.define('Ext.lib.app.ControllerMixin', {
     	var error = me.getError(response);
         
         Ext.Msg.alert("Ошибка", error, callback);
+    },
+    
+    initVmFromUrlParams: function() {
+        var me = this;
+        var vm = me.getViewModel();
+        var urlParams = Ext.Object.fromQueryString(location.search.substring(1));
+
+        for(key in urlParams) {
+            if((urlParams[key] !== '') && (key in vm.getData())) {
+                vm.set(key, urlParams[key]);
+            } 
+        };
     }
 });
