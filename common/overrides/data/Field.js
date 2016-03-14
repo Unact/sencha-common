@@ -13,12 +13,12 @@ Ext.onReady(function() {
 	                var val;
 	                var formats = ['c', 'd.m.Y H:i:s'];
 	                
-	                if(record.dateFormat){
-	                	formats.splice(0, 1, record.dateFormat);
+	                if(this.dateFormat){
+	                	formats.unshift(this.dateFormat);
 	                }
 	                
-	                if(record.dateReadFormat){
-	                	formats.shift(0, 1, record.dateReadFormat);
+	                if(this.dateReadFormat){
+	                	formats.unshift(this.dateReadFormat);
 	                }
 	                
 	                for(var i=0; i<formats.length && (val==null || val==undefined); i++){
