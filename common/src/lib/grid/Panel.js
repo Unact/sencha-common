@@ -85,11 +85,11 @@ Ext.define('Ext.lib.grid.Panel', {
                 config.dockedItems.push(config.afterToolbar[i]);
             }
         }
-		
-		config.viewConfig = config.viewConfig || {
+
+		Ext.applyIf(config.viewConfig, {
 			enableTextSelection : true,
 			loadMask: false
-		};
+		});
 
 		if (config.disableEditing !== true) {
 			var hasEditingPlugin = false;
