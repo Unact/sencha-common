@@ -97,12 +97,17 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
         treePanel.applyState=function(act2Apply)
         {
             try{treePanel.ownApplyState(arguments);}catch(e){}
-            if(!Ext.isEmpty(act2Apply)){me.actions2Apply=act2Apply.toString();}
+            
+            me.actions2Apply=Ext.isEmpty(act2Apply)?me.act2Remember:act2Apply.toString();
             me._applyState();
             me._flushState();
         };
         //самодеятельность (после применения состояния не обнуляет его, а продолжает накапливать изменения)
-        treePanel.applyStateWithoutFlush=function(){me._applyState();};
+        treePanel.applyStateWithoutFlush=function(act2Apply)
+        {
+            me.actions2Apply=Ext.isEmpty(act2Apply)?me.act2Remember:act2Apply.toString();
+            me._applyState();
+        };
         treePanel.flushState=function(){me._flushState()};
         //цепляем применение состояния на загрузку хранилища дерева, если установлено autoOnLoad
         if(me.autoOnLoad)
