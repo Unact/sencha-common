@@ -91,7 +91,6 @@ Ext.define('Ext.lib.grid.Panel', {
 			enableTextSelection : true,
 			loadMask: false
 		});
-		console.log(config);
 
 		if (config.disableEditing !== true) {
 			var hasEditingPlugin = false;
