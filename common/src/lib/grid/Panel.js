@@ -41,6 +41,8 @@ Ext.define('Ext.lib.grid.Panel', {
 		
 		suffix = config.suffix || me.xtype;
 		config.suffix = suffix;
+		config.viewConfig = {};
+		config.dockedItems = [];
 
 		Ext.apply(config, me.getInitialConfig());
 		Ext.apply(config, currentConfig);
@@ -71,13 +73,24 @@ Ext.define('Ext.lib.grid.Panel', {
             toolbarConfig['buttonsDock'] = config.buttonsDock;
         }
                 
-        config.dockedItems = [toolbarConfig];
-		
+        if(config.beforeToolbar){
+        	for (i = 0; i < config.beforeToolbar.length; i++) {
+                config.dockedItems.push(config.beforeToolbar[i]);
+            }
+        }
+                
+        config.dockedItems.push(toolbarConfig);
 
-		config.viewConfig = config.viewConfig || {
+        if(config.afterToolbar){
+        	for (i = 0; i < config.afterToolbar.length; i++) {
+                config.dockedItems.push(config.afterToolbar[i]);
+            }
+        }
+
+		Ext.applyIf(config.viewConfig, {
 			enableTextSelection : true,
 			loadMask: false
-		};
+		});
 
 		if (config.disableEditing !== true) {
 			var hasEditingPlugin = false;

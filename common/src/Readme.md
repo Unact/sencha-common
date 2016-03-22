@@ -4,9 +4,12 @@
 Реализованные возможности:
 
 1. [Базовые возможности контроллеров](https://github.com/Unact/sencha-common/tree/master/common/src/lib/app):
- - [примесь для контроллеров с возможностями загрузки хранилищ и обработки ошибок сервера](https://github.com/Unact/sencha-common/blob/master/common/src/lib/app/ControllerMixin.js)
- - [заготовка контроллера маршрутизации для работы с меню и карточным режимом вывода](https://github.com/Unact/sencha-common/blob/master/common/src/lib/app/Routing.js)
- - [заготовка контроллера представления для обработки событий загрузки "своих" хранилищ и хранилищ приложения](https://github.com/Unact/sencha-common/blob/master/common/src/lib/app/ViewController.js)
+  - [примесь для контроллеров с возможностями](https://github.com/Unact/sencha-common/blob/master/common/src/lib/app/ControllerMixin.js):
+    - загрузки хранилищ,
+    - обработки ошибок сервера,
+    - инициализация значений в ViewModel (свойство data) из параметров url.
+  - [заготовка контроллера маршрутизации для работы с меню и карточным режимом вывода](https://github.com/Unact/sencha-common/blob/master/common/src/lib/app/Routing.js)
+  - [заготовка контроллера представления для обработки событий загрузки "своих" хранилищ и хранилищ приложения](https://github.com/Unact/sencha-common/blob/master/common/src/lib/app/ViewController.js)
 
 2. [Данные](https://github.com/Unact/sencha-common/tree/master/common/src/lib/data):
  - [поле модели, которое принимает значение null, если входящее значение - пустая строка](https://github.com/Unact/sencha-common/blob/master/common/src/lib/data/field/NullifiedString.js)
