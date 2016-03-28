@@ -222,7 +222,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
             callbackScope = arguments[1] || me;
         } else {
             callback = function(){
-            	if(--detailsToProcess==0){
+            	if(--detailsToProcess<=0){
             		me.onRefresh();
             	}
             };
