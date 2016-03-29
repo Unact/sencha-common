@@ -2,6 +2,7 @@ Ext.onReady(function() {
 	Ext.override(Ext.data.Field, {
 		dateFormat: 'c',
 		dateReadFormat: 'c',
+		dateWriteFormat: 'Y-m-d\\TH:i:s',
 		
 		statics: {
 			convertDate: function(v, record){
