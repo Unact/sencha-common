@@ -8,6 +8,19 @@ Ext.define('Ext.lib.grid.column.MultiFieldColumn', {
 		boxready: 'onBoxReady'
 	},
 
+	/**
+	 * @param {Object} config Config object.
+	 * fields - массив полей, которые будет отображать колонка
+	 *
+	 * Отображение поля можно изменить с помощью конфиги tpl.
+	 * 
+	 * Для комбобокса присутсвует фикс, позволяющий верно отображаться значения.
+	 * В модель таблицы при ее создании добавляется вычисляемое поле,
+	 * хранящее значение, которое надо отобразить.
+	 * 
+	 * НЕ ПОДДЕРЖИВАЕТ field с типом 'checkbox' и 'radio'
+	 */
+
 	constructor: function(config){
 		var me = this,
 			fieldConfig = {},

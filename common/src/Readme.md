@@ -20,7 +20,7 @@
 
 3. Таблица:
  - ["combocolumn" - специальный класс колонки, которая должна отображать значения по внешнему ключу из другого хранилища](https://github.com/Unact/sencha-common/blob/master/common/src/lib/grid/column/ComboColumn.js)
- - ["multifieldcolumn" - класс колонки, которая может содержать более 1 поля в качестве редакторов ](https://github.com/Unact/sencha-common/blob/master/common/src/lib/grid/column/MultiFieldColumn.js)
+ - ["multifieldcolumn" - класс колонки, которая может содержать более 1 поля в качестве редактора](https://github.com/Unact/sencha-common/blob/master/common/src/lib/grid/column/MultiFieldColumn.js)
  - [плагин для работы с буфером обмена](https://github.com/Unact/sencha-common/blob/master/common/src/lib/grid/plugin/RowClipboard.js). стандартный не работает в safari
  Также реализованы дополнительные возможности обработки данных.
  - [отдельное окно для редактирования значений записи таблицы](https://github.com/Unact/sencha-common/blob/master/common/src/lib/grid/EditingCard.js)
