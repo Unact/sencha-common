@@ -118,13 +118,6 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 	addPrimaryValueField: function(model){
 		var me = this, fields, fieldPresent = false;
 		
-		if(model==null){
-			model = me.up('grid').getStore().getModel();
-			if(model==null){
-				return;
-			}
-		}
-		
 		fields = model.getFields();
 		fields.forEach(function(field){
 			if(field.name==me.fieldName){

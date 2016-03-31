@@ -6,7 +6,7 @@ Ext.define('Ext.overrides.panel.Table', {
 		
 		me.callParent(arguments);
 		
-		me.initComboColumns();
+		me.initSpecialColumns();
 	},
 	
 	setStore: function(){
@@ -23,16 +23,17 @@ Ext.define('Ext.overrides.panel.Table', {
             store.load();
         }
 		
-		me.initComboColumns();
+		me.initSpecialColumns();
 	},
 	
-	initComboColumns: function(model){
+	initSpecialColumns: function(){
 		var me = this;
 		
 		model = me.store.getModel();
+
 		if(model){
 			me.columns.every(function(column){
-				if(column.xtype=='combocolumn'){
+				if(column.xtype=='combocolumn' || column.xtype=='multifieldcolumn'){
 					column.addPrimaryValueField(model);
 				}
 				return true;
