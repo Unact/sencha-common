@@ -53,22 +53,14 @@ Ext.define('Ext.lib.grid.column.MultiFieldColumn', {
 	},
 
 	defaultRenderer: function(value, meta, record) {
-        var me = this,
-        	data = Ext.apply({}, record.data, record.getAssociatedData()),
-        	modified = false;
-      
-        me.field.items.items.forEach(function(el, i, array){
-        	modified =  modified ? modified : record.isModified(el.dataIndex)
-        });
+        var me = this;
+        var data = Ext.apply({}, record.data, record.getAssociatedData());
 
-        if (modified) {
-        	meta.tdCls += 'x-grid-dirty-cell';
-        }
         return this.tpl.apply(data);
     },
 
     onBoxReady: function(){
-    	this.ownerCt.ownerCt.on('edit', this.updateFieldValues);
+    	this.up('panel').on('validateedit', this.updateFieldValues);
     },
 
     updateFieldValues: function(editor, ctx, eOpts){
@@ -77,22 +69,25 @@ Ext.define('Ext.lib.grid.column.MultiFieldColumn', {
 			column = ctx.column;
 
 		if (column.xtype == 'multifieldcolumn'){
-			column.field.items.items.forEach(function(el, i, array){
+			column.getFields().forEach(function(el, i, array){
 				if (el.value != record.get(el.dataIndex)){
 					record.set(el.dataIndex, el.value);	
 				}
 			});
 		}
-		ctx.grid.getView().refresh();
+	},
+
+	getFields: function(){
+		return this.field.items.items;
 	},
 
 	addPrimaryValueField: function(model){
-		var me = this,
-			field,
-			fieldsToAdd = [],
-			viewModel = me.ownerCt.ownerCt.getViewModel();
+		var me = this;
+		var field;
+		var fieldsToAdd = [];
+		var	viewModel = me.up('panel').getViewModel();
 
-		me.field.items.items.forEach(function(el, i, array){
+		me.getFields().forEach(function(el, i, array){
 			if (el.xtype == 'combobox'){
 				el.viewModel = viewModel;
 				el.getBind(); // Требуется, чтобы стор привязался к комбо, иначе пустой
@@ -107,7 +102,7 @@ Ext.define('Ext.lib.grid.column.MultiFieldColumn', {
 							foreignKey,
 							modelField = this;
 
-						me.field.items.items.forEach(function(element, i, array){
+						me.getFields().forEach(function(element, i, array){
 							if (modelField.depends[0] == element.dataIndex){
 								convertField = element;
 							}
