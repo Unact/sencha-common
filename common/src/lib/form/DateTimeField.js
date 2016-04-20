@@ -1,5 +1,5 @@
 Ext.define('Ext.lib.form.DateTimeField', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.form.FieldContainer',
     alias: 'widget.datetimefield',
 
     mixins: ['Ext.form.field.Text'],
