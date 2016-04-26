@@ -5,7 +5,6 @@ Ext.define('Ext.lib.form.DateTimeField', {
     mixins: ['Ext.form.field.Text'],
 
     layout: 'column',
-    timeFormat: 'H:i',
     defaultMargins: '0 0 0 0',
     dateFormat: 'd.m.Y',
     flex:1,
@@ -26,7 +25,6 @@ Ext.define('Ext.lib.form.DateTimeField', {
     
     setValue: function(value){
         var me = this;
-
         me.getFields()[0].setValue(Ext.Date.format(value, me.dateFormat));
         me.getFields()[1].setValue(Ext.Date.format(value, me.timeFormat));
         
@@ -43,17 +41,17 @@ Ext.define('Ext.lib.form.DateTimeField', {
 
     getValue: function(){
         var me = this;
-        var dateValue = me.getFields()[0].getValue();
-        var timeValue = me.getFields()[1].getValue();
+        var dateValue = me.getFields()[0].getRawValue();
+        var timeValue = me.getFields()[1].getRawValue();
+        var timeValues = timeValue.split(':');
         var value = '';
-        
+                
         if (dateValue){
-            value = Ext.Date.format(dateValue, 'Y-m-d');
-            if (timeValue){
-                value +=  ' ' + Ext.Date.format(timeValue, me.timeFormat);
-            }
+            value  = Ext.Date.parse(dateValue, me.dateFormat);
+            value  = Ext.Date.add(value, Ext.Date.HOUR,     timeValues[0]);
+            value  = Ext.Date.add(value, Ext.Date.MINUTE,   timeValues[1]);
         }
-        value = value === '' ? null : new Date(value);
+        value = value === '' ? null : value;
         return value;
     },
 
@@ -61,7 +59,7 @@ Ext.define('Ext.lib.form.DateTimeField', {
         var me = this,
             valid = true;
 
-        me.items.items.forEach(function(el, i, array){
+        me.getFields().forEach(function(el, i, array){
             valid = !valid ? !el.isValid() : valid;
             
         });
