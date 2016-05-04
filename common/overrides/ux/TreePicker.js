@@ -2,13 +2,25 @@
  * A Picker field that contains a tree panel on its popup, enabling selection of tree nodes.
  */
 Ext.define('Ext.overrides.ux.TreePicker', {
-	override : 'Ext.ux.TreePicker',
+	override: 'Ext.ux.TreePicker',
 
     mixins: [
         'Ext.util.StoreHolder'
     ],
 
     editable: true,
+
+    pickerAlign: 'tl-bl',
+
+    maxPickerHeight: 400,
+
+    anyMatch: true,
+
+    caseSensitive: false,
+
+    enableRegEx: false,
+
+    queryFilter: null,
 
     getStoreListeners: function(){
     	var me = this;
@@ -33,31 +45,39 @@ Ext.define('Ext.overrides.ux.TreePicker', {
                 displayField: me.displayField,
                 columns: me.columns,
                 maxHeight: me.maxPickerHeight,
-                manageHeight: true,
+                manageHeight: false,
                 shadow: false,
                 listeners: {
                     scope: me,
-                    itemclick: me.onItemClick,
-                    afteritemexpand: me.onAfterItemExpand,
-                    afteritemcollapse: me.onAfterItemCollapse
+                    itemclick: me.onItemClick
                 },
                 viewConfig: {
                     listeners: {
                         scope: me,
-                        render: me.onViewRender
+                        render: me.onViewRender,
+                        afteritemexpand: me.refreshPickerView,
+                        afteritemcollapse: me.refreshPickerView,
+                        beforeitemclick: function(){
+                            var view = picker.getView();
+                            picker._scrollY = view.getEl().getScroll().top;
+                        }
+                    }
+                },
+                layout: {
+                    // Set the scroll after the layout.
+                    finishedLayout: function(){
+                        var layoutFns = Ext.layout.container.Fit.prototype;
+                        layoutFns.finishedLayout.apply(this, arguments);
+          
+                        if (picker._scrollY) {
+                           picker.getView().getEl().dom.scrollTop = picker._scrollY;
+                        }
                     }
                 }
-            }),
-            view = picker.getView();
+            });
 
         return picker;
     },
-    /**
-     * @event select
-     * Fires when a tree node is selected
-     * @param {Ext.ux.TreePicker} picker        This tree picker
-     * @param {Ext.data.Model} record           The selected record
-     */
 
     initComponent: function() {
         var me = this;
@@ -75,22 +95,11 @@ Ext.define('Ext.overrides.ux.TreePicker', {
     	}
     },
 
-    onAfterItemCollapse: function(node, eOpts) {
-        // Since onItemCollapse scrolls to top, we have to scroll back to
-        // the node which we collapsed.
-        // Ugly but works!
-        var me = this,
-            view = me.picker.getView();
-        view.scrollToRecord(node);
-    },
+    refreshPickerView: function(){
+        var me = this;
+        var picker = me.getPicker();
 
-    onAfterItemExpand: function(node, eOpts) {
-        // Since onItemExpand scrolls to top, we have to scroll back to
-        // the node which we expanded.
-        // Ugly but works!
-        var me = this,
-            view = me.picker.getView();
-        view.scrollToRecord(node);
+        picker.getView().refresh();
     },
 
     /**
@@ -114,8 +123,10 @@ Ext.define('Ext.overrides.ux.TreePicker', {
             node = store.getRoot();
         }
 
-        picker.selectPath(node.getPath());
-		view.scrollToRecord(node);
+        picker.ensureVisible(node, {
+            select: true,
+            focus: true
+        });
     },
 
     /**
@@ -153,5 +164,73 @@ Ext.define('Ext.overrides.ux.TreePicker', {
         }
 
         return me;
-    }
+    },
+
+    onFieldMutation: function(e) {
+        var me = this,
+            key = e.getKey(),
+            isDelete = key === e.BACKSPACE || key === e.DELETE,
+            rawValue = me.inputEl.dom.value,
+            len = rawValue.length,
+            store = me.getStore(),
+            node = store.getRoot();
+
+        // Do not process two events for the same mutation.
+        // For example an input event followed by the keyup that caused it.
+        // We must process delete keyups.
+        // Also, do not process TAB event which fires on arrival.
+        if (!me.readOnly && (rawValue !== me.lastMutatedValue || isDelete) && key !== e.TAB) {
+            me.lastMutatedValue = rawValue;
+            me.lastKey = key;
+            if (len && (e.type !== 'keyup' || (!e.isSpecialKey() || isDelete))) {
+                
+                store.removeFilter(me.queryFilter, true);
+                filter = me.queryFilter = new Ext.util.Filter({
+                    id: me.id + '-filter',
+                    anyMatch: me.anyMatch,
+                    caseSensitive: me.caseSensitive,
+                    root: 'data',
+                    property: me.displayField,
+                    value: me.enableRegEx ? new RegExp(rawValue) : rawValue
+                });
+                store.addFilter(filter, true);
+
+                if (me.store.getCount() || me.getPicker().emptyText) {
+                    // The filter changing was done with events suppressed, so
+                    // refresh the picker DOM while hidden and it will layout on show.       
+                    node.expandChildren(true);
+                    me.expand();
+                } else {
+                    me.collapse();
+                }
+                me.refreshPickerView();
+                me.focus();
+            } else {
+                // We have *erased* back to empty if key is a delete, or it is a non-key event (cut/copy)
+                if (!len && (!key || isDelete)) {
+                    // This portion of code may end up calling setValue will check for change. But since
+                    // it's come from field mutations, we need to respect the checkChangeBuffer, so
+                    // we suspend checks here, it will be handled by callParent
+                    // Essentially a silent setValue.
+                    // Clear our value
+                    me.value = null;
+                    // Just erased back to empty. Hide the dropdown.
+                    me.collapse();
+                    node.expandChildren(true);
+
+                    // There may have been a local filter if we were querying locally.
+                    // Clear the query filter and suppress the consequences (we do not want a list refresh).
+                    if (me.queryFilter) {
+                        // Must set changingFilters flag for this.checkValueOnChange.
+                        // the suppressEvents flag does not affect the filterchange event
+                        me.changingFilters = true;
+                        me.store.removeFilter(me.queryFilter, true);
+                        me.changingFilters = false;
+                    }
+                }
+                me.callParent([e]);
+            }
+        }
+    },
+
 });
