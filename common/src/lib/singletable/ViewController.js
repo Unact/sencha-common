@@ -125,7 +125,9 @@ Ext.define('Ext.lib.singletable.ViewController', {
             if(masterRecord && !masterRecord.phantom) {
                 result = me.beforeRefresh(masterRecord);
             } else {
-                store.loadData([]);
+                if(!store.isEmptyStore) {
+                    store.loadData([]);
+                }
                 result = false;
             }
         } else {

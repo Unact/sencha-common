@@ -49,7 +49,9 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             {
                 result = me.beforeRefresh(masterRecord);
             } else {
-                checkmarkStore.loadData([]);
+                if(!checkmarkStore.isEmptyStore) {
+                    checkmarkStore.loadData([]);
+                }
                 result = false;
             }
         } else {

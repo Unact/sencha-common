@@ -58,7 +58,9 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
                 resultCheckmark = me.beforeRefresh(masterRecord);
                 result = me.beforeAvailableRowsRefresh(masterRecord);
             } else {
-                checkmarkStore.loadData([]);
+                if(!checkmarkStore.isEmptyStore) {
+                    checkmarkStore.loadData([]);
+                }
                 resultCheckmark = false;
                 result = false;
             }
