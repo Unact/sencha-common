@@ -18,7 +18,7 @@ Ext.define('Ext.overrides.view.Table', {
 				me.handleUpdate.apply(me, arguments);
 			}
 		}
-		if(me.isVisible()){
+		if(me.isVisible(true)){
 			if(store.indexOf(record)>=0 && me.selModel.getSelection().length == 1){
 				me.scrollToRecord(record);
 			}

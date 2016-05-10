@@ -123,6 +123,8 @@ Ext.define('Ext.overrides.ux.TreePicker', {
             node = store.getRoot();
         }
 
+        node.expand();
+
         picker.ensureVisible(node, {
             select: true,
             focus: true
@@ -195,15 +197,14 @@ Ext.define('Ext.overrides.ux.TreePicker', {
                 });
                 store.addFilter(filter, true);
 
+                me.collapse();
+
                 if (me.store.getCount() || me.getPicker().emptyText) {
                     // The filter changing was done with events suppressed, so
-                    // refresh the picker DOM while hidden and it will layout on show.       
+                    // refresh the picker DOM while hidden and it will layout on show.      
                     node.expandChildren(true);
-                    me.expand();
-                } else {
-                    me.collapse();
+                    me.expand(); 
                 }
-                me.refreshPickerView();
                 me.focus();
             } else {
                 // We have *erased* back to empty if key is a delete, or it is a non-key event (cut/copy)
@@ -216,8 +217,6 @@ Ext.define('Ext.overrides.ux.TreePicker', {
                     me.value = null;
                     // Just erased back to empty. Hide the dropdown.
                     me.collapse();
-                    node.expandChildren(true);
-                    me.refreshPickerView();
 
                     // There may have been a local filter if we were querying locally.
                     // Clear the query filter and suppress the consequences (we do not want a list refresh).
@@ -227,10 +226,12 @@ Ext.define('Ext.overrides.ux.TreePicker', {
                         me.changingFilters = true;
                         me.store.removeFilter(me.queryFilter, true);
                         me.changingFilters = false;
-                    }
+                    }             
+                    node.collapse(true);         
                 }
                 me.callParent([e]);
             }
+            me.refreshPickerView();
         }
     },
 
