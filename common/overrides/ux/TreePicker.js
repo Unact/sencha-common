@@ -217,6 +217,7 @@ Ext.define('Ext.overrides.ux.TreePicker', {
                     // Just erased back to empty. Hide the dropdown.
                     me.collapse();
                     node.expandChildren(true);
+                    me.refreshPickerView();
 
                     // There may have been a local filter if we were querying locally.
                     // Clear the query filter and suppress the consequences (we do not want a list refresh).
