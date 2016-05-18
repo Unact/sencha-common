@@ -16,44 +16,28 @@ Ext.define('Ext.overrides.data.AbstractStore', {
 
     getValidations: function(){
         var me = this;
-        var validations = {
-            base: [],
-            fields: []
-        };
-        var  differentValidations = {
-            base: [],
-            fields: []
-        };
+        var validations = [];
+        var differentValidations = [];
 
         me.each(function(record){
             var validation = record.getValidation();
             if((record.dirty || record.phantom)) {
-                validations.fields.push(validation.data);
-                validations.base.push(record.getRecordValidation());
+                validations.push({ fields: validation.data, base: record.getRecordValidation() });
             }
         });
 
-        differentValidations.base = me.getDifferentValidations(validations.base);
-        differentValidations.fields = me.getDifferentValidations(validations.fields);
-
-        return differentValidations;
-    },
-
-    getDifferentValidations: function(validations){
-        var differentValidations = [];
-        var differentField;
-
-        validations.forEach(function(elI){
-            differentField = true;
-            differentValidations.forEach(function(elJ){
-                if(Ext.Object.equals(elI, elJ)){
-                    differentField = false;
+        for(i = 0; i<validations.length; i++){
+            different = true;
+            for(j = 0; j<differentValidations.length && different; j++){
+                if(Ext.Object.equals(validations[i].fields, differentValidations[j].fields) &&
+                    validations[i].base==differentValidations[j].base){
+                    different = false;
                 }
-            });
-            if(differentField){
-                differentValidations.push(elI);
             }
-        });
+            if(different){
+                differentValidations.push(validations[i]);
+            }
+        }
 
         return differentValidations;
     },
@@ -61,26 +45,20 @@ Ext.define('Ext.overrides.data.AbstractStore', {
     getValidationMessages: function(){
         var me = this,
             validations = me.getValidations(),
-            messages = {
-                fields: [],
-                base: []
-            },
+            messages = [],
             message;
 
-        validations.fields.forEach(function(el){
-            message = {};
-            for(field in el){
-                if(el[field]!==true){
-                    message[field] = el[field];
+        validations.forEach(function(validation){
+            message = { fields: {} };
+            for(field in validation.fields){
+                if(validation.fields[field]!==true){
+                    message.fields[field] = validation.fields[field];
                 }
             }
-            messages.fields.push(message);
-        });
-
-        validations.base.forEach(function(el){
-            if (el!==true){
-                messages.base.push(el);
+            if(validation.base!==true){
+                message.base = validation.base;
             }
+            messages.push(message);
         });
 
         return messages;
