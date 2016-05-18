@@ -52,7 +52,6 @@ Ext.define('Ext.overrides.data.Validation', {
                     (values || (values = {}))[name] = error;
                 }
             }
-
             if (values) {
                 // only need to do this if something changed...
                 me.set(values);

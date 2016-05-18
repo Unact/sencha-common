@@ -248,7 +248,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
 
         if (store.hasChanges()) {
             messages = store.getValidationMessages();
-            if(messages.length==0){
+            if(messages.base.length==0 && messages.fields.length==0){
                 me.mainView.setLoading(true);
                 store.sync({
                     callback : function(batch) {
@@ -263,19 +263,22 @@ Ext.define('Ext.lib.singletable.ViewController', {
                     }
                 });
             } else {
-                for(i = 0; i<messages.length; i++){
-                    for(field in messages[i]){
+                messages.base.forEach(function(el){
+                    errors.push(el);
+                });
+                messages.fields.forEach(function(el){
+                    for(field in el){
                         fieldName = null;
-                        for(j = 0; j<view.columns.length && !fieldName; j++){
-                            if(view.columns[j].dataIndex==field){
-                                fieldName = view.columns[j].text;
+                        view.columns.forEach(function(elJ){
+                            if(elJ.dataIndex==field){
+                                fieldName = elJ.text;
                             }
-                        }
+                        });
                         
                         fieldName = fieldName ? fieldName: field;
-                        errors.push('Поле "' + fieldName + '" ' + messages[i][field]);
+                        errors.push('Поле "' + fieldName + '" ' + el[field]);
                     }
-                }
+                });
                 
                 Ext.Msg.alert("Некорректные значения", errors.join("<br/>"));
             }
