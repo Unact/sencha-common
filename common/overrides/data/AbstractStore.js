@@ -45,20 +45,18 @@ Ext.define('Ext.overrides.data.AbstractStore', {
     getValidationMessages: function(){
         var me = this,
             validations = me.getValidations(),
-            messages = [],
-            message;
+            messages = [];
 
         validations.forEach(function(validation){
-            message = { fields: {} };
+            var fields = {};
             for(field in validation.fields){
                 if(validation.fields[field]!==true){
-                    message.fields[field] = validation.fields[field];
+                    fields[field] = validation.fields[field];
                 }
             }
-            if(validation.base!==true){
-                message.base = validation.base;
+            if(Object.keys(fields).length>0 || validation.base!==true){
+                messages.push({ base: validation.base!==true ? validation.base : null, fields: fields });
             }
-            messages.push(message);
         });
 
         return messages;

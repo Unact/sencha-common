@@ -248,7 +248,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
 
         if (store.hasChanges()) {
             messages = store.getValidationMessages();
-            if(messages.base.length==0 && messages.fields.length==0){
+            if(messages.length==0){
                 me.mainView.setLoading(true);
                 store.sync({
                     callback : function(batch) {
@@ -263,20 +263,20 @@ Ext.define('Ext.lib.singletable.ViewController', {
                     }
                 });
             } else {
-                messages.base.forEach(function(el){
-                    errors.push(el);
-                });
-                messages.fields.forEach(function(el){
-                    for(field in el){
+                messages.forEach(function(message){
+                    if (message.base){
+                        errors.push(message.base);
+                    }
+                    for(field in message.fields){
                         fieldName = null;
-                        view.columns.forEach(function(elJ){
-                            if(elJ.dataIndex==field){
-                                fieldName = elJ.text;
+                        view.columns.forEach(function(column){
+                            if(column.dataIndex==field){
+                                fieldName = column.text;
                             }
                         });
                         
                         fieldName = fieldName ? fieldName: field;
-                        errors.push('Поле "' + fieldName + '" ' + el[field]);
+                        errors.push('Поле "' + fieldName + '" ' + message[field]);
                     }
                 });
                 
