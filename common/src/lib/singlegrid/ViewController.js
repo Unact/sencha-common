@@ -102,6 +102,8 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
             grid.view.scrollToRecord(recordToSelect);
         } else if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
             grid.view.scrollToRecord(oldSelectionIndex);
+        } else {
+            grid.view.scrollToRecord(0);
         }
     }
 });
