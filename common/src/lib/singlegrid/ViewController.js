@@ -94,15 +94,15 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	 * Если модель найдена, то поставить фокус на нее
 	 * иначе поставить фокус на строку тем же порядковым номером, что и был ранее  
 	 */
-    callbackRefresh: function(grid, store, oldSelectionId, oldSelectionIndex) {
+    callbackRefresh: function (grid, store, oldSelectionId, oldSelectionIndex) {
         var me = this;
         var recordToSelect = store.getById(oldSelectionId);
 
-        if(recordToSelect){
+        if (recordToSelect) {
             grid.view.scrollToRecord(recordToSelect);
-        } else if(oldSelectionIndex && store.getCount()>oldSelectionIndex){
+        } else if (oldSelectionIndex && store.getCount() > oldSelectionIndex) {
             grid.view.scrollToRecord(oldSelectionIndex);
-        } else {
+        } else if (store.first) {
             grid.view.scrollToRecord(0);
         }
     }
