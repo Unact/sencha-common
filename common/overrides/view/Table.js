@@ -4,7 +4,7 @@ Ext.define('Ext.overrides.view.Table', {
 	onUpdate : function(store, record, operation, modifiedFieldNames, details) {
 		var me = this,
 			isFiltered = details && details.filtered;
-			
+
 		// If, due to filtering or buffered rendering, or node collapse, the updated record is not
 		// represented in the rendered structure, this is a no-op.
 		// The correct, new values will be rendered the next time the record becomes visible and is rendered.
@@ -32,12 +32,11 @@ Ext.define('Ext.overrides.view.Table', {
 	scrollToRecord : function(nodeInfo, silentSelect) {
 		var me = this,
 			record;
+
+		me.selModel.select(nodeInfo, false, silentSelect);
 		if (me.bufferedRenderer) {
-			me.bufferedRenderer.scrollTo(nodeInfo, {
-				select : true
-			});
+			me.bufferedRenderer.scrollTo(nodeInfo);
 		} else {
-			me.selModel.select(nodeInfo, false, silentSelect);
 			me.getRow(nodeInfo).scrollIntoView(me.getEl());
 		}
 	},
@@ -72,7 +71,7 @@ Ext.define('Ext.overrides.view.Table', {
             scope,
             elData,
             emptyValue;
-            
+
 
         if (me.viewReady) {
             // Table row being updated
