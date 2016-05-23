@@ -97,12 +97,13 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
     callbackRefresh: function (grid, store, oldSelectionId, oldSelectionIndex) {
         var me = this;
         var recordToSelect = store.getById(oldSelectionId);
+        var storeCount = store.getCount();
 
         if (recordToSelect) {
             grid.view.scrollToRecord(recordToSelect);
-        } else if (oldSelectionIndex && store.getCount() > oldSelectionIndex) {
+        } else if (oldSelectionIndex && storeCount > oldSelectionIndex) {
             grid.view.scrollToRecord(oldSelectionIndex);
-        } else if (store.first) {
+        } else if (storeCount > 0) {
             grid.view.scrollToRecord(0);
         }
     }
