@@ -25,21 +25,21 @@ Ext.define('Ext.overrides.view.Table', {
 		}
 	},
 
-	/**
-	 * Переход и фокусировка к строке по индексу или записи
-	 * @param {Number/Ext.data.Model} nodeInfo индекс или запись.
-	 */
-	scrollToRecord : function(nodeInfo, silentSelect) {
-		var me = this,
-			record;
+    /**
+     * Переход и фокусировка к строке по индексу или записи
+     * @param {Number/Ext.data.Model} nodeInfo индекс или запись.
+     */
+    scrollToRecord: function(nodeInfo, silentSelect) {
+        var me = this;
+        var record;
 
-		me.selModel.select(nodeInfo, false, silentSelect);
-		if (me.bufferedRenderer) {
-			me.bufferedRenderer.scrollTo(nodeInfo);
-		} else {
-			me.getRow(nodeInfo).scrollIntoView(me.getEl());
-		}
-	},
+        me.selModel.select(nodeInfo, false, silentSelect);
+        if (me.bufferedRenderer) {
+            me.bufferedRenderer.scrollTo(nodeInfo);
+        } else if (me.getRow(nodeInfo) !== null) {
+            me.getRow(nodeInfo).scrollIntoView(me.getEl());
+        }
+    },
 
 	handleUpdate: function(store, record, operation, changedFieldNames, info, allColumns) {
         operation = operation || Ext.data.Model.EDIT;
