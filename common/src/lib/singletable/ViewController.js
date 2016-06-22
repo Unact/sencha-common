@@ -19,6 +19,20 @@ Ext.define('Ext.lib.singletable.ViewController', {
         });
     },
 
+    findDetail: function(detailName){
+        var me = this;
+        
+        if (me.detailGrids.length > 0){
+            return me.detailGrids.find(function(detail){
+                        return detail.xtype === detailName;
+                    });
+        } else {
+            if (me.masterGrid){
+                return me.masterGrid.getController().findDetail(detailName);
+            }
+        }
+    },
+
     init: function(view){
         var me = this;
         
