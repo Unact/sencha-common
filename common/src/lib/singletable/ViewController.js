@@ -19,21 +19,14 @@ Ext.define('Ext.lib.singletable.ViewController', {
         });
     },
 
-    findGrid: function(xtype){
+    findDetail: function(xtype){
         var me = this;
-        var result;
 
-        if (me.masterGrid){
-            result = me.masterGrid.getController().findGrid(xtype);
-        }
-        
-        if (!result && me.detailGrids.length > 0){
-            result =  me.detailGrids.find(function(detail){
+        if (me.detailGrids.length > 0){
+            return me.detailGrids.find(function(detail){
                         return detail.xtype === xtype;
                     });
         }
-
-        return me.getView().xtype === xtype ? me : result;
     },
 
     init: function(view){
