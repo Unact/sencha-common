@@ -17,7 +17,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		},
 		
 		saveDetail: false,
-		stateful: true,
+		stateful: false,
 		autoEditOnAdd: false
 	},
 
