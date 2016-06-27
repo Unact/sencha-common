@@ -19,18 +19,21 @@ Ext.define('Ext.lib.singletable.ViewController', {
         });
     },
 
-    findDetail: function(detailName){
+    findGrid: function(xtype){
         var me = this;
-        
-        if (me.detailGrids.length > 0){
-            return me.detailGrids.find(function(detail){
-                        return detail.xtype === detailName;
-                    });
-        } else {
-            if (me.masterGrid){
-                return me.masterGrid.getController().findDetail(detailName);
-            }
+        var result;
+
+        if (me.masterGrid){
+            result = me.masterGrid.getController().findGrid(xtype);
         }
+        
+        if (!result && me.detailGrids.length > 0){
+            result =  me.detailGrids.find(function(detail){
+                        return detail.xtype === xtype;
+                    });
+        }
+
+        return me.getView().xtype === xtype ? me : result;
     },
 
     init: function(view){
