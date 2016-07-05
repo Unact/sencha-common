@@ -75,10 +75,14 @@ Ext.define('Ext.lib.singletable.ViewController', {
         var view = me.getView();
         var vm = view.getViewModel();
         var deleteButton = me.lookupReference('delete' + view.suffix);
+        var addButton = me.lookupReference('add' + view.suffix);
         var master = selectedOne ? selected[0] : null;
     
         if(deleteButton){
             deleteButton.setDisabled(me.isDisabledDeleteButton(selected));
+        }
+        if(addButton){
+            addButton.setDisabled(me.isDisabledAddButton(selected));
         }
         if(vm){
             vm.set('masterRecord', master);
@@ -307,5 +311,13 @@ Ext.define('Ext.lib.singletable.ViewController', {
      * @param {Ext.data.Model} record - Выбранный строка, если никакая строка не выбрана, то null
      * @return {Boolean}
      */    
-    isDisabledDeleteButton: Ext.emptyFn
+    isDisabledDeleteButton: Ext.emptyFn,
+
+    /**
+     * Возвращает true, если надо задизейблить кнопку "Добавить".
+     * @abstract
+     * @param {Ext.data.Model} record - Выбранный строка, если никакая строка не выбрана, то null
+     * @return {Boolean}
+     */ 
+    isDisabledAddButton: Ext.emptyFn
 });

@@ -39,6 +39,10 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         return !(records && records.length>0);
     },
 
+    isDisabledAddButton: function(records){
+        return false;
+    },
+
 	onDeleteByColumn: function(grid, rowIndex, colIndex, item, e, record, row) {
 		var me = this;
 		if(me.grid.enableDeleteDialog===true){

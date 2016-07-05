@@ -278,6 +278,10 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         }
         for ( sourceRowIdx = recCount-1; sourceRowIdx >= 0; sourceRowIdx--) {
             dataObject = dataInitializator ? dataInitializator.call(controller, masterRecord) : {};
+
+            if (!dataObject){
+                break;
+            }
             
             row = values[sourceRowIdx];
             
