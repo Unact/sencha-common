@@ -39,14 +39,33 @@ Ext.define('Renew.ymaps.SelfIntersection', {
         me.selfIntersectionRemovePlacemarks(me.map, selfIntersectionCollection);
 
         event.get('points').forEach(function(coordinates) {
-            selfIntersectionCollection.add(new ymaps.Placemark(coordinates, {
-                balloonContent: 'Точка самопересечения. Определяются "на лету" для полигонов ' +
+            var msg = 'Точка самопересечения.';
+            if (event.get('lengthCheck') !== null && event.get('lengthCheck') !== undefined) {
+                msg += ' Определяются "на лету" для полигонов ' +
                     'с количеством верним не превышающем ' + event.get('lengthCheck') + '.'
+            }
+            selfIntersectionCollection.add(new ymaps.Placemark(coordinates, {
+                balloonContent: msg
             }, {
                 preset: 'islands#greenDotIcon'
             }));
         });
 
         me.map.geoObjects.add(selfIntersectionCollection);
+    },
+
+    // Условие использования этой функции - модель, представляющая зону должна иметь поле polygon, которае
+    // ссылается на объект ymaps.Polygon
+    // 
+    // Фнкция должна испльзоваться в обработчике ошибки при синхронизации стора с зонами.
+    selfIntersectionSyncErrorHandler: function(response, messageExtractor) {
+        var re = /Validation failed: Зона имеет самопересечение в точке \[([+-]?\d+(\.\d+)?); ([+-]?\d+(\.\d+)?)\]/
+        var found = messageExtractor(response).match(re);
+
+        if (found !== null) {
+            response.request.records[0].polygon.events.fire('intersectiondetectionend', {
+                points: [[parseFloat(found[1]), parseFloat(found[3])]]
+            });
+        }
     }
 });
