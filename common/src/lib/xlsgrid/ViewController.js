@@ -4,12 +4,19 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
 
     idColumn: null,
 
-    getRequestUrl: Ext.emptyFn,
-    getRequestParams: Ext.emptyFn,
+    getRequestOptions: Ext.emptyFn,
+
+    repeated: [],
+    invalid: [],
 
     init: function() {
         var me = this;
-        var vm = me.getViewModel();
+
+        me.getView().getColumns().forEach(function(column) {
+            if (column.identificator) {
+                me.idColumn = column.dataIndex;
+            }
+        });
 
         me.callParent(arguments);
     },
@@ -18,18 +25,74 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
         this.getView().getStore().loadData([]);
     },
 
+    onRefresh: function() {
+        Ext.Msg.alert('Ok', 'Refreshed');
+    },
+
+    onSave: function() {
+        var me = this;
+        var view = me.getView();
+        var store = view.getStore();
+        var messageLines = [];
+
+        store.each(function(r) {
+            var validation = r.getValidation();
+            var messages = [];
+            r.getFields().forEach(function(field) {
+                var validationMessage = validation.get(field.getName());
+                if (validationMessage.length) {
+                    messages.push(validationMessage);
+                }
+            });
+            if (messages.length) {
+                var id = r.get(me.idColumn);
+                messageLines.push((id ? String(id) + ': ' : '') + messages.join(', '));
+            }
+        });
+        if (messageLines.length) {
+            Ext.Msg.alert('Ошибка!', messageLines.join('<br/>'));
+        }
+    },
+
+    showMessage: function() {
+        var me = this;
+        var msg = [];
+        var idColumnText = Ext.Array.findBy(me.getView().getColumns(), function(item) {
+            return item.dataIndex === me.idColumn;
+        }).text;
+
+        if (me.invalid && me.invalid.length) {
+            msg.push('Несуществующие значения поля "' + idColumnText + '": ' +
+                Ext.Array.unique(me.invalid).join(', '));
+        }
+        if (me.repeated && me.repeated.length) {
+            msg.push('Повторяющиеся значения поля "' + idColumnText + '": ' +
+                Ext.Array.unique(me.repeated).join(', '));
+        }
+
+        me.repeated = [];
+        me.invalid = [];
+
+        if (msg.length) {
+            Ext.Msg.alert('Сообщение', msg.join('<br/>'));
+        }
+    },
+
     mergeObjectArrays: function(arr1, arr2) {
         var me = this;
+        var fields = me.getView().getColumns().map(function(column) {return column.dataIndex;});
         var result = [];
 
         arr1.forEach(function(r1) {
-            var r2 = Ext.Array.findBy(arr2, function(item) {
-                return Number(r1[me.idColumn]) === Number(item[me.idColumn]);
+            arr2.forEach(function(r2) {
+                if (r1[me.idColumn] == r2[me.idColumn]) {
+                    var resultRecord = {};
+                    fields.forEach(function(field) {
+                        resultRecord[field] = r1[field] || r2[field];
+                    });
+                    result.push(resultRecord);
+                }
             });
-
-            if (r2) {
-                result.push(Ext.Object.merge(r1, r2));
-            }
         });
 
         return result;
@@ -39,29 +102,31 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
         var me = this;
         var view = me.getView();
         var store = view.getStore();
-        var ids = records.map(function(r) { return (r[me.idColumn]); });
+        var ids = records.map(function(r) { return Number(r[me.idColumn]); });
+        var requestOptions = me.getRequestOptions(ids);
 
-        // view.setLoading(true);
+        view.setLoading(true);
 
-        Ext.Ajax.request({
-            timeout: 60000,
-            url: me.getRequestUrl(),
-            params: me.getRequestParams(ids),
-            method: 'GET',
-            success: function(response) {
-                var receivedRecords = Ext.JSON.decode(response.responseText, true);
-                var receivedIds = receivedRecords.map(function(r) { return Number(r[me.idColumn]); });
-                Ext.Array.difference(ids, receivedIds); // TODO
-                store.add(me.mergeObjectArrays(records, receivedRecords));
-            }
-        });
+        requestOptions.headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+
+        requestOptions.success = function(response) {
+            var receivedRecords = Ext.JSON.decode(response.responseText, true);
+            var receivedIds = receivedRecords.map(function(r) { return Number(r[me.idColumn]); });
+            me.invalid = me.invalid.concat(Ext.Array.difference(ids, receivedIds));
+            store.add(me.mergeObjectArrays(records, receivedRecords));
+            view.setLoading(false);
+            me.showMessage();
+        };
+
+        Ext.Ajax.request(requestOptions);
     },
 
     isDublicate: function(records, record) {
-        var found;
         var store = this.getView().getStore();
-
-        found = Ext.Array.findBy(records, function(r) {
+        var found = Ext.Array.findBy(records, function(r) {
             return Ext.Array.equals(Ext.Object.getValues(record), Ext.Object.getValues(r));
         });
 
@@ -71,7 +136,11 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
 
         found = store.findBy(function(r) {
             for (var i in record) {
-                if (r.get(i) != record[i]) {
+                var storeValue = r.get(i);
+                if (storeValue instanceof Date) {
+                    storeValue = Ext.Date.format(storeValue, 'd.m.Y');
+                }
+                if (storeValue != record[i]) {
                     return false;
                 }
             }
@@ -88,18 +157,15 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
         var rows = xls.split('\n');
         var records = [];
         var colSpecs = [];
-        var idCol;
 
         columns.forEach(function(column) {
             var columnIx = column.columnInXls;
-            if (column.identificator) {
-                me.idColumn = column.dataIndex;
-            }
             if (columnIx !== undefined) {
                 colSpecs[columnIx] = {
                     dataIndex: column.dataIndex,
                     identificator: column.identificator ? true : false,
-                    required: column.required ? true : false
+                    required: column.required ? true : false,
+                    columnStore: column.xtype === 'combocolumn' ? column.store : null
                 };
             }
         });
@@ -109,14 +175,22 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
             var record = {};
             if (row.length) {
                 for (var i in colSpecs) {
-                    var item = row[i];
-                    if (colSpecs[i].required && item.length === 0) {
+                    var item = row[i] && row[i].length ? row[i] : null;
+                    var columnStore = colSpecs[i].columnStore;
+
+                    if (columnStore) {
+                        var recordFromCombo = columnStore.getAt(columnStore.findExact('name', item));
+                        item = recordFromCombo ? recordFromCombo.get('id') : null;
+                    }
+
+                    if ((colSpecs[i].required || colSpecs[i].identificator) && !item) {
                         return;
                     }
-                    record[colSpecs[i].dataIndex] = item && item.length ? item : null;
+
+                    record[colSpecs[i].dataIndex] = item;
                 }
                 if (me.isDublicate(records, record)) {
-                    // TODO
+                    me.repeated.push(record[me.idColumn]);
                 } else {
                     records.push(record);
                 }
