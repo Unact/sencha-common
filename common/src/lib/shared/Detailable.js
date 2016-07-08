@@ -11,5 +11,25 @@ Ext.define('Ext.lib.shared.Detailable', {
             return true;
         }
         return master.phantom;
-    } 
+    },
+    
+    applyDetailGrids: function(detailGrids){
+        var me = this;
+        
+        me.detailGrids = detailGrids;
+        
+        me.detailGrids.forEach(function(detail){
+            detail.getController().masterGrid = me.getView();
+        });
+    },
+
+    findDetail: function(xtype){
+        var me = this;
+
+        if (me.detailGrids.length > 0){
+            return me.detailGrids.find(function(detail){
+                return detail.xtype === xtype;
+            });
+        }
+    }
 });

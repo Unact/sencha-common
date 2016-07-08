@@ -62,6 +62,6 @@ Ext.define('Ext.lib.shared.Toolbar', {
         }
         
         me.items = buttons;
-        me.callParent();
+        me.callParent(arguments);
     }
 });

@@ -18,8 +18,8 @@ Ext.define('Ext.lib.singletree.ViewController', {
     deleteRecords: function(store, records, index, sm){
         var recordsCount;
         var record = records[0];
-        var parentRecord = record.parentNode;  
-
+        var parentRecord = record.parentNode;
+        
         parentRecord.removeChild(record);
         
         recordsCount = store.getCount();

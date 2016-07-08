@@ -4,8 +4,11 @@ Ext.define('Ext.lib.singletree.View', {
 
     requires : [
         'Ext.lib.singletree.ViewController',
-        'Ext.lib.shared.Toolbar'
+        'Ext.lib.shared.Toolbar',
+        'Ext.lib.shared.PanelBuilders'
     ],
+    
+    mixins: ['Ext.lib.shared.PanelBuilders'],
 
     controller : 'singletree',
 
@@ -42,54 +45,16 @@ Ext.define('Ext.lib.singletree.View', {
         });
     },
     
-    initComponent: function() {
+    initComponent: function(config) {
         var me = this;
-        var toolbarConfig = {
-            xtype: 'sharedtoolbar',
-            
-            beforeButtons: me.beforeButtons,
-            afterButtons: me.afterButtons,
-            
-            disableDelete: me.disableDelete,
-            disableAdd: me.disableAdd,
-            disableSave: me.disableSave,
-            disableRefresh: me.disableRefresh,
-            
-            suffix: me.suffix
-        };
-    
-        if(me.enabledButtons) {
-            toolbarConfig['enabledButtons'] = me.enabledButtons;
-        };
-        if(me.buttonsDock) {
-            toolbarConfig['buttonsDock'] = me.buttonsDock;
-        }
-                
-        me.dockedItems = [toolbarConfig];
-        
-        
         var plugins = me.plugins || [];
-        if (me.disableEditing !== true) {
-            var hasEditingPlugin = false;
-
-            for ( i = 0; i < plugins.length; i++) {
-                if (plugins[i].ptype == 'rowediting' || plugins[i].ptype == 'cellediting') {
-                    hasEditingPlugin = true;
-                    break;
-                }
-            }
-            if (!hasEditingPlugin) {
-                plugins.push((me.editing == 'row') ? {
-                    ptype : 'rowediting',
-                    clicksToEdit : 2
-                } : {
-                    ptype : 'cellediting',
-                    clicksToEdit : 1
-                });
-            }
-        }
+        
+        me.formToolbarConfig(me);
+        
+        me.addEditingPlugins(me, plugins);
+        
         me.plugins = plugins;
         
-        me.callParent();
+        me.callParent(arguments);
     }
 });

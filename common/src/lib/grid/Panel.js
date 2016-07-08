@@ -1,14 +1,16 @@
 Ext.define('Ext.lib.grid.Panel', {
 	extend : 'Ext.grid.Panel',
 	alias : 'widget.simpleGrid',
-
-	// @formatter:off
+	
 	requires: [
 		'Ext.button.Button',
 		'Ext.grid.plugin.CellEditing',
 		'Ext.grid.plugin.RowEditing',
-		'Ext.lib.shared.Toolbar'],
-	// @formatter:on
+		'Ext.lib.shared.Toolbar',
+		'Ext.lib.shared.PanelBuilders'
+	],
+	
+	mixins: ['Ext.lib.shared.PanelBuilders'],
 	
 	config: {
 		selModel: {
@@ -41,75 +43,20 @@ Ext.define('Ext.lib.grid.Panel', {
 		suffix = config.suffix || me.xtype;
 		config.suffix = suffix;
 		config.viewConfig = {};
-		config.dockedItems = [];
 
 		Ext.apply(config, me.getInitialConfig());
 		Ext.apply(config, currentConfig);
 		Ext.apply(config, me.cfg);
+		Ext.applyIf(config.viewConfig, {
+            enableTextSelection : true,
+            loadMask: false
+        });
 		
+		me.formToolbarConfig(config);
 		
 		plugins = config.plugins || [];
-		
 
-        var toolbarConfig = {
-            xtype: 'sharedtoolbar',
-            
-            beforeButtons: config.beforeButtons,
-            afterButtons: config.afterButtons,
-            
-            disableDelete: config.disableDelete,
-            disableAdd: config.disableAdd,
-            disableSave: config.disableSave,
-            disableRefresh: config.disableRefresh,
-            
-            suffix: config.suffix
-        };
-        
-        if(config.enabledButtons) {
-            toolbarConfig['enabledButtons'] = config.enabledButtons;
-        };
-        if(config.buttonsDock) {
-            toolbarConfig['buttonsDock'] = config.buttonsDock;
-        }
-                
-        if(config.beforeToolbar){
-        	for (i = 0; i < config.beforeToolbar.length; i++) {
-                config.dockedItems.push(config.beforeToolbar[i]);
-            }
-        }
-                
-        config.dockedItems.push(toolbarConfig);
-
-        if(config.afterToolbar){
-        	for (i = 0; i < config.afterToolbar.length; i++) {
-                config.dockedItems.push(config.afterToolbar[i]);
-            }
-        }
-
-		Ext.applyIf(config.viewConfig, {
-			enableTextSelection : true,
-			loadMask: false
-		});
-
-		if (config.disableEditing !== true) {
-			var hasEditingPlugin = false;
-
-			for ( i = 0; i < plugins.length; i++) {
-				if (plugins[i].ptype == 'rowediting' || plugins[i].ptype == 'cellediting') {
-					hasEditingPlugin = true;
-					break;
-				}
-			}
-			if (!hasEditingPlugin) {
-				plugins.push((config.editing == 'row') ? {
-					ptype : 'rowediting',
-					clicksToEdit : 2
-				} : {
-					ptype : 'cellediting',
-					clicksToEdit : 1
-				});
-			}
-		}
+		me.addEditingPlugins(config, plugins);
 
 		if (config.enableBuffering === true) {
 			var hasBufferPlugin = false;
@@ -158,8 +105,8 @@ Ext.define('Ext.lib.grid.Panel', {
 			}, config.deleteColumnConfig));
 		}
 		
-		Ext.apply(this, config);
+		Ext.apply(me, config);
 
-		this.callParent(arguments);
+		me.callParent(arguments);
 	}
 });
