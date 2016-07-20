@@ -46,14 +46,13 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
             return;
         }
 
-        view.setLoading(true);
-
         if (errorText.length) {
             Ext.Msg.alert('Ошибка!', errorText);
         } else {
             if (me.beforeSave && !me.beforeSave()) {
                 return;
             }
+            view.setLoading(true);
             store.each(function(r) {
                 var dataObject = {};
                 columns.forEach(function(c) {
@@ -62,15 +61,21 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
                 gridData.push(dataObject);
             });
 
-            saveOptions = me.getSaveOptions(gridData);
-            saveOptions.callback = function(options, success, response) {
-                view.setLoading(false);
-                if (success) {
-                    Ext.Msg.alert('Сообщение', 'Данные успешно сохранены')
-                    store.commitChanges();
+            if (gridData.length) {
+                saveOptions = me.getSaveOptions(gridData);
+                if (saveOptions.callback === undefined) {
+                    saveOptions.callback = function(options, success, response) {
+                        view.setLoading(false);
+                        if (success) {
+                            Ext.Msg.alert('Сообщение', 'Данные успешно сохранены')
+                            store.commitChanges();
+                        }
+                    };
                 }
-            };
-            Ext.Ajax.request(saveOptions);
+                Ext.Ajax.request(saveOptions);
+            } else {
+                view.setLoading(false);
+            }
         }
     },
 
@@ -102,6 +107,7 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
                         });
                     }
                 });
+                store.commitChanges();
             });
         });
     },
@@ -163,7 +169,10 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
         store.each(function(outer) {
             var _values = function(model) {
                 var columns = me.getEditableColumns();
-                return columns.map(function(key) {return model.get(key); });
+                return columns.map(function(key) {
+                    var val = model.get(key);
+                    return val instanceof Date ? Ext.Date.format(val, 'd.m.Y') : val;
+                });
             };
             var outerValues = _values(outer);
             var found = store.findBy(function(inner) {

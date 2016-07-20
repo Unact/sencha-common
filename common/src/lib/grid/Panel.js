@@ -1,7 +1,7 @@
 Ext.define('Ext.lib.grid.Panel', {
 	extend : 'Ext.grid.Panel',
 	alias : 'widget.simpleGrid',
-	
+
 	requires: [
 		'Ext.button.Button',
 		'Ext.grid.plugin.CellEditing',
@@ -9,15 +9,15 @@ Ext.define('Ext.lib.grid.Panel', {
 		'Ext.lib.shared.Toolbar',
 		'Ext.lib.shared.PanelBuilders'
 	],
-	
+
 	mixins: ['Ext.lib.shared.PanelBuilders'],
-	
+
 	config: {
 		selModel: {
 			type: 'rowmodel',
 			mode: 'MULTI'
 		},
-		
+
 		saveDetail: false,
 		autoEditOnAdd: false
 	},
@@ -39,8 +39,8 @@ Ext.define('Ext.lib.grid.Panel', {
 		var plugins;
 		var i;
 		var suffix;
-		
-		suffix = config.suffix || me.xtype;
+
+		suffix = currentConfig.suffix || me.xtype;
 		config.suffix = suffix;
 		config.viewConfig = {};
 
@@ -51,9 +51,9 @@ Ext.define('Ext.lib.grid.Panel', {
             enableTextSelection : true,
             loadMask: false
         });
-		
+
 		me.formToolbarConfig(config);
-		
+
 		plugins = config.plugins || [];
 
 		me.addEditingPlugins(config, plugins);
@@ -104,7 +104,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				handler : 'onDeleteByColumn'
 			}, config.deleteColumnConfig));
 		}
-		
+
 		Ext.apply(me, config);
 
 		me.callParent(arguments);
