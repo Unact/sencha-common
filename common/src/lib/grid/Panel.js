@@ -11,7 +11,7 @@ Ext.define('Ext.lib.grid.Panel', {
 	 * beforeButtons - дополнительные элементы для панели, располагающиеся перед основными кнопками
 	 * afterButtons - дополнительные элементы для панели, располагающиеся после основных кнопок
 	 * disableEditing - таблица нередактируемая. По умолчанию используется редактирование ячеек
-	 * disableDeleteColumn - не добавлять колонку удаления позиций. По умолчанию добавляется
+	 * enableDeleteColumn - добавлять колонку удаления позиций. По умолчанию не добавляется
 	 * enableBuffering - использовать плагин для буферизованного вывода записей. когда записей больше 1000, это полезно.
 	 * extraPlugins - дополнительные плагины помимо плагинов редактирования и буферизованного вывода.
 	 * функция loadComboColumn - загружает сторки у всех combocolumn данной панели. Параметр - функция обратного вызова
@@ -147,7 +147,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		config.stateful = true;
 		config.stateId = config.suffix + 'StateId';
 
-		if (config.disableDeleteColumn !== true) {
+		if (config.enableDeleteColumn === true) {
 			config.columns.push({
 				xtype : 'actioncolumn',
 				width : 20,
