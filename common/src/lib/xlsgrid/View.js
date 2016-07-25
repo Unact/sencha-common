@@ -27,7 +27,7 @@ Ext.define('Ext.lib.xlsgrid.View', {
 
     config: {
         autoEditOnAdd: 0,
-        disableDeleteColumn: true,
+        
         afterButtons: [{
             xtype: 'button',
             text: 'Очистить',
