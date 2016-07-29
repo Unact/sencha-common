@@ -5,10 +5,13 @@ Ext.define('Ext.lib.form.DateTimeField', {
     mixins: ['Ext.form.field.Field'],
 
     layout: 'column',
+
     defaultMargins: '0 0 0 0',
-    dateFormat: 'd.m.Y',
-    timeFormat: 'H:i',
-    flex:1,
+
+    flex: 1,
+
+    // Если включен, значит у полей не надо менять значения
+    suspendFieldValueChange: 0,
 
     items: [
         {
@@ -35,45 +38,61 @@ Ext.define('Ext.lib.form.DateTimeField', {
 
         me.timefield.on('change', me.changeTimeValue, me);
         me.datefield.on('change', me.changeDateValue, me);
+        me.on('change', me.changeValue, me);
     },
 
     changeTimeValue: function(field, newValue, oldValue, eOpts){
         var me = this;
-        var date = me.datefield.getValue() || new Date();
-        var len = field.getRawValue().length;
+        var date = me.datefield.getValue();
 
-        if (field.isValid() && (len > 4)){
-            me.setValue(me.addTime(date, newValue));
-        } 
-
-        if (len === 0) {
-            me.setValue(null);
+        if (newValue instanceof Date || newValue === null){
+            me.suspendFieldValueChange++;
+            me.setValue(me.computeDateTime(date, newValue));
+            me.suspendFieldValueChange--;
         }
-
         return true;
     },
 
     changeDateValue: function(field, newValue, oldValue, eOpts){
         var me = this;
         var time = me.timefield.getValue();
-        var len = field.getRawValue().length;
 
-        if (field.isValid() && (len > 9)){
-            me.setValue(me.addTime(newValue, time));
-        }
-
-        if (len === 0) {
-            me.setValue(null);
+        // Иногда приходят странные значения newValue, в таких случаях ничего делать не надо
+        if (newValue instanceof Date || newValue === null){
+            me.suspendFieldValueChange++;
+            me.setValue(me.computeDateTime(newValue, time));
+            me.suspendFieldValueChange--;
         }
 
         return true;
     },
 
-    addTime: function(date, time){
-        value = Ext.Date.clearTime(date);
-        time = time || value;
-        value = Ext.Date.add(value, Ext.Date.HOUR, time.getHours());
-        value = Ext.Date.add(value, Ext.Date.MINUTE, time.getMinutes());
+    changeValue: function(field, newValue, oldValue, eOpts){
+        var me = this;
+
+        if (!me.suspendFieldValueChange){
+            // Проведем изменение значений без ивентов и проверок
+            me.datefield.suspendCheckChange++;
+            me.timefield.suspendCheckChange++;
+
+            me.datefield.setValue(newValue);
+            me.timefield.setValue(newValue);
+            
+            me.timefield.suspendCheckChange--;
+            me.datefield.suspendCheckChange--;
+        }
+    },
+
+    // Если дата или время null то и значение должно быть null
+    computeDateTime: function(date, time){
+        var value = null;
+        if (date){
+            if (time){
+                value = Ext.Date.clearTime(date);
+                value = Ext.Date.add(value, Ext.Date.HOUR, time.getHours());
+                value = Ext.Date.add(value, Ext.Date.MINUTE, time.getMinutes());
+            }
+        }
 
         return value;
     },
@@ -82,42 +101,14 @@ Ext.define('Ext.lib.form.DateTimeField', {
         var me = this;
 
         me.callParent(arguments);
-        me.datefield.setDisabled(false);
-        me.timefield.setDisabled(false);
-        return true;
-    },
-    
-    setValue: function(value){
-        var me = this;
-        var timeValue = me.timefield.getValue();
-        var dateValue = me.datefield.getValue();
-        var timeValueSet = value;
-        var dateValueSet = value;
-
-        if (!value){
-            dateValueSet = dateValue ? dateValue : value;
-            timeValueSet = timeValue ? timeValue : value;
-            if (dateValue && timeValue){
-                dateValueSet = null;
-                timeValueSet = null;
-            }
-        }
-        
-        me.datefield.setValue(dateValueSet);
-        me.timefield.setValue(timeValueSet);
-        me.mixins.field.setValue.call(me, value);
-        me.value = value;
-
-        return true;
-    },
-    
-    getValue: function(){
-        return this.value;
+        me.datefield.setDisabled(value);
+        me.timefield.setDisabled(value);
     },
 
     resetOriginalValue: function(){
         var me = this;
 
+        me.callParent();
         me.getFields().forEach(function(el, i, array){
             el.resetOriginalValue();
         });
