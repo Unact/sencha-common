@@ -2,7 +2,10 @@ Ext.define('Ext.lib.xlsgrid.View', {
     extend: 'Ext.lib.singlegrid.View',
     alias: 'widget.xlsgrid',
 
-    requires: ['Ext.lib.xlsgrid.ViewController'],
+    requires: [
+        'Ext.lib.xlsgrid.ViewController',
+        'Ext.lib.grid.plugin.RowClipboard'
+    ],
 
     controller: 'xlsgrid',
 
@@ -31,27 +34,19 @@ Ext.define('Ext.lib.xlsgrid.View', {
     config: {
         uniqueByIdentificator: true,
         autoEditOnAdd: 0,
-        
+
+        extraPlugins: [{
+            ptype: 'rowclipboard',
+            enabledActions: ['paste'],
+            pasteInEditableOnly: true,
+            insertPrimaryValue: true
+        }],
+
         afterButtons: [{
             xtype: 'button',
             text: 'Очистить',
             listeners: {
                 click: 'onClearButtonClick',
-                scope: this.controller
-            }
-        }, {
-            xtype: 'textareafield',
-            fieldLabel: 'XLS',
-            width: 100,
-            grow: true,
-            growMax: 1,
-            minHeight: 20,
-            labelWidth: 25,
-            style: {
-                marginLeft: '15px'
-            },
-            listeners: {
-                change: 'onXlsChanged',
                 scope: this.controller
             }
         }]

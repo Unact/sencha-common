@@ -4,6 +4,7 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
 
     idColumn: null,
 
+    saveParams: null,
     getRequestOptions: Ext.emptyFn,
 
     repeated: [],
@@ -35,47 +36,12 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
 
     onSave: function() {
         var me = this;
-        var view = me.getView();
-        var store = view.getStore();
-        var gridData = [];
         var errorText = me.getValidationText();
-        var saveOptions;
-        var columns = me.getEditableColumns();
-
-        if (store.count() === 0) {
-            return;
-        }
 
         if (errorText.length) {
-            Ext.Msg.alert('Ошибка!', errorText);
+            Ext.Msg.alert('Ошибка', errorText);
         } else {
-            if (me.beforeSave && !me.beforeSave()) {
-                return;
-            }
-            view.setLoading(true);
-            store.each(function(r) {
-                var dataObject = {};
-                columns.forEach(function(c) {
-                    dataObject[c] = r.get(c);
-                });
-                gridData.push(dataObject);
-            });
-
-            if (gridData.length) {
-                saveOptions = me.getSaveOptions(gridData);
-                if (saveOptions.callback === undefined) {
-                    saveOptions.callback = function(options, success, response) {
-                        view.setLoading(false);
-                        if (success) {
-                            Ext.Msg.alert('Сообщение', 'Данные успешно сохранены')
-                            store.commitChanges();
-                        }
-                    };
-                }
-                Ext.Ajax.request(saveOptions);
-            } else {
-                view.setLoading(false);
-            }
+            me.callParent(arguments);
         }
     },
 
@@ -107,7 +73,6 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
                         });
                     }
                 });
-                store.commitChanges();
             });
         });
     },
@@ -130,7 +95,7 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
                                 Object.keys(record).forEach(function(key) {
                                     model.set(key, record[key]);
                                 });
-                                model.commit();
+                                delete model.modified[me.idColumn];
                             } else {
                                 store.remove(model);
                             }
@@ -224,15 +189,26 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
 
     mergeRecordArrays: function(arr1, arr2) {
         var me = this;
-        var fields = me.getView().getColumns().map(function(column) {return column.dataIndex;});
+        var columns = me.getView().getColumns();
+        var fields = columns.map(function(column) {return column.dataIndex;});
         var result = [];
+
+        if (columns[0].xtype === 'rownumberer') {
+            delete fields[0];
+        }
 
         arr1.forEach(function(r1) {
             arr2.forEach(function(r2) {
                 if (r1[me.idColumn] == r2[me.idColumn]) {
                     var resultRecord = {};
                     fields.forEach(function(field) {
-                        resultRecord[field] = r1[field] || r2[field];
+                        var value = null;
+                        if (r1[field] || r1[field] === 0) {
+                            value = r1[field];
+                        } else if (r2[field] || r2[field] === 0) {
+                            value = r2[field];
+                        }
+                        resultRecord[field] = value;
                     });
                     result.push(resultRecord);
                 }
@@ -322,78 +298,27 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
                 continue;
             }
 
-            result.splice(0, 0, rec);
+            result.unshift(rec);
         }
 
         return result;
     },
 
-    extractRecordsFromXls: function(xls) {
+    insertValues: function(records) {
         var me = this;
-        var view = me.getView();
-        var columns = view.getColumns();
-        var rows = xls.split('\n');
-        var records = [];
-        var colSpecs = [];
+        var validRecords = [];
 
-        columns.forEach(function(column) {
-            var columnIx = column.columnInXls;
-            if (columnIx !== undefined) {
-                colSpecs[columnIx] = {
-                    dataIndex: column.dataIndex,
-                    identificator: column.identificator ? true : false,
-                    required: column.required ? true : false,
-                    columnStore: column.xtype === 'combocolumn' ? column.store : null
-                };
+        me.unique(records).forEach(function(r) {
+            var id = r[me.idColumn];
+            if (Ext.Number.from(id, null) === null) {
+                me.invalid.push(id);
+            } else {
+                validRecords.push(r);
             }
         });
 
-        rows.forEach(function(row) {
-            var row = row.split('\t');
-            var record = {};
-            if (row.length) {
-                var id;
-                for (var i in colSpecs) {
-                    var item = row[i] && row[i].length ? row[i] : null;
-                    var columnStore = colSpecs[i].columnStore;
-
-                    if (columnStore) {
-                        var recordFromCombo = columnStore.findExactRecord('name', item);
-                        item = recordFromCombo ? recordFromCombo.get('id') : null;
-                    }
-
-                    if ((colSpecs[i].required || colSpecs[i].identificator) && !item) {
-                        return;
-                    }
-
-                    record[colSpecs[i].dataIndex] = item;
-                }
-                id = record[me.idColumn];
-                if (Ext.Number.from(id, null) === null) {
-                    me.invalid.push(id);
-                } else {
-                    records.push(record);
-                }
-            }
-        });
-
-        return me.unique(records);
-    },
-
-    onXlsChanged: function(field, xls) {
-        var me = this;
-        var records;
-
-        if (!xls || !xls.length) {
-            return;
-        }
-
-        field.reset();
-
-        records = me.extractRecordsFromXls(xls);
-
-        me.loadRemoteData(records, function(receivedRecords) {
-            me.getView().getStore().add(me.mergeRecordArrays(records, receivedRecords));
+        me.loadRemoteData(validRecords, function(receivedRecords) {
+            me.getView().getStore().insert(0, me.mergeRecordArrays(validRecords, receivedRecords));
         });
     }
 });

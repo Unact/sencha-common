@@ -15,25 +15,26 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
             get: 'getRowData'
         }
     },
-    
+
     config: {
-        copyColumnHeaders: false
+        copyColumnHeaders: false,
+        pasteInEditableOnly: false
     },
-    
+
     enabledActions: ['copy', 'paste', 'cut'],
 
     insertPrimaryValue: false,
-    
+
     privates: {
         finishInit: function(comp){
             var me = this,
                 toolbar,
                 binding,
                 i;
-            
+
             if(Ext.browser.is('Safari')){
                 toolbar = comp.down('toolbar[dock="' + (comp.buttonsDock ? comp.buttonsDock : 'top') + '"]');
-                
+
                 if(!toolbar){
                     toolbar = comp.addDocked({
                         xtype: 'toolbar',
@@ -41,7 +42,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                         dock: 'top'
                     })[0];
                 }
-                
+
                 toolbar.add({
                     xtype: 'textarea',
                     width: 350,
@@ -92,11 +93,11 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
             }
         }
     },
-    
+
     createBufferTextArea: function(cmp) {
         var me = this,
             areaEl = document.getElementById(cmp.getInputId());
-        
+
         areaEl.onclick = function(){
             areaEl.value = ' ';
             areaEl.select();
@@ -136,7 +137,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         var view = cmp.getView();
         var columns = view.getVisibleColumnManager().getColumns();
         var i, j;
-        
+
         if(me.copyColumnHeaders){
             row = [];
             for(j = 0; j<columns.length; j++){
@@ -144,9 +145,9 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
             }
             ret.push(row);
         }
-        
+
         selected =  copyAll ? store.getData().items : selected;
-        
+
         for(i = 0; i<selected.length; i++){
             record = selected[i];
             row = [];
@@ -163,7 +164,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                 } else {
                     viewNode = Ext.fly(viewNode);
                 }
-                
+
                 for(j = 0; j<columns.length; j++){
                     cell = viewNode.down(columns[j].getCellInnerSelector());
                     data = cell.dom.innerHTML;
@@ -173,18 +174,18 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                     if(data && data.length>0 && data.trim()=='&nbsp;'){
                         data = "";
                     }
-                    
+
                     row.push(data);
                 }
             }
 
             ret.push(row);
-            
+
             if (erase && dataIndex) {
                 record.set(dataIndex, null);
             }
         }
-        
+
         return Ext.util.TSV.encode(ret);
     },
 
@@ -198,7 +199,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         var copyAll = selModel.getSelectionMode()!=='MULTI' || store.getCount()==selected.length;
         var dataIndex, record, row;
         var i, j;
-        
+
         if(me.copyColumnHeaders){
             row = [];
             for(j = 0; j<columns.length; j++){
@@ -206,25 +207,25 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
             }
             ret.push(row);
         }
-        
+
         selected =  copyAll ? store.getData().items : selected;
-        
+
         for(i = 0; i<selected.length; i++){
             record = selected[i];
-            
+
             ret.push( row = {
                 model: record.self,
                 fields: []
             });
-            
+
             for(j = 0; j<columns.length; j++){
                 dataIndex = columns[j].dataIndex;
-                
+
                 row.fields.push({
                     name: dataIndex,
                     value: record.data[dataIndex]
                 });
-                
+
                 if (erase && dataIndex) {
                     record.set(dataIndex, null);
                 }
@@ -250,6 +251,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         var controller = cmp.getController();
         var sm = cmp.getSelectionModel();
         var records = [];
+        var dataObjects = [];
         var row;
         var rowIdx;
         var sourceRowIdx;
@@ -259,11 +261,11 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         var dataObject;
         var masterRecord;
         var dataInitializator;
+        var insertInStore;
         var pasteComplete;
-        var insertValue;
-        
+
         sm.deselectAll();
-        
+
         if(controller){
             if(controller.masterGrid){
                 masterRecord = controller.masterGrid.getViewModel().get('masterRecord');
@@ -271,9 +273,13 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
             if(controller.beforeAdd && (typeof controller.beforeAdd === "function")){
                 dataInitializator = controller.beforeAdd;
             }
-            
+
             if(controller.afterPaste && (typeof controller.afterPaste === "function")){
                 pasteComplete = controller.afterPaste;
+            }
+
+            if (controller.insertValues && (typeof controller.insertValues === "function")) {
+                insertInStore = controller.insertValues;
             }
         }
         for ( sourceRowIdx = recCount-1; sourceRowIdx >= 0; sourceRowIdx--) {
@@ -282,46 +288,57 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
             if (!dataObject){
                 break;
             }
-            
+
             row = values[sourceRowIdx];
-            
+
             // Collect new values in dataObject
             for ( sourceColIdx = 0, rowIdx = 0; sourceColIdx < colCount && sourceColIdx < columns.length; sourceColIdx++, rowIdx++) {
-                column = columns[sourceColIdx];
-                if (column.xtype == 'rownumberer'){
+                if (columns[sourceColIdx].xtype == 'rownumberer'){
                     sourceColIdx++;
                     colCount++;
                 }
-                
-                if (column.xtype === 'combocolumn' && me.insertPrimaryValue){
-                    row[rowIdx] = column.store.findExactRecord(column.primaryValue, row[rowIdx]).get(column.primaryKey);
-                }
-                dataIndex = columns[sourceColIdx].dataIndex;
-                if (dataIndex) {
-                    switch (format) {
-                    // Raw field values
-                    case 'raw':
-                        dataObject[dataIndex] = row[rowIdx];
-                        break;
+                column = columns[sourceColIdx];
 
-                    // Textual data with HTML tags stripped
-                    case 'text':
-                        dataObject[dataIndex] = row[rowIdx];
-                        break;
-
-                    // innerHTML from the cell inner
-                    case 'html':
-                        break;
+                dataIndex = column.dataIndex;
+                if (!me.pasteInEditableOnly || column.editor || column.field) {
+                    if (column.xtype === 'combocolumn' && me.insertPrimaryValue){
+                        var comboRecord = column.store.findExactRecord(column.primaryValue, row[rowIdx]);
+                        row[rowIdx] = comboRecord ? comboRecord.get(column.primaryKey) : null;
                     }
+                    if (dataIndex) {
+                        switch (format) {
+                        // Raw field values
+                        case 'raw':
+                            dataObject[dataIndex] = row[rowIdx];
+                            break;
+
+                        // Textual data with HTML tags stripped
+                        case 'text':
+                            dataObject[dataIndex] = row[rowIdx];
+                            break;
+
+                        // innerHTML from the cell inner
+                        case 'html':
+                            break;
+                        }
+                    }
+                } else {
+                    dataObject[dataIndex] = null;
+                    rowIdx--;
+                    colCount++;
                 }
             }
-            record = store.insert(0, dataObject);
-            sm.select(record);
-            records.push(record[0]);
-            
+            dataObjects.unshift(dataObject);
         }
-        if (pasteComplete) {
-           pasteComplete.call(controller, records); 
+
+        if (insertInStore) {
+            insertInStore.call(controller, dataObjects);
+        } else {
+            records = store.insert(0, dataObjects);
+            sm.select(records[records.length-1]);
+            if (pasteComplete) {
+               pasteComplete.call(controller, records);
+            }
         }
     },
 
@@ -329,4 +346,3 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         this.putRowData(data, format);
     }
 });
-
