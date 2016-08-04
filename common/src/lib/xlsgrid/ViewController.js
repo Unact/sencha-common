@@ -19,11 +19,6 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
                 me.idColumn = column.dataIndex;
             }
         });
-
-        view.findPlugin('cellediting').on({
-            validateedit: 'onValidateEdit',
-            scope: me
-        });
     },
 
     getEditableColumns: function() {
@@ -203,9 +198,9 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
                     var resultRecord = {};
                     fields.forEach(function(field) {
                         var value = null;
-                        if (r1[field] || r1[field] === 0) {
+                        if (!Ext.isEmpty(r1[field])) {
                             value = r1[field];
-                        } else if (r2[field] || r2[field] === 0) {
+                        } else if (!Ext.isEmpty(r2[field])) {
                             value = r2[field];
                         }
                         resultRecord[field] = value;

@@ -28,6 +28,7 @@ Ext.define('Ext.lib.xlsgrid.View', {
 
     listeners: {
         viewready: 'onViewReady',
+        validateEdit: 'onValidateEdit',
         scope: 'controller'
     },
 

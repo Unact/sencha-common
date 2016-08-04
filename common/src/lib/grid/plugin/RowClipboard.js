@@ -335,7 +335,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
             insertInStore.call(controller, dataObjects);
         } else {
             records = store.insert(0, dataObjects);
-            sm.select(records[records.length-1]);
+            sm.select(0);
             if (pasteComplete) {
                pasteComplete.call(controller, records);
             }
