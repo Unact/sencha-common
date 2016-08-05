@@ -54,8 +54,11 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
         }
 
         store.each(function(r) {
-            ids.push(r.get(me.idColumn));
-            storeRecords.push(r.getData());
+            var id = r.get(me.idColumn);
+            if (id) {
+                ids.push(id);
+                storeRecords.push(r.getData());
+            }
         });
 
         me.loadRemoteData(ids, function(receivedRecords) {
