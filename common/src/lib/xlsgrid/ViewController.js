@@ -4,7 +4,6 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
 
     idColumn: null,
 
-    saveParams: null,
     getRequestOptions: Ext.emptyFn,
 
     repeated: [],
@@ -277,7 +276,7 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
                 } else {
                     for (var i in rec) {
                         var storeValue = r.get(i);
-                        if (storeValue instanceof Date) {
+                        if (Ext.isDate(storeValue)) {
                             storeValue = Ext.Date.format(storeValue, 'd.m.Y');
                         }
                         if (storeValue != rec[i]) {
@@ -305,10 +304,10 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
 
         me.unique(records).forEach(function(r) {
             var id = r[me.idColumn];
-            if (Ext.Number.from(id, null) === null) {
-                me.invalid.push(id);
-            } else {
+            if (Ext.isNumberic()) {
                 validRecords.push(r);
+            } else {
+                me.invalid.push(id);
             }
         });
 
