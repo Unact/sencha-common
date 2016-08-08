@@ -307,7 +307,7 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
 
         me.unique(records).forEach(function(r) {
             var id = r[me.idColumn];
-            if (Ext.isNumberic()) {
+            if (Ext.isNumeric(id)) {
                 validRecords.push(r);
             } else {
                 me.invalid.push(id);
