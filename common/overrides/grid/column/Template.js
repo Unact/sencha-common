@@ -5,4 +5,4 @@ Ext.define('Ext.overrides.grid.column.Template', {
     // Если что-то поменялось в модели он выводит checkbox
     // Отменить это певедение
     updater: Ext.emptyFn
-})
+});
