@@ -143,7 +143,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
                         }
                         return matching == null;
                     });
-                    return matching || v || "";
+                    return matching || (foreignKey ? v : null) || "";
                 },
                 depends: [me.dataIndex],
                 persist: false
