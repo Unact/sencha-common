@@ -1,4 +1,4 @@
-Ext.define('Lib.data.validator.DateValidator', {
+Ext.define('Ext.lib.data.recordvalidator.DateInterval', {
 
     /**  
      * Проверяет, что дата начала меньше дата конца
