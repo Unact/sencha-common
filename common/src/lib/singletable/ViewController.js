@@ -22,6 +22,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
         if(view.disableSelectionChangeHandler!==true){
             view.on('selectionchange', me.onChangeSelect, me);
         }
+        
+        me.autoRefreshingTable = false || view.autoRefreshingTable;
     },
 
     onDelete: function(){
@@ -215,13 +217,18 @@ Ext.define('Ext.lib.singletable.ViewController', {
         var callbackScope;
         var detailsToProcess = 0;
         
+        me.syncing = true;
+        
         if (arguments[0] && (typeof arguments[0]==='function')) {
             callback = arguments[0];
             callbackScope = arguments[1] || me;
         } else {
             callback = function(){
             	if(--detailsToProcess<=0){
-            		me.onRefresh();
+            	    me.syncing = false;
+            		if(!me.autoRefreshingTable) {
+            		    me.onRefresh();
+            		}
             	}
             };
             callbackScope = me;

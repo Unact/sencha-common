@@ -45,8 +45,8 @@ Ext.define('Ext.lib.grid.Panel', {
 		config.viewConfig = {};
 
 		Ext.apply(config, me.getInitialConfig());
-		Ext.apply(config, currentConfig);
-		Ext.apply(config, me.cfg);
+		Ext.apply(config, Ext.clone(currentConfig));
+		Ext.apply(config, Ext.clone(me.cfg));
 		Ext.applyIf(config.viewConfig, {
             enableTextSelection : true,
             loadMask: false
@@ -104,7 +104,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				handler: 'onDeleteByColumn'
 			}, config.deleteColumnConfig));
 		}
-
+		
 		Ext.apply(me, config);
 
 		me.callParent(arguments);
