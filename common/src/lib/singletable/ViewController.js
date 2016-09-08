@@ -14,8 +14,6 @@ Ext.define('Ext.lib.singletable.ViewController', {
     init: function(view){
         var me = this;
         
-        me.mainView = me.mainView || view;      
-        
         view.on('refreshtable', me.onRefresh, me);
         view.on('savetable', me.onSave, me);
 
@@ -134,7 +132,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         
         if(result){
             if (vm==null || vm.get('filterReady')!==false) {
-                me.mainView.setLoading(true);
+                view.fireEvent('beginserveroperation');
                 store.load({
                     callback: function(records, operation, success){
                         if (!success) {
@@ -143,7 +141,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
                         
                         me.callbackRefresh(view, store, oldSelectionId, oldSelectionIndex);
 
-                        me.mainView.setLoading(false);
+                        view.fireEvent('endserveroperation');
                         me.afterRefresh.call(me);
                     }
                 });
@@ -252,11 +250,11 @@ Ext.define('Ext.lib.singletable.ViewController', {
         if (store.hasChanges()) {
             messages = store.getValidationMessages();
             if(messages.length==0){
-                me.mainView.setLoading(true);
+                view.fireEvent('beginserveroperation');
                 store.sync({
                     callback : function(batch) {
                         view.getSelectionModel().refresh();
-                        me.mainView.setLoading(false);
+                        view.fireEvent('endserveroperation');
                         me.afterSave(batch);
                         if (batch.exceptions.length > 0) {
                             me.onError(batch.exceptions[0].getError().response);
