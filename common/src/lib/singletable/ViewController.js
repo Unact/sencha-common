@@ -14,6 +14,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
     init: function(view){
         var me = this;
         
+        me.mainView = view;
+        
         view.on('refreshtable', me.onRefresh, me);
         view.on('savetable', me.onSave, me);
 
