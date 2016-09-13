@@ -132,7 +132,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         
         if(result){
             if (vm==null || vm.get('filterReady')!==false) {
-                view.fireEvent('beginserveroperation');
+                Ext.GlobalEvents.fireEvent('beginserveroperation');
                 store.load({
                     callback: function(records, operation, success){
                         if (!success) {
@@ -140,8 +140,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
                         }
                         
                         me.callbackRefresh(view, store, oldSelectionId, oldSelectionIndex);
-
-                        view.fireEvent('endserveroperation');
+                        Ext.GlobalEvents.fireEvent('endserveroperation');
                         me.afterRefresh.call(me);
                     }
                 });
@@ -250,11 +249,11 @@ Ext.define('Ext.lib.singletable.ViewController', {
         if (store.hasChanges()) {
             messages = store.getValidationMessages();
             if(messages.length==0){
-                view.fireEvent('beginserveroperation');
+                Ext.GlobalEvents.fireEvent('beginserveroperation');
                 store.sync({
                     callback : function(batch) {
                         view.getSelectionModel().refresh();
-                        view.fireEvent('endserveroperation');
+                        Ext.GlobalEvents.fireEvent('endserveroperation');
                         me.afterSave(batch);
                         if (batch.exceptions.length > 0) {
                             me.onError(batch.exceptions[0].getError().response);

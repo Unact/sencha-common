@@ -11,9 +11,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
     loadDictionaries : function(dictionaries, callback) {
         var controller = this;
         var loader;
-        var view = (controller.getMainView && (typeof controller.getMainView) === "function") ?
-            controller.getMainView() :
-            controller.getView();
+        var view = controller.getView();
         var errors = [];
         
         function getStore(obj){
@@ -35,6 +33,8 @@ Ext.define('Ext.lib.app.ControllerMixin', {
                 var errorsTxt;
                 var i;
                 
+                Ext.GlobalEvents.fireEvent('endserveroperation');
+                
                 if (--me.dictionaryCount == 0) {
                     if(errors.length>0 && !controller.skipDictionaryAlert){
                         errorsTxt = [];
@@ -48,18 +48,18 @@ Ext.define('Ext.lib.app.ControllerMixin', {
                             if(me.callback && ( typeof me.callback)=="function"){
                                 me.callback.call(controller, errors);
                             }
-                            me.mainContainer.setLoading(false);
                         });
                     } else {
                         if(me.callback && ( typeof me.callback)=="function"){
                             me.callback.call(controller, errors);
                         }
-                        me.mainContainer.setLoading(false);
                     }
                 }
             },
             loadStore: function(store, dictionaryData){
                 var me = this;
+                
+                Ext.GlobalEvents.fireEvent('beginserveroperation');
                 
                 store.load({
                     callback: function(records, operation, success) {
@@ -76,7 +76,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
                             me.load(dictionaryData);
                         }
                         
-                        me.updateDictionariesLoadingCount();
+                        Ext.GlobalEvents.fireEvent('endserveroperation');
                     }
                 });
             },
@@ -91,9 +91,9 @@ Ext.define('Ext.lib.app.ControllerMixin', {
                 if (Array.isArray(dictionaries)) {
                     me.dictionaryCount += dictionaries.length;
         
-                    me.mainContainer.setLoading(true);
-        
                     for ( i = 0; i < dictionaries.length; i++) {
+                        Ext.GlobalEvents.fireEvent('beginserveroperation');
+                        
                         dictionary = dictionaries[i];
                         store = getStore(dictionary);
                         if(store) {
