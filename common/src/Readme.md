@@ -40,3 +40,5 @@
 6. ["Плоская" таблица - простой вывод xml-данных в виде горизонтальной или вертикальной таблицы](https://github.com/Unact/sencha-common/blob/master/common/src/lib/view/PlainTable.js)
 7. [Специальные функции для проверки ИНН, номера лицевого счета](https://github.com/Unact/sencha-common/blob/master/common/src/lib/Checkers.js)
 8. [Заготовка для компонента фильтра дат](https://github.com/Unact/sencha-common/blob/master/common/src/lib/DateIntervalFilter.js)
+
+При загрузке хранилищ с использованием [loadDictionaries](https://github.com/Unact/sencha-common/blob/master/common/src/lib/app/ControllerMixin.js) и работе с таблицами генерируются глобальные события `beginserveroperation` и `endserveroperation`. С их помощью можно управлять поведением приложения в соответствующих ситуациях
