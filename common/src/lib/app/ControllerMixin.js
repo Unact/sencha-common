@@ -28,34 +28,6 @@ Ext.define('Ext.lib.app.ControllerMixin', {
             dictionaryCount : 0,
             mainContainer: view,
             callback: callback,
-            updateDictionariesLoadingCount: function(){
-                var me = this;
-                var errorsTxt;
-                var i;
-                
-                Ext.GlobalEvents.fireEvent('endserveroperation');
-                
-                if (--me.dictionaryCount == 0) {
-                    if(errors.length>0 && !controller.skipDictionaryAlert){
-                        errorsTxt = [];
-                        
-                        for(i = 0; i<errors.length; i++){
-                            errorsTxt.push("Хранилище: " + errors[i].storeName + "<br/>" +
-                            "Ресурс: " + errors[i].url + "<br/>" +
-                            "Ошибка: " + errors[i].error);
-                        }
-                        Ext.Msg.alert("Ошибки при загрузке", errorsTxt.join('<br/><br/>'), function(){
-                            if(me.callback && ( typeof me.callback)=="function"){
-                                me.callback.call(controller, errors);
-                            }
-                        });
-                    } else {
-                        if(me.callback && ( typeof me.callback)=="function"){
-                            me.callback.call(controller, errors);
-                        }
-                    }
-                }
-            },
             loadStore: function(store, dictionaryData){
                 var me = this;
                 
@@ -92,7 +64,6 @@ Ext.define('Ext.lib.app.ControllerMixin', {
                     me.dictionaryCount += dictionaries.length;
         
                     for ( i = 0; i < dictionaries.length; i++) {
-                        Ext.GlobalEvents.fireEvent('beginserveroperation');
                         
                         dictionary = dictionaries[i];
                         store = getStore(dictionary);
