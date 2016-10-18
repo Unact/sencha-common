@@ -24,32 +24,19 @@ Ext.define('Ext.overrides.data.Model', {
         * Возвращает экземпляр модели с фиктивным id, который может быть
         * использован в качестве выбора "всех значений"
         * @param {Object} values - поля и значения возвращаемого экземпляра
-        * @param {Object} options - опции с полями idProperty и nameProperty
+        * @param {String} nameProperty - поле с отображаемым значением
         * @return экземпляр класса Ext.data.Model или унаследованного от него класса
         */
-        getDummyAll: function(values, options){
+        getDummyAll: function(values, nameProperty){
             var model = Ext.create(this.$className);
-            var options = Ext.isObject(options) ? options : null;
-            var idProperty = options && options.idProperty ? options.idProperty : 'id';
-            var nameProperty = options && options.nameProperty ? options.nameProperty : 'name';
-            var fieldNames = model.getFields().map(
-                function(field) {
-                    return field.getName();
-                }
-            );
 
             values = values || {};
+            nameProperty = nameProperty !== 'undefined' ? nameProperty : 'name';
+            values[nameProperty] = values[nameProperty] ? values[nameProperty] : 'Все';
 
-            values[idProperty] = this.DUMMY_ALL;
-            if (values.indexOf(nameProperty) === -1) {
-                values[nameProperty] = 'Все';
-            }
+            values[this.getIdProperty()] = this.DUMMY_ALL;
 
-            Object.keys(values).forEach(function(key) {
-                if (fieldNames.indexOf(key) !== -1) {
-                    model.set(key, values[key]);
-                }
-            });
+            model.set(values);
 
             return model;
         }
