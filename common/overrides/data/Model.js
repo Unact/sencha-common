@@ -31,11 +31,10 @@ Ext.define('Ext.overrides.data.Model', {
             var model = Ext.create(this.$className);
 
             values = values || {};
-            nameProperty = nameProperty !== undefined ? nameProperty : 'name';
-            values[nameProperty] = values[nameProperty] ? values[nameProperty] : 'Все';
+            nameProperty = nameProperty || 'name';
+            values[nameProperty] = values[nameProperty] || 'Все';
 
-            values[this.getIdProperty()] = this.DUMMY_ALL;
-
+            model.setId(this.DUMMY_ALL);
             model.set(values);
 
             return model;
