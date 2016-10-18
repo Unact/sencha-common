@@ -20,27 +20,36 @@ Ext.define('Ext.overrides.data.Model', {
     inheritableStatics: {
         DUMMY_ALL: -1,
 
-        getDummyAll: function(values){
+        /**
+        * Возвращает экземпляр модели с фиктивным id, который может быть
+        * использован в качестве выбора "всех значений"
+        * @param {Object} values - поля и значения возвращаемого экземпляра
+        * @param {Object} options - опции с полями idProperty и nameProperty
+        * @return экземпляр класса Ext.data.Model или унаследованного от него класса
+        */
+        getDummyAll: function(values, options){
             var model = Ext.create(this.$className);
+            var options = Ext.isObject(options) ? options : null;
+            var idProperty = options && options.idProperty ? options.idProperty : 'id';
+            var nameProperty = options && options.nameProperty ? options.nameProperty : 'name';
             var fieldNames = model.getFields().map(
                 function(field) {
                     return field.getName();
                 }
             );
 
-            model.set('id', this.DUMMY_ALL);
+            values = values || {};
 
-            if (fieldNames.indexOf('name') !== -1) {
-                model.set('name', 'Все');
+            values[idProperty] = this.DUMMY_ALL;
+            if (values.indexOf(nameProperty) === -1) {
+                values[nameProperty] = 'Все';
             }
 
-            if (Ext.isObject(values)) {
-                Object.keys(values).forEach(function(key) {
-                    if (fieldNames.indexOf(key) !== -1) {
-                        model.set(key, values[key]);
-                    }
-                });
-            }
+            Object.keys(values).forEach(function(key) {
+                if (fieldNames.indexOf(key) !== -1) {
+                    model.set(key, values[key]);
+                }
+            });
 
             return model;
         }
