@@ -31,7 +31,7 @@ Ext.define('Ext.overrides.data.Model', {
             var model = Ext.create(this.$className);
 
             values = values || {};
-            nameProperty = nameProperty !== 'undefined' ? nameProperty : 'name';
+            nameProperty = nameProperty !== undefined ? nameProperty : 'name';
             values[nameProperty] = values[nameProperty] ? values[nameProperty] : 'Все';
 
             values[this.getIdProperty()] = this.DUMMY_ALL;
