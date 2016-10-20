@@ -28,13 +28,14 @@ Ext.define('Ext.overrides.data.Model', {
         * @return экземпляр класса Ext.data.Model или унаследованного от него класса
         */
         getDummyAll: function(values, nameProperty){
-            var model = Ext.create(this.$className);
+            var me = this;
+            var model = me.create();
 
             values = values || {};
             nameProperty = nameProperty || 'name';
             values[nameProperty] = values[nameProperty] || 'Все';
 
-            model.setId(this.DUMMY_ALL);
+            model.setId(me.DUMMY_ALL);
             model.set(values);
 
             return model;
