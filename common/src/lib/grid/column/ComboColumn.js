@@ -33,7 +33,8 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
         me.primaryKey = config.primaryKey || 'id';
         me.primaryValue = config.primaryValue || 'name';
         
-        me.fieldName = me.dataIndex + '_' + me.primaryValue;
+        me.fieldName = ((me.dataIndex.indexOf('_id')===me.dataIndex.length - 3) ?
+            me.dataIndex.substr(0, me.dataIndex.length - 3) : me.dataIndex) + '_' + me.primaryValue;
         
         if(config.store){
             if(!config.store.isStore){
@@ -120,34 +121,41 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
     
     // эта функция вызывается таблицей при привязке основного хранилища
     addPrimaryValueField: function(model){
-        var me = this, fields, fieldPresent = false;
+        var me = this;
+        var field = null;
+        var convertFunction = function(v, rec) {
+            var matching = null;
+            var data = me.getStore().snapshot || me.getStore().data;
+            var foreignKey = rec.get(me.dataIndex);
+                
+            data.each(function(record) {
+                if (record.get(me.primaryKey) == foreignKey) {
+                    matching = record.get(me.primaryValue);
+                }
+                return matching == null;
+            });
+            return matching || (foreignKey ? v : null) || "";
+        };
         
-        fields = model.getFields();
-        fields.forEach(function(field){
-            if(field.name==me.fieldName){
-                fieldPresent = true;
+        model.getFields().forEach(function(fieldFromFrid){
+            if(fieldFromFrid.name==me.fieldName){
+                field = fieldFromFrid;
             }
-            return !fieldPresent;
+            return field;
         });
-        if(!fieldPresent){
-            model.addFields([{  
+        
+        if(!field){
+            model.addFields([{
                 name: me.fieldName,
-                convert: function(v, rec) {
-                    var matching = null,
-                        data = me.getStore().snapshot || me.getStore().data,
-                        foreignKey = rec.get(me.dataIndex);
-                    
-                    data.each(function(record) {
-                        if (record.get(me.primaryKey) == foreignKey) {
-                            matching = record.get(me.primaryValue);
-                        }
-                        return matching == null;
-                    });
-                    return matching || (foreignKey ? v : null) || "";
-                },
+                convert: convertFunction,
                 depends: [me.dataIndex],
                 persist: false
             }]);
+        } else if (!field.depends) {
+            field.convert = convertFunction;
+            field.depends = [me.dataIndex];
+            
+            model.replaceFields([field]);
         }
     }
 });
