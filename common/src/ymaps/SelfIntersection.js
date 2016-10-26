@@ -6,12 +6,12 @@ Ext.define('Renew.ymaps.SelfIntersection', {
         polygon.events.add('mapchange', this.onSelfIntersectionMapChange, this);
     },
 
-    selfIntersectionRemovePlacemarks(map, colleciton) {
+    selfIntersectionRemovePlacemarks: function(map, colleciton) {
         map.geoObjects.remove(colleciton);
         colleciton.removeAll();
     },
 
-    onSelfIntersectionMapChange(event) {
+    onSelfIntersectionMapChange: function(event) {
         var me = this;
         var map = event.get('oldMap');
         var polygon = event.get('target');
@@ -42,7 +42,7 @@ Ext.define('Renew.ymaps.SelfIntersection', {
             var msg = 'Точка самопересечения.';
             if (event.get('lengthCheck') !== null && event.get('lengthCheck') !== undefined) {
                 msg += ' Определяются "на лету" для полигонов ' +
-                    'с количеством верним не превышающем ' + event.get('lengthCheck') + '.'
+                    'с количеством верним не превышающем ' + event.get('lengthCheck') + '.';
             }
             selfIntersectionCollection.add(new ymaps.Placemark(coordinates, {
                 balloonContent: msg
@@ -56,14 +56,14 @@ Ext.define('Renew.ymaps.SelfIntersection', {
 
     // Условие использования этой функции - модель, представляющая зону должна иметь поле polygon, которае
     // ссылается на объект ymaps.Polygon
-    // 
+    //
     // Фнкция должна испльзоваться в обработчике ошибки при синхронизации стора с зонами.
-    selfIntersectionSyncErrorHandler: function(response, messageExtractor) {
-        var re = /Validation failed: Зона имеет самопересечение в точке \[([+-]?\d+(\.\d+)?); ([+-]?\d+(\.\d+)?)\]/
-        var found = messageExtractor(response).match(re);
+    selfIntersectionSyncErrorHandler: function(polygon, message) {
+        var re = /Validation failed: Зона имеет самопересечение в точке \[([+-]?\d+(\.\d+)?); ([+-]?\d+(\.\d+)?)\]/;
+        var found = message.match(re);
 
         if (found !== null) {
-            response.request.records[0].polygon.events.fire('intersectiondetectionend', {
+            polygon.events.fire('intersectiondetectionend', {
                 points: [[parseFloat(found[1]), parseFloat(found[3])]]
             });
         }
