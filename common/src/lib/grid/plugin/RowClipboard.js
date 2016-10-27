@@ -324,7 +324,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                         }
                     }
                 } else {
-                    dataObject[dataIndex] = null;
+                    dataObject[dataIndex] = dataObject[dataIndex] || null;
                     rowIdx--;
                     colCount++;
                 }
