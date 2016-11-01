@@ -303,7 +303,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                 dataIndex = column.dataIndex;
                 if (!me.pasteInEditableOnly || column.editor || column.field) {
                     if(!me.skipTrimValues){
-                        row[rowIdx] = row[rowIdx].trimRight();
+                        row[rowIdx] = row[rowIdx] ? row[rowIdx].trimRight() : null;
                     }
                     if (column.xtype === 'combocolumn' && me.insertPrimaryValue){
                         var comboRecord = column.getStore().findExactRecord(column.primaryValue, row[rowIdx]);
