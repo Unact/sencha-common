@@ -242,7 +242,8 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 
     putRowData: function(data, format) {
         var me = this;
-        var raw_values = Ext.util.TSV.decode(data);
+        var processedData = data.replace(/\"/g, '""').replace(/([^\t\r\n]*\"+[^\t\r\n]*)/g, '"$1"'); // удвоить кавычки, поместить в кавычки содержимое поля
+        var raw_values = Ext.util.TSV.decode(processedData);
         var values = raw_values.filter(function (e) {  return !(e.length === 1 && e[0] === "");}); //по умолчанию пустые строки вставляются, но нам-то они не нужны
         var recCount = values.length;
         var colCount = recCount ? values[0].length : 0;
@@ -307,7 +308,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                     }
                     if (column.xtype === 'combocolumn' && me.insertPrimaryValue){
                         var comboRecord = column.getStore().findExactRecord(column.primaryValue, row[rowIdx]);
-                        
+
                         row[rowIdx] = comboRecord ? comboRecord.get(column.primaryKey) : null;
                     }
                     if (dataIndex) {
