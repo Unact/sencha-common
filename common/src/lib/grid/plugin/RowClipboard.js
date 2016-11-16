@@ -19,7 +19,8 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
     config: {
         copyColumnHeaders: false,
         pasteInEditableOnly: false,
-        skipTrimValues: false
+        skipTrimValues: false,
+        likeSafari: true
     },
 
     enabledActions: ['copy', 'paste', 'cut'],
@@ -28,12 +29,12 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 
     privates: {
         finishInit: function(comp){
-            var me = this,
-                toolbar,
-                binding,
-                i;
+            var me = this;
+            var toolbar;
+            var binding;
+            var i;
 
-            if(Ext.browser.is('Safari')){
+            if(Ext.browser.is('Safari') || me.getLikeSafari()){
                 toolbar = comp.down('toolbar[dock="' + (comp.buttonsDock ? comp.buttonsDock : 'top') + '"]');
 
                 if(!toolbar){
