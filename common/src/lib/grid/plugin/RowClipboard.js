@@ -25,6 +25,12 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 
     enabledActions: ['copy', 'paste', 'cut'],
 
+    /**
+     * @property {Boolean/Object} insertPrimaryValue Производить ли замену в колонке с выпадающим списком
+     * вставляемого (текстового) значения на первичный ключ.
+     * Если передан объект, то ключ - название колонки, значение - применять ли заменую для конкретной колонки
+     * по-умолчанию - fasle
+     */
     insertPrimaryValue: false,
 
     privates: {
@@ -191,6 +197,8 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         return Ext.util.TSV.encode(ret);
     },
 
+
+
     getRows: function(format, erase) {
         var me = this;
         var cmp = me.getCmp();
@@ -266,6 +274,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         var dataInitializator;
         var insertInStore;
         var pasteComplete;
+        var singleInsertPrimaryValue = Ext.isBoolean(me.insertPrimaryValue)
 
         sm.deselectAll();
 
@@ -307,7 +316,11 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                     if(!me.skipTrimValues){
                         row[rowIdx] = row[rowIdx] ? row[rowIdx].trimRight() : null;
                     }
-                    if (column.xtype === 'combocolumn' && me.insertPrimaryValue){
+
+
+                    var isInsertPrimaryValue =
+                        singleInsertPrimaryValue ? me.insertPrimaryValue : me.insertPrimaryValue[dataIndex]
+                    if (column.xtype === 'combocolumn' && isInsertPrimaryValue){
                         var comboRecord = column.getStore().findExactRecord(column.primaryValue, row[rowIdx]);
 
                         row[rowIdx] = comboRecord ? comboRecord.get(column.primaryKey) : null;
