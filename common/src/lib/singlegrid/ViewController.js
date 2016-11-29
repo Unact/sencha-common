@@ -6,35 +6,35 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 	init: function(view){
 		var me = this;
 
-        //От этого надо аккуратно изавиться		
+        //От этого надо аккуратно изавиться
 		me.grid = view;
-		
+
 		me.callParent(arguments);
 	},
-	
+
 	deleteRecords: function(store, records, index, sm){
         var recordsCount;
-        
+
         store.remove(records);
         recordsCount = store.getCount();
         if (recordsCount > 0) {
             sm.select(recordsCount > index ? index : index - 1);
         }
 	},
-	
+
     addRecord: function(store, sm, result) {
         var index = store.indexOf(sm.getLastSelected());
         var newRec;
-    
+
         if(store.isSorted()){
             newRec = store.add(result)[0];
         } else {
             newRec = store.insert(Math.max(index, 0), result)[0];
         }
-                
+
         return newRec;
     },
-    
+
     isDisabledDeleteButton: function(records){
         return !(records && records.length>0);
     },
@@ -64,18 +64,18 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 
 	onCancelEdit: function(editor, ctx, eOpts) {
 		var me = this;
-		
+
 		if(ctx.record.phantom && !ctx.record.dirty){
 			ctx.grid.store.remove(ctx.record);
 		}
 	},
-	
+
 	onCompleteEdit: function(editor, ctx, eOpts){
 		var me = this;
 		var grid = ctx.grid;
 		var record = ctx.record;
 		var sm = grid.getSelectionModel();
-		
+
 		me.mainView.setLoading(true);
 		sm.deselectAll();
 		record.self.setProxy(grid.getStore().getProxy());
@@ -92,11 +92,11 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 			}
 		});
 	},
-	
+
 	/*
 	 * По идентификатору находится модель
 	 * Если модель найдена, то поставить фокус на нее
-	 * иначе поставить фокус на строку тем же порядковым номером, что и был ранее  
+	 * иначе поставить фокус на строку тем же порядковым номером, что и был ранее
 	 */
     callbackRefresh: function (grid, store, oldSelectionId, oldSelectionIndex) {
         var me = this;

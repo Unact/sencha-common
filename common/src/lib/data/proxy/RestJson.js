@@ -4,9 +4,9 @@ Ext.define('Ext.lib.data.proxy.RestJson', {
 
     limitParam: '',
     pageParam: '',
-      
+
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
     }
-}); 
+});
