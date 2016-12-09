@@ -1,16 +1,16 @@
 Ext.define('Ext.lib.singlechecktree.ViewController', {
     extend: 'Ext.lib.app.ViewController',
     alias : 'controller.singlechecktree',
-    
+
     mixins: ['Ext.lib.shared.Detailable'],
-    
+
     isProcessBranch: false,
 
     init: function(view){
         var me = this;
-        
-        me.mainView = me.mainView || view;      
-        
+
+        me.mainView = me.mainView || view;
+
         view.on('refreshtable', me.onCheckmarkRefresh, me);
         view.on('savetable', me.onSave, me);
         view.on('checkchange', me.onCheckchange, me);
@@ -19,7 +19,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
     onCheckmarkRefresh: function() {
         this.sharedRefresh(false, true);
     },
-    
+
     onRefresh: function() {
         this.sharedRefresh(true, true);
     },
@@ -32,17 +32,14 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         var vm = view.getViewModel();
         var sm = view.getSelectionModel();
         var treeStore = view.getStore();  //?
-        var checkmarkStore = view.getCheckmarkStore(); 
+        var checkmarkStore = view.getCheckmarkStore();
         var oldSelection = sm.getSelection();
-        var oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
-                treeStore.indexOf(oldSelection[0]) :
-                null;
         var oldSelectionId = (oldSelection && oldSelection.length==1) ?
                 oldSelection[0].get('id') :
                 null;
         var stores = [];
         var counter = 0;
-                
+
         if(me.masterGrid){
             masterRecord = me.masterGrid.getViewModel().get('masterRecord');
             if(masterRecord && !masterRecord.phantom)
@@ -57,37 +54,37 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         } else {
             result = me.beforeRefresh(masterRecord);
         }
-        
+
         if(isRefreshTree) {
             stores.push(treeStore);
         }
-        
+
         if(isRefreshCheckmark) {
-            if(result && (vm==null || vm.get('filterReady')!==false)) {
+            if(result && (!vm || vm.get('filterReady')!==false)) {
                 stores.push(checkmarkStore);
-            }    
+            }
         }
-        
+
         counter = stores.length;
-        
-        if(counter == 0) {
+
+        if(counter === 0) {
             me.afterRefresh();
             return;
         }
-        
+
         me.mainView.setLoading(true);
-        
+
         Ext.Array.each(stores, function(store) {
             store.load({
                 callback: function(records, operation, success) {
                     if (!success) {
                         me.onError(operation.getError().response);
                     }
-                    
+
                     counter--;
-                    if(counter == 0) {
+                    if(counter === 0) {
                         //afterRefresh изменяет выделенную строку, поэтому
-                        //вызовим его до установки фокуса на строку 
+                        //вызовим его до установки фокуса на строку
                         me.afterRefresh();
 
                         me.callbackRefresh(view, treeStore, oldSelectionId);
@@ -98,9 +95,8 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             });
         });
     },
-    
+
     callbackRefresh: function(tree, store, oldSelectionId) {
-        var me = this;
         var record;
         var pathProperty; //Если поле с названием pathProperty не String, то могут быть проблемы
 
@@ -109,7 +105,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                 record = node;
             }
         });
-        
+
         if(!record) {
             record = store.getRoot();
         }
@@ -117,7 +113,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         if(record) {
             pathProperty = record.pathProperty || record.idProperty;
             //Раскрыть ветвь, выделить узел, проскроллить к узлу
-            //решени со скроллом взято отсюда: http://www.sencha.com/forum/showthread.php?251980-scrolling-to-specific-node-in-tree-panel&p=923068&viewfull=1#post923068 
+            //решени со скроллом взято отсюда: http://www.sencha.com/forum/showthread.php?251980-scrolling-to-specific-node-in-tree-panel&p=923068&viewfull=1#post923068
             tree.selectPath(record.getPath(pathProperty), pathProperty, null, function (s, n) {
                 if(s) {
                     var nodeEl = Ext.get(tree.view.getNode(n));
@@ -126,19 +122,24 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             });
         }
     },
-    
+
     onSave: function() {
         var me = this;
         var view = me.getView();
         var recordsChecked = view.getChecked();
         var store = view.getCheckmarkStore();
-        var records = [];
         var recordsDel = [];
         var recordsAdd = [];
-        var masterRecord = me.masterGrid.getViewModel().get('masterRecord');
+        var masterRecord;
         var callback;
         var callbackScope;
-        
+
+        if (me.masterGrid) {
+            masterRecord = me.masterGrid.getViewModel().get('masterRecord');
+        } else {
+            masterRecord = me.getViewModel().get('masterRecord');
+        }
+
         if (arguments[0] && (typeof arguments[0]==='function')) {
             callback = arguments[0];
             callbackScope = arguments[1] || me;
@@ -155,8 +156,9 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             });
 
             //Если галочка не стоит
-            if(!isExists)
+            if(!isExists) {
                 recordsDel.push(record);
+            }
         });
         store.remove(recordsDel);
 
@@ -171,10 +173,11 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             });
 
             //Если в сторе нет записи
-            if(!isExists)
+            if(!isExists) {
                 recordsAdd.push(
                     me.createCheckmarkRecord(recordChecked, masterRecord)
                 );
+            }
         });
         store.add(recordsAdd);
 
@@ -182,14 +185,14 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             me.mainView.setLoading(true);
 
             store.sync({
-                success: function(batch, opt){
+                success: function(){
                     me.mainView.setLoading(false);
                     if(callback) {
                         callback.call(callbackScope);
                     }
                 },
 
-                failure: function(batch, opt){
+                failure: function(batch){
                     if (batch.exceptions.length > 0) {
                         me.onError(batch.exceptions[0].getError().response);
                     }
@@ -209,7 +212,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
     onFilterCheck: function(btn) {
         var me = this;
         var store = me.getView().getStore();
-        
+
         if(btn.pressed) {
             store.filterBy(function(node) {
                 var isVisible = false;
@@ -219,21 +222,21 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                         if(n.get('checked')) {
                             isVisible = true;
                         }
-                        
-                        return !isVisible; //Это немножко сократит кол-во итераций  
+
+                        return !isVisible; //Это немножко сократит кол-во итераций
                     }
                 });
-                
-                if(!node.isLeaf()) { 
+
+                if(!node.isLeaf()) {
                     node.set('expanded', isVisible);
-                }             
+                }
                 return isVisible;
             });
         } else {
             store.clearFilter();
         }
     },
-    
+
     onBranch: function(btn) {
         this.isProcessBranch = btn.pressed;
     },
@@ -241,14 +244,14 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
     /**
      * Функция должна возвратить "истину" для продолжения обновления
      */
-    beforeRefresh: function(masterRecord){
+    beforeRefresh: function(){
         return true;
     },
-    
+
     afterRefresh: function() {
         var me = this;
         var ids=[];
-        var view = me.getView();        
+        var view = me.getView();
         var rootNode = view.getRootNode();
         var checkmarkStore = view.getCheckmarkStore();
         var store = view.getStore();
@@ -257,7 +260,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         checkmarkStore.each(function(record) {
             ids.push(record.get(me.checkmarkLink));
         });
-        
+
         store.clearFilter();
         rootNode.cascadeBy(function(node) {
             var index;
@@ -268,16 +271,17 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                 node.set('checked', false);
             }
         });
-        
+
         store.filter(filters.getRange());
     },
-    
-    onCheckchange: function(node, checked, eOpts) {
+
+    onCheckchange: function(node, checked) {
         var me = this;
 
         node.cascadeBy(function(n) {
-            if(me.isProcessBranch)
+            if(me.isProcessBranch) {
                 n.set('checked', checked);
-        });    
+            }
+        });
     }
 });
