@@ -1,5 +1,11 @@
 Ext.define('Ext.overrides.view.Table', {
-    override : 'Ext.view.Table',
+    override: 'Ext.view.Table',
+
+    // В гридах с ГРУППИРОВКОЙ при изменении значения некоторой модели вдобавок
+    // апдейтится как минимум первая строка. Это приводит к перемещению к ней фокуса
+    // в методе onUpdate, что может приветси к лишним запросам на сервер (событие смена фокуса в мастер-детейл)
+    // Эта конфига сделана, что бы предотвратить этот побочный эффект
+    avoidScrollToRecordOnUpdate: false,
 
     onUpdate : function(store, record, operation, modifiedFieldNames, details) {
         var me = this,
@@ -18,7 +24,7 @@ Ext.define('Ext.overrides.view.Table', {
                 me.handleUpdate.apply(me, arguments);
             }
         }
-        if(me.isVisible(true)){
+        if(me.isVisible(true) && !me.avoidScrollToRecordOnUpdate){
             if(store.indexOf(record)>=0 && me.selModel.getSelection().length == 1){
                 me.scrollToRecord(record);
             }
