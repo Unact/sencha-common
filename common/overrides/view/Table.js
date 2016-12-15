@@ -1,29 +1,29 @@
 Ext.define('Ext.overrides.view.Table', {
-	override : 'Ext.view.Table',
+    override : 'Ext.view.Table',
 
-	onUpdate : function(store, record, operation, modifiedFieldNames, details) {
-		var me = this,
-			isFiltered = details && details.filtered;
+    onUpdate : function(store, record, operation, modifiedFieldNames, details) {
+        var me = this,
+            isFiltered = details && details.filtered;
 
-		// If, due to filtering or buffered rendering, or node collapse, the updated record is not
-		// represented in the rendered structure, this is a no-op.
-		// The correct, new values will be rendered the next time the record becomes visible and is rendered.
-		if (!isFiltered && me.getNode(record)) {
+        // If, due to filtering or buffered rendering, or node collapse, the updated record is not
+        // represented in the rendered structure, this is a no-op.
+        // The correct, new values will be rendered the next time the record becomes visible and is rendered.
+        if (!isFiltered && me.getNode(record)) {
 
-			// If we are throttling UI updates (See the updateDelay global config), ensure there's a change entry
-			// queued for the record in the global queue.
-			if (me.throttledUpdate) {
-				me.statics().queueRecordChange(me, store, record, operation, modifiedFieldNames);
-			} else {
-				me.handleUpdate.apply(me, arguments);
-			}
-		}
-		if(me.isVisible(true)){
-			if(store.indexOf(record)>=0 && me.selModel.getSelection().length == 1){
-				me.scrollToRecord(record);
-			}
-		}
-	},
+            // If we are throttling UI updates (See the updateDelay global config), ensure there's a change entry
+            // queued for the record in the global queue.
+            if (me.throttledUpdate) {
+                me.statics().queueRecordChange(me, store, record, operation, modifiedFieldNames);
+            } else {
+                me.handleUpdate.apply(me, arguments);
+            }
+        }
+        if(me.isVisible(true)){
+            if(store.indexOf(record)>=0 && me.selModel.getSelection().length == 1){
+                me.scrollToRecord(record);
+            }
+        }
+    },
 
     /**
      * Переход и фокусировка к строке по индексу или записи
@@ -41,7 +41,7 @@ Ext.define('Ext.overrides.view.Table', {
         }
     },
 
-	handleUpdate: function(store, record, operation, changedFieldNames, info, allColumns) {
+    handleUpdate: function(store, record, operation, changedFieldNames, info, allColumns) {
         operation = operation || Ext.data.Model.EDIT;
         var me = this,
             recordIndex = me.store.indexOf(record),
@@ -202,21 +202,21 @@ Ext.define('Ext.overrides.view.Table', {
                         value = null;
 
                         cell = Ext.fly(oldItemDom).down(column.getCellSelector(), true);
-	                    cellFly.attach(cell);
+                        cellFly.attach(cell);
 
                         if (column.xtype == 'multifieldcolumn'){
-							column.field.items.items.forEach(function(el, i, array){
-								modified = record.isModified(el.dataIndex) ? true : modified;
-							});
-						} else {
-							// The dataIndex of the column is the field name
-	                        fieldName = column.dataIndex;
+                            column.field.items.items.forEach(function(el, i, array){
+                                modified = record.isModified(el.dataIndex) ? true : modified;
+                            });
+                        } else {
+                            // The dataIndex of the column is the field name
+                            fieldName = column.dataIndex;
 
-	                        value = record.get(fieldName);
-	                        modified = record.isModified(column.dataIndex) ? true : modified;
-						}
+                            value = record.get(fieldName);
+                            modified = record.isModified(column.dataIndex) ? true : modified;
+                        }
 
-						// Mark the field's dirty status if we are configured to do so (defaults to true)
+                        // Mark the field's dirty status if we are configured to do so (defaults to true)
                         if (!clearDirty && markDirty) {
                             if (modified) {
                                 cellFly.addCls(dirtyCls);
