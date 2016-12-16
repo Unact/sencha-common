@@ -177,7 +177,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                     cell = viewNode.down(columns[j].getCellInnerSelector());
                     data = cell.dom.innerHTML;
                     if (isText) {
-                        data = Ext.util.Format.stripTags(data);
+                        data = Ext.util.Format.stripTags(data).split('&nbsp;').join(' ');
                     }
                     if(data && data.length>0 && data.trim()=='&nbsp;'){
                         data = "";
