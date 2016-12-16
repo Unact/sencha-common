@@ -1,12 +1,6 @@
 Ext.define('Ext.overrides.view.Table', {
     override: 'Ext.view.Table',
 
-    // В гридах с ГРУППИРОВКОЙ при изменении значения некоторой модели вдобавок
-    // апдейтится как минимум первая строка. Это приводит к перемещению к ней фокуса
-    // в методе onUpdate, что может приветси к лишним запросам на сервер (событие смена фокуса в мастер-детейл)
-    // Эта конфига сделана, что бы предотвратить этот побочный эффект
-    avoidScrollToRecordOnUpdate: false,
-
     onUpdate : function(store, record, operation, modifiedFieldNames, details) {
         var me = this,
             isFiltered = details && details.filtered;
@@ -24,8 +18,14 @@ Ext.define('Ext.overrides.view.Table', {
                 me.handleUpdate.apply(me, arguments);
             }
         }
-        if(me.isVisible(true) && !me.avoidScrollToRecordOnUpdate){
-            if(store.indexOf(record)>=0 && me.selModel.getSelection().length == 1){
+
+        // Ext.getClassName(store) !== "Ext.grid.feature.GroupStore":
+        // В гридах с ГРУППИРОВКОЙ при изменении значения некоторой модели вдобавок
+        // апдейтится как минимум первая строка. Это приводит к перемещению к ней фокуса,
+        // что может приветси к лишним запросам на сервер (событие смена фокуса в мастер-детейл)
+        // см. http://docs.sencha.com/extjs/6.0.1/classic/Ext.grid.feature.GroupStore.html#method-onUpdate
+        if(me.isVisible(true) && Ext.getClassName(store) !== "Ext.grid.feature.GroupStore"){
+            if(store.indexOf(record)>=0 && me.selModel.getSelection().length === 1){
                 me.scrollToRecord(record);
             }
         }
@@ -37,7 +37,6 @@ Ext.define('Ext.overrides.view.Table', {
      */
     scrollToRecord: function(nodeInfo, silentSelect) {
         var me = this;
-        var record;
 
         me.selModel.select(nodeInfo, false, silentSelect);
         if (me.bufferedRenderer) {
@@ -211,7 +210,7 @@ Ext.define('Ext.overrides.view.Table', {
                         cellFly.attach(cell);
 
                         if (column.xtype == 'multifieldcolumn'){
-                            column.field.items.items.forEach(function(el, i, array){
+                            column.field.items.items.forEach(function(el){
                                 modified = record.isModified(el.dataIndex) ? true : modified;
                             });
                         } else {
