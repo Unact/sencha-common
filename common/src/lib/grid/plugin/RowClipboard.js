@@ -135,6 +135,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         var cmp = me.getCmp();
         var selModel = cmp.getSelectionModel();
         var store = cmp.getStore();
+        var controller = cmp.getController();
         var selected = selModel.getSelection();
         var copyAll = selModel.getSelectionMode()!=='MULTI' || store.getCount()==selected.length;
         var ret = [];
@@ -144,6 +145,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         var cell, data, record, row;
         var view = cmp.getView();
         var columns = view.getVisibleColumnManager().getColumns();
+        var afterCellCopy;
         var i, j;
 
         if(me.copyColumnHeaders){
@@ -152,6 +154,10 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                 row.push(columns[j].text);
             }
             ret.push(row);
+        }
+
+        if (controller.afterCellCopy && (typeof controller.afterCellCopy === "function")) {
+            afterCellCopy = controller.afterCellCopy;
         }
 
         selected =  copyAll ? store.getData().items : selected;
@@ -177,11 +183,13 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                     cell = viewNode.down(columns[j].getCellInnerSelector());
                     data = cell.dom.innerHTML;
                     if (isText) {
-                        data = Ext.util.Format.stripTags(data).split('&nbsp;').join('');
+                        data = Ext.util.Format.stripTags(data);
                     }
                     if(data && data.length>0 && data.trim()=='&nbsp;'){
                         data = "";
                     }
+
+                    data =  afterCellCopy ? afterCellCopy(data) : data;
 
                     row.push(data);
                 }
@@ -197,7 +205,9 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         return Ext.util.TSV.encode(ret);
     },
 
-
+    afterCellCopy: function(data){
+        return data;
+    },
 
     getRows: function(format, erase) {
         var me = this;
