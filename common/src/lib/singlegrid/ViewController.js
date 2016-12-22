@@ -109,6 +109,14 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
             grid.view.scrollToRecord(oldSelectionIndex);
         } else if (storeCount > 0) {
             grid.view.scrollToRecord(0);
+        } else {
+            // Когда не отобралось ни одной строчки - послать фейковый selectionchange
+            // Это позволит решить проблему:
+            // когда в гриде ДО рефреша не было данных и ПОСЛЕ рефреша данные не появились - этом случае
+            // selectionchange не отправляется. Хотя в обработчике события ожидается, что после каждого
+            // refresh-a надо вызвать selectionchange
+            // Пример решаемой ошибки см тут: DEV-32192
+            grid.fireEvent('selectionchange', grid, []);
         }
     }
 });

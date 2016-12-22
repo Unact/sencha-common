@@ -8,9 +8,9 @@ Ext.define('Ext.lib.shared.Toolbar', {
         'add',
         'delete'
     ],
-    
+
     overflowHandler: 'scroller',
-    
+
     initComponent: function() {
         var me = this;
         var buttons = [];
@@ -20,7 +20,7 @@ Ext.define('Ext.lib.shared.Toolbar', {
                 buttons.push(me.beforeButtons[i]);
             }
         }
-        
+
         if (me.enabledButtons.indexOf('refresh')!=-1 && !me.disableRefresh) {
             buttons.push({
                 reference : 'refresh' + me.suffix,
@@ -60,7 +60,7 @@ Ext.define('Ext.lib.shared.Toolbar', {
                 buttons.push(me.afterButtons[i]);
             }
         }
-        
+
         me.items = buttons;
         me.callParent(arguments);
     }

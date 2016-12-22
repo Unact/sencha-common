@@ -23,7 +23,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
             view.on('selectionchange', me.onChangeSelect, me);
         }
 
-        me.refreshDetailOnSelect = view.refreshDetailOnSelect != null ? view.refreshDetailOnSelect : true ;
+        me.refreshDetailOnSelect = view.refreshDetailOnSelect === false ? false : true;
         me.autoRefreshingTable = false || view.autoRefreshingTable;
     },
 
@@ -54,35 +54,63 @@ Ext.define('Ext.lib.singletable.ViewController', {
         }
     },
 
-    onChangeSelect: function(sm, selected, eOpts){
-        var me = this;
-        var selectedOne = selected && selected.length==1;
-        var view = me.getView();
-        var vm = view.getViewModel();
-        var deleteButton = me.lookupReference('delete' + view.suffix);
-        var addButton = me.lookupReference('add' + view.suffix);
-        var master = selectedOne ? selected[0] : null;
+    changeDisabledButtons: function(selected, options) {
+        this.getView().down('sharedtoolbar').enabledButtons.forEach(function(prefix) {
+            let button = this.lookupReference(prefix + this.getView().suffix);
+            let functionName = `isDisabled${prefix.charAt(0).toUpperCase() + prefix.slice(1)}Button`;
 
-        if(deleteButton){
-            deleteButton.setDisabled(me.isDisabledDeleteButton(selected));
+            if (button) {
+                button.setDisabled(this[functionName](selected, options));
+            }
+        }, this);
+    },
+
+    changeDisabledDetails: function(master) {
+        if (this.detailGrids) {
+            this.detailGrids.forEach(function(detail){
+                detail.setDisabled(detail.getController().isDisabledView(master));
+            }, this);
         }
-        if(addButton){
-            addButton.setDisabled(me.isDisabledAddButton(selected));
+    },
+
+    refreshDetails: function() {
+        if (!this.refreshDetailOnSelect) {
+            return;
         }
+
+        if (this.detailGrids) {
+            this.detailGrids.forEach(function(detail){
+                detail.fireEvent('refreshtable');
+            }, this);
+        }
+    },
+
+    extraxtMasterRecord: function(selected) {
+        return (selected && selected.length === 1) ? selected[0] : null;
+    },
+
+    setMasterRecord: function(master) {
+        const vm = this.getView().getViewModel();
+
         if(vm){
             vm.set('masterRecord', master);
         }
+    },
 
-        me.beforeChangeSelect(sm, selected, eOpts);
+    extraxtAndSetMasterRecord: function(selected) {
+        const master = this.extraxtMasterRecord(selected);
+        this.setMasterRecord(master);
 
-        if(me.detailGrids){
-            me.detailGrids.forEach(function(detail){
-                detail.setDisabled(detail.getController().isDisabledView(master));
-                if (me.refreshDetailOnSelect) {
-                    detail.fireEvent('refreshtable');
-                }
-            });
-        }
+        return master;
+    },
+
+    onChangeSelect: function(sm, selected, eOpts){
+        const master = this.extraxtAndSetMasterRecord(selected);
+
+        this.beforeChangeSelect(sm, selected, eOpts);
+        this.changeDisabledButtons(selected);
+        this.changeDisabledDetails(master);
+        this.refreshDetails();
     },
 
     beforeChangeSelect: Ext.emptyFn,
@@ -90,7 +118,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
     /**
      * Функция должна возвратить "истину" для продолжения обновления
      */
-    beforeRefresh: function(masterRecord){
+    beforeRefresh: function(){
         return true;
     },
 
@@ -206,8 +234,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         me.afterAdd(newRec);
     },
 
-    afterSave: function(batch){
-    },
+    afterSave: Ext.emptyFn,
 
     onSave: function() {
         var me = this;
@@ -299,7 +326,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
     /**
      * Возвращает true, если надо задизейблить кнопку "Удалить".
      * @abstract
-     * @param {Ext.data.Model} record - Выбранный строка, если никакая строка не выбрана, то null
+     * @param {Ext.data.Model[]} selected - Выбранные строки, если никакая строка не выбрана, то null
      * @return {Boolean}
      */
     isDisabledDeleteButton: Ext.emptyFn,
@@ -307,8 +334,24 @@ Ext.define('Ext.lib.singletable.ViewController', {
     /**
      * Возвращает true, если надо задизейблить кнопку "Добавить".
      * @abstract
-     * @param {Ext.data.Model} record - Выбранный строка, если никакая строка не выбрана, то null
+     * @param {Ext.data.Model[]} selected - Выбранные строки, если никакая строка не выбрана, то null
      * @return {Boolean}
      */
-    isDisabledAddButton: Ext.emptyFn
+    isDisabledAddButton: Ext.emptyFn,
+
+    /**
+     * Возвращает true, если надо задизейблить кнопку "Обновить".
+     * @abstract
+     * @param {Ext.data.Model[]} selected - Выбранные строки, если никакая строка не выбрана, то null
+     * @return {Boolean}
+     */
+    isDisabledRefreshButton: Ext.emptyFn,
+
+    /**
+     * Возвращает true, если надо задизейблить кнопку "Сохранить".
+     * @abstract
+     * @param {Ext.data.Model[]} selected - Выбранные строки, если никакая строка не выбрана, то null
+     * @return {Boolean}
+     */
+    isDisabledSaveButton: Ext.emptyFn
 });
