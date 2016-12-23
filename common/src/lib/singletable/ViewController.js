@@ -85,7 +85,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         }
     },
 
-    extraxtMasterRecord: function(selected) {
+    extractMasterRecord: function(selected) {
         return (selected && selected.length === 1) ? selected[0] : null;
     },
 
@@ -97,15 +97,15 @@ Ext.define('Ext.lib.singletable.ViewController', {
         }
     },
 
-    extraxtAndSetMasterRecord: function(selected) {
-        const master = this.extraxtMasterRecord(selected);
+    extractAndSetMasterRecord: function(selected) {
+        const master = this.extractMasterRecord(selected);
         this.setMasterRecord(master);
 
         return master;
     },
 
     onChangeSelect: function(sm, selected, eOpts){
-        const master = this.extraxtAndSetMasterRecord(selected);
+        const master = this.extractAndSetMasterRecord(selected);
 
         this.beforeChangeSelect(sm, selected, eOpts);
         this.changeDisabledButtons(selected);
@@ -117,6 +117,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
 
     /**
      * Функция должна возвратить "истину" для продолжения обновления
+     * @param {Ext.data.Model} masterRecord
      */
     beforeRefresh: function(){
         return true;
@@ -234,6 +235,9 @@ Ext.define('Ext.lib.singletable.ViewController', {
         me.afterAdd(newRec);
     },
 
+    /**
+     * @param {Ext.data.Batch}
+     */
     afterSave: Ext.emptyFn,
 
     onSave: function() {
