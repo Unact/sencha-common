@@ -56,8 +56,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
 
     changeDisabledButtons: function(selected, options) {
         this.getView().down('sharedtoolbar').enabledButtons.forEach(function(prefix) {
-            let button = this.lookupReference(prefix + this.getView().suffix);
-            let functionName = `isDisabled${prefix.charAt(0).toUpperCase() + prefix.slice(1)}Button`;
+            var button = this.lookupReference(prefix + this.getView().suffix);
+            var functionName = 'isDisabled' + prefix.charAt(0).toUpperCase() + prefix.slice(1) + 'Button';
 
             if (button) {
                 button.setDisabled(this[functionName](selected, options));
@@ -90,7 +90,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
     },
 
     setMasterRecord: function(master) {
-        const vm = this.getView().getViewModel();
+        var vm = this.getView().getViewModel();
 
         if(vm){
             vm.set('masterRecord', master);
@@ -98,14 +98,14 @@ Ext.define('Ext.lib.singletable.ViewController', {
     },
 
     extractAndSetMasterRecord: function(selected) {
-        const master = this.extractMasterRecord(selected);
+        var master = this.extractMasterRecord(selected);
         this.setMasterRecord(master);
 
         return master;
     },
 
     onChangeSelect: function(sm, selected, eOpts){
-        const master = this.extractAndSetMasterRecord(selected);
+        var master = this.extractAndSetMasterRecord(selected);
 
         this.beforeChangeSelect(sm, selected, eOpts);
         this.changeDisabledButtons(selected);
@@ -257,25 +257,25 @@ Ext.define('Ext.lib.singletable.ViewController', {
             callbackScope = arguments[1] || me;
         } else {
             callback = function(){
-            	if(--detailsToProcess<=0){
-            	    me.syncing = false;
-            		if(!me.autoRefreshingTable) {
-            		    me.onRefresh();
-            		}
-            	}
+                if(--detailsToProcess<=0){
+                    me.syncing = false;
+                    if(!me.autoRefreshingTable) {
+                        me.onRefresh();
+                    }
+                }
             };
             callbackScope = me;
         }
 
         function saveDetails(makeCallback, refreshSelf){
-        	if(me.detailGrids && view.saveDetail){
-            	detailsToProcess = me.detailGrids.length;
+            if(me.detailGrids && view.saveDetail){
+                detailsToProcess = me.detailGrids.length;
                 me.detailGrids.forEach(function(detail){
-                	if(refreshSelf){
-                		detail.fireEvent('savetable', callback, callbackScope);
-                	} else {
-                		detail.fireEvent('savetable');
-                	}
+                    if(refreshSelf){
+                        detail.fireEvent('savetable', callback, callbackScope);
+                    } else {
+                        detail.fireEvent('savetable');
+                    }
                 });
             } else if (makeCallback){
                 callback.call(callbackScope);
@@ -294,7 +294,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
                         if (batch.exceptions.length > 0) {
                             me.onError(batch.exceptions[0].getError().response);
                         } else {
-                        	saveDetails(true, callback, callbackScope);
+                            saveDetails(true, callback, callbackScope);
                         }
                     }
                 });
@@ -319,7 +319,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
                 Ext.Msg.alert("Некорректные значения", errors.join("<br/>"));
             }
         } else {
-        	saveDetails(arguments.length==2, callback, callbackScope);
+            saveDetails(arguments.length==2, callback, callbackScope);
         }
     },
 
