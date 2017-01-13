@@ -1,71 +1,35 @@
 Ext.define('Ext.lib.shared.Toolbar', {
-    extend: 'Ext.Toolbar',
+    extend: 'Ext.lib.shared.BaseToolbar',
     alias: 'widget.sharedtoolbar',
 
-    enabledButtons: [
-        'refresh',
-        'save',
+    additionEnabledButtons: [
         'add',
         'delete'
     ],
 
-    overflowHandler: 'scroller',
-
-    initComponent: function() {
-        var me = this;
+    additionButtons: function() {
         var buttons = [];
 
-        if (me.beforeButtons != null) {
-            for (i = 0; i < me.beforeButtons.length; i++) {
-                buttons.push(me.beforeButtons[i]);
-            }
-        }
-
-        if (me.enabledButtons.indexOf('refresh')!=-1 && !me.disableRefresh) {
+        if (this.enabledButtons.indexOf('add') !== -1 && !this.disableAdd) {
             buttons.push({
-                reference : 'refresh' + me.suffix,
-                icon: '/images/refresh.gif',
-                tooltip: 'Обновить',
-                handler: 'onRefresh',
-                margin: me.sharedToolbarButtonMargins
-            });
-        }
-        if (me.enabledButtons.indexOf('save')!=-1 && !me.disableSave) {
-            buttons.push({
-                reference: 'save' + me.suffix,
-                icon: '/images/save.png',
-                tooltip: 'Сохранить',
-                handler: 'onSave',
-                margin: me.sharedToolbarButtonMargins
-            });
-        }
-        if (me.enabledButtons.indexOf('add')!=-1 && !me.disableAdd) {
-            buttons.push({
-                reference: 'add' + me.suffix,
+                reference: 'add' + this.suffix,
                 icon: '/images/add.gif',
                 tooltip: 'Добавить',
                 handler: 'onAdd',
-                margin: me.sharedToolbarButtonMargins
+                margin: this.sharedToolbarButtonMargins
             });
         }
-        if (me.enabledButtons.indexOf('delete')!=-1 && !me.disableDelete) {
+        if (this.enabledButtons.indexOf('delete') !== -1 && !this.disableDelete) {
             buttons.push({
-                reference: 'delete' + me.suffix,
+                reference: 'delete' + this.suffix,
                 icon: '/images/delete.gif',
                 disabled: true,
                 tooltip: 'Удалить',
                 handler: 'onDelete',
-                margin: me.sharedToolbarButtonMargins
+                margin: this.sharedToolbarButtonMargins
             });
         }
 
-        if (me.afterButtons != null) {
-            for ( i = 0; i < me.afterButtons.length; i++) {
-                buttons.push(me.afterButtons[i]);
-            }
-        }
-
-        me.items = buttons;
-        me.callParent(arguments);
+        return buttons;
     }
 });

@@ -15,30 +15,30 @@ Ext.define('Ext.lib.singlecheckgrid.View', {
      * @cfg {function} beforeAdd
      * beforeAdd - должен вернуть объект для вставки в хранилище
      * /
-    
-    /** 
+
+    /**
      * @cfg {function} beforeRefresh
      * beforeRefresh - должен вернуть истину
      */
-    
+
     // если "предварительные" методы возвращают другие значения, то основной метод далее не выполняется
 
     /**
      * @cfg {boolean} enableDeleteDialog
      * Показывать диалог подтверждения удаления или нет
      */
-    
-    
+
+
     config: {
         checkmarkStore: null,
         availableRowsFK: null
     },
-    
+
     initComponent: function() {
         var me = this;
         var toolbarConfig = {
             xtype: 'sharedcheckmarktoolbar',
-            
+
             beforeButtons: me.beforeButtons,
             afterButtons: me.afterButtons,
 
@@ -46,20 +46,21 @@ Ext.define('Ext.lib.singlecheckgrid.View', {
             disableSave: me.disableSave,
             disableFilterCheck: me.disableFilterCheck,
             disableBranch: true,
-            
+
+            sharedToolbarButtonMargins: me.sharedToolbarButtonMargins,
             suffix: me.suffix
         };
-    
+
         if(me.enabledButtons) {
             toolbarConfig['enabledButtons'] = me.enabledButtons;
         };
         if(me.buttonsDock) {
             toolbarConfig['buttonsDock'] = me.buttonsDock;
         }
-                
+
         me.dockedItems = [toolbarConfig];
-        
-        
+
+
         var plugins = me.plugins || [];
         if (me.disableEditing !== true) {
             var hasEditingPlugin = false;
@@ -81,7 +82,7 @@ Ext.define('Ext.lib.singlecheckgrid.View', {
             }
         }
         me.plugins = plugins;
-        
+
         me.callParent();
     }
 });
