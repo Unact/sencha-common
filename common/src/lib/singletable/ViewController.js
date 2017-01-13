@@ -311,8 +311,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
                             }
                         });
 
-                        fieldName = fieldName ? fieldName: field;
-                        errors.push('Поле "' + fieldName + '" ' + message[field]);
+                        fieldName = fieldName ? fieldName : field;
+                        errors.push('Поле "' + fieldName + '" ' + message.fields[field]);
                     }
                 });
 
