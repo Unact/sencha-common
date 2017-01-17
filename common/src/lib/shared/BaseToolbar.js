@@ -41,7 +41,7 @@ Ext.define('Ext.lib.shared.BaseToolbar', {
             });
         }
 
-        items = items.concat(this.additionButtons());
+        items = items.concat(this.additionalButtons());
 
         if (this.afterButtons) {
             items = items.concat(this.afterButtons);
@@ -63,13 +63,13 @@ Ext.define('Ext.lib.shared.BaseToolbar', {
     },
 
     getDefaultEnabledButtons: function() {
-        return this.defaultEnabledButtons.concat(this.additionEnabledButtons);
+        return this.defaultEnabledButtons.concat(this.additionalEnabledButtons);
     },
 
     /**
      * @template
      */
-    additionButtons: function() {
+    additionalButtons: function() {
         return [];
     }
 });

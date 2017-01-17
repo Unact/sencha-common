@@ -6,7 +6,7 @@ Ext.define('Ext.lib.shared.Refresher', {
      * xtype элементов вводa, для которых нажатие Enter будет приводить к нажатию кнопки "Обновить"
      * @private
      */
-    refreshingXtypes: ['textfield', 'combobox', 'timefield', 'datefield', 'numberfield'],
+    refreshingXtypes: ['textfield', 'combobox', 'timefield', 'datefield', 'numberfield', 'treepicker'],
 
     /**
      * @private

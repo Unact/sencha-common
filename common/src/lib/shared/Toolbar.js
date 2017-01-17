@@ -2,12 +2,12 @@ Ext.define('Ext.lib.shared.Toolbar', {
     extend: 'Ext.lib.shared.BaseToolbar',
     alias: 'widget.sharedtoolbar',
 
-    additionEnabledButtons: [
+    additionalEnabledButtons: [
         'add',
         'delete'
     ],
 
-    additionButtons: function() {
+    additionalButtons: function() {
         var buttons = [];
 
         if (this.enabledButtons.indexOf('add') !== -1 && !this.disableAdd) {

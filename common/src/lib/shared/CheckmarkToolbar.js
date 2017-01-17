@@ -2,12 +2,12 @@ Ext.define('Ext.lib.shared.CheckmarkToolbar', {
     extend: 'Ext.lib.shared.BaseToolbar',
     alias : 'widget.sharedcheckmarktoolbar',
 
-    additionEnabledButtons: [
+    additionalEnabledButtons: [
         'filterCheck',
         'branch'
     ],
 
-    additionButtons: function() {
+    additionalButtons: function() {
         var buttons = [];
 
         if (this.enabledButtons.indexOf('filterCheck')!=-1 && !this.disableFilterCheck) {
