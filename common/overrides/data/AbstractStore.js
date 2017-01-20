@@ -1,13 +1,8 @@
 Ext.define('Ext.overrides.data.AbstractStore', {
     override: 'Ext.data.AbstractStore',
 
-    hasChanges : function() {
-        var me = this;
-        var changed = (Ext.getVersion().isLessThan('6')) ?
-            me.getUnfiltered().createFiltered(me.filterHasChanges).getRange().length>0 :
-            me.filterDataSource(me.filterHasChanges).length>0;
-
-        return changed || me.getRemovedRecords().length > 0;
+    hasChanges: function() {
+        return this.filterDataSource(this.filterHasChanges).length > 0 || this.getRemovedRecords().length > 0;
     },
 
     filterHasChanges: function(item) {

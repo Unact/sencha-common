@@ -93,11 +93,11 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 		});
 	},
 
-	/*
-	 * По идентификатору находится модель
-	 * Если модель найдена, то поставить фокус на нее
-	 * иначе поставить фокус на строку тем же порядковым номером, что и был ранее
-	 */
+    /*
+     * По идентификатору находится модель
+     * Если модель найдена, то поставить фокус на нее
+     * иначе поставить фокус на строку тем же порядковым номером, что и был ранее
+     */
     callbackRefresh: function (grid, store, oldSelectionId, oldSelectionIndex) {
         var me = this;
         var recordToSelect = store.getById(oldSelectionId);
