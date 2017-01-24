@@ -18,8 +18,8 @@ Ext.define('Ext.modern.lib.grid.column.ValueColumn', {
      * с хранилищем колонки
      */
     constructor: function(config){
-        let dataIndex = config.dataIndex;
-        let renderer;
+        var dataIndex = config.dataIndex;
+        var renderer;
 
         this.primaryKey = config.primaryKey || 'id';
         this.primaryValue = config.primaryValue || 'name';
@@ -43,7 +43,7 @@ Ext.define('Ext.modern.lib.grid.column.ValueColumn', {
         }
 
         renderer = function(v, rec) {
-            const storeRecord = this.store.findExactRecord(this.primaryKey, v);
+            var storeRecord = this.store.findExactRecord(this.primaryKey, v);
             return storeRecord ? storeRecord.get(this.primaryValue) : "";
         }
         this.renderer = config.renderer || renderer;
@@ -62,7 +62,7 @@ Ext.define('Ext.modern.lib.grid.column.ValueColumn', {
     },
 
     setStore: function(store){
-        const initConfig = this.getInitialConfig();
+        var initConfig = this.getInitialConfig();
 
         this.store = store;
         if(this.field &&

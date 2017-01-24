@@ -19,9 +19,9 @@ Ext.define('Ext.modern.lib.grid.BaseGrid', {
 
 
     constructor: function(currentConfig){
-        const initialConfig = this.config;
-        let config = {};
-        let toolbarConfig;
+        var initialConfig = this.config;
+        var config = {};
+        var toolbarConfig;
 
         config.suffix = initialConfig.suffix || this.xtype;
         config.enableDeleteDialog = initialConfig.enableDeleteDialog;

@@ -8,7 +8,7 @@ Ext.define('Ext.modern.lib.shared.Toolbar', {
     ],
 
     additionalButtons: function(config) {
-        const buttons = [];
+        var buttons = [];
 
         if (config.enabledButtons.indexOf('add') !== -1 && !config.disableAdd) {
             buttons.push({

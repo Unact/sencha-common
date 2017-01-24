@@ -8,7 +8,7 @@ Ext.define('Ext.modern.lib.shared.BaseToolbar', {
     ],
 
     constructor: function(config) {
-        let items = [];
+        var items = [];
 
         if (!config.enabledButtons) {
             config.enabledButtons = this.getDefaultEnabledButtons();

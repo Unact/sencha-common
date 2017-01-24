@@ -1,5 +1,8 @@
 Ext.define('Ext.overrides.field.Select', {
     override: 'Ext.field.Select',
+    // Решает https://www.sencha.com/forum/showthread.php?321945
+    // Все методы где возвращается в обычной сенче запись,
+    // переопредлены на значение
 
     config: {
         autoSelect: false
@@ -8,9 +11,9 @@ Ext.define('Ext.overrides.field.Select', {
      * @private
      */
     applyValue: function(value) {
-        let record = value;
-        let index;
-        let store;
+        var record = value;
+        var index;
+        var store;
         //we call this so that the options configruation gets intiailized, so that a store exists, and we can
         //find the correct value
         this.getOptions();
@@ -37,9 +40,9 @@ Ext.define('Ext.overrides.field.Select', {
     },
 
     updateValue: function(value, oldValue) {
-        const component = this.getComponent();
-        let displayValueRecord;
-        let displayValue = '';
+        var component = this.getComponent();
+        var displayValueRecord;
+        var displayValue = '';
 
         this.value = value;
 
@@ -80,7 +83,7 @@ Ext.define('Ext.overrides.field.Select', {
     },
 
     getValueFieldValue: function(){
-        const record = this.getCurrentStoreRecord();
+        var record = this.getCurrentStoreRecord();
         return record ? record.get(this.getDisplayField()) : null;
     },
 
@@ -97,10 +100,10 @@ Ext.define('Ext.overrides.field.Select', {
      * @private
      */
     onPickerChange: function(picker, value) {
-        const newValue = value[this.getName()];
-        const store = this.getStore();
-        const index = store.find(this.getValueField(), newValue, null, null, null, true);
-        const record = store.getAt(index);
+        var newValue = value[this.getName()];
+        var store = this.getStore();
+        var index = store.find(this.getValueField(), newValue, null, null, null, true);
+        var record = store.getAt(index);
 
         this.setValue(record.get(this.getValueField()));
     },
@@ -111,10 +114,10 @@ Ext.define('Ext.overrides.field.Select', {
      * @chainable
      */
     reset: function() {
-        let record;
-        let store;
-        let usePicker;
-        let picker;
+        var record;
+        var store;
+        var usePicker;
+        var picker;
 
         if (this.getAutoSelect()) {
             store = this.getStore();

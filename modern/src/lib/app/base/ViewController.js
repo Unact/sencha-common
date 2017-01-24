@@ -23,8 +23,8 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
 
     changeDisabledButtons: function() {
         this.getView().down('sharedtoolbar').enabledButtons.forEach(function(prefix) {
-            const button = this.lookupReference(prefix + this.getView().suffix);
-            const functionName = 'isDisabled' + prefix.charAt(0).toUpperCase() + prefix.slice(1) + 'Button';
+            var button = this.lookupReference(prefix + this.getView().suffix);
+            var functionName = 'isDisabled' + prefix.charAt(0).toUpperCase() + prefix.slice(1) + 'Button';
 
             if (button) {
                 button.setDisabled(this[functionName]());
@@ -53,12 +53,12 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
     },
 
     extractMasterRecord: function() {
-        const selected = this.getView().getSelection();
+        var selected = this.getView().getSelection();
         return (selected && selected.length === 1) ? selected[0] : selected;
     },
 
     setMasterRecord: function(master) {
-        const vm = this.getView().getViewModel();
+        var vm = this.getView().getViewModel();
 
         if(vm){
             vm.set('masterRecord', master);
@@ -66,14 +66,14 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
     },
 
     extractAndSetMasterRecord: function() {
-        const master = this.extractMasterRecord();
+        var master = this.extractMasterRecord();
         this.setMasterRecord(master);
 
         return master;
     },
 
     onChangeSelect: function(sm, selected, eOpts) {
-        const master = this.extractAndSetMasterRecord();
+        var master = this.extractAndSetMasterRecord();
         this.beforeChangeSelect(sm, selected, eOpts);
         this.changeDisabledButtons();
         this.changeDisabledDetails(master);
@@ -88,7 +88,7 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
     },
 
     applyDetailGrids: function(detailGrids){
-        const me = this;
+        var me = this;
 
         me.detailGrids = detailGrids;
 
@@ -98,7 +98,7 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
     },
 
     findDetail: function(xtype){
-        const me = this;
+        var me = this;
 
         if (me.detailGrids.length > 0){
             return me.detailGrids.find(function(detail){
@@ -121,20 +121,19 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
      * Функция должна возвратить "истину" для продолжения обновления
      */
     onRefresh: function() {
-        const me = this;
-        const view = me.getView();
-        const vm = view.getViewModel();
-        const store = view.getStore();
-        const oldSelection = view.getSelection();
-        let oldSelectionIndex = null;
-        let oldSelectionId = null;
-        let result = true;
-        let masterRecord;
+        var me = this;
+        var view = me.getView();
+        var vm = view.getViewModel();
+        var store = view.getStore();
+        var oldSelection = view.getSelection();
+        var oldSelectionIndex = null;
+        var oldSelectionId = null;
+        var result = true;
+        var masterRecord;
 
         if(oldSelection) {
-            let r = oldSelection;
-            oldSelectionIndex = store.indexOf(r);
-            oldSelectionId = r.id;
+            oldSelectionIndex = store.indexOf(oldSelection);
+            oldSelectionId = oldSelection.id;
         }
 
         view.deselectAll();
@@ -153,7 +152,7 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
         }
 
         if(result){
-            if (vm==null || vm.get('filterReady')!==false) {
+            if (!vm || vm.get('filterReady')!==false) {
                 Ext.GlobalEvents.fireEvent('beginserveroperation');
                 store.load({
                     callback: function(records, operation, success){
@@ -192,10 +191,10 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
      * Если объект не будет возвращен, то в хранилище ничего не вставится.
      */
     onAdd: function() {
-        let result = {};
-        const view = this.getView();
-        let masterRecord;
-        let newRec;
+        var result;
+        var view = this.getView();
+        var masterRecord;
+        var newRec;
 
         if(this.masterGrid){
             masterRecord = this.masterGrid.getViewModel().get('masterRecord');
@@ -213,10 +212,10 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
     },
 
     onDelete: function() {
-        const me = this;
-        const view = me.getView();
-        const oldSelection = view.getSelection();
-        const oldSelectionIndex = oldSelection ? view.getStore().indexOf(oldSelection) : null;
+        var me = this;
+        var view = me.getView();
+        var oldSelection = view.getSelection();
+        var oldSelectionIndex = oldSelection ? view.getStore().indexOf(oldSelection) : null;
 
         if (view.config.enableDeleteDialog === true){
             Ext.Msg.confirm(
@@ -239,11 +238,11 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
     afterSave: Ext.emptyFn,
 
     onSave: function() {
-        const me = this;
-        let detailsToProcess = 0;
-        const view = me.getView();
-        const store = view.getStore();
-        const callback = function(){
+        var me = this;
+        var detailsToProcess = 0;
+        var view = me.getView();
+        var store = view.getStore();
+        var callback = function(){
             if(--detailsToProcess <= 0){
                 me.syncing = false;
                 if(!me.autoRefreshingTable) {
@@ -251,8 +250,8 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
                 }
             }
         };
-        const callbackScope = me;
-        const saveDetails = function(makeCallback, refreshSelf){
+        var callbackScope = me;
+        var saveDetails = function(makeCallback, refreshSelf){
             if(me.detailGrids && view.saveDetail){
                 detailsToProcess = me.detailGrids.length;
                 me.detailGrids.forEach(function(detail){
@@ -293,10 +292,10 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
      * иначе поставить фокус на строку тем же порядковым номером, что и был ранее
      */
     callbackRefresh: function (oldSelectionId, oldSelectionIndex) {
-        const view = this.getView();
-        const store = view.getStore();
-        const recordToSelect = store.getById(oldSelectionId);
-        const storeCount = store.getCount();
+        var view = this.getView();
+        var store = view.getStore();
+        var recordToSelect = store.getById(oldSelectionId);
+        var storeCount = store.getCount();
 
         if (recordToSelect) {
             view.scrollToRecord(recordToSelect);
@@ -310,8 +309,8 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
     },
 
     deleteRecords: function(records, index){
-        const store = this.getView().getStore();
-        let recordsCount;
+        var store = this.getView().getStore();
+        var recordsCount;
 
         store.remove(records);
         recordsCount = store.getCount();
@@ -321,9 +320,9 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
     },
 
     addRecord: function(result) {
-        const store = this.getView().getStore();
-        const index = store.indexOf(this.getView().getLastSelected());
-        let newRec;
+        var store = this.getView().getStore();
+        var index = store.indexOf(this.getView().getLastSelected());
+        var newRec;
 
         if(store.isSorted()){
             newRec = store.add(result)[0];
@@ -335,7 +334,7 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
     },
 
     isDisabledDeleteButton: function(){
-        const selected = this.getView().getSelection();
+        var selected = this.getView().getSelection();
 
         return (selected && selected.length > 0);
     },
