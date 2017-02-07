@@ -13,10 +13,10 @@ Ext.onReady(function() {
 	            responseText: response.responseText
 	        });
 	    },
-	    
+
 	    setExtraParamAndRemoveIfNull : function(extraParam, value) {
 			var me = this;
-			
+
 			if(value!=null){
 				me.setExtraParam(extraParam, value);
 			} else {
@@ -24,4 +24,4 @@ Ext.onReady(function() {
 			}
 		}
     });
-}); 
+});

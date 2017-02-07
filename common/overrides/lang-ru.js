@@ -12,13 +12,13 @@ Ext.onReady(function() {
     	{
 			startDay : 1,		//Начало недели - понедельник
 			format : 'd.m.Y',	//Год записывается четырьмя знаками
-			
+
 			statics: {
 				dateWithTimeFormat: 'd.m.Y H:i'
 			}
 		}
 	);
-	
+
 	Ext.define("app.locale.ru.form.field.Time", {                 //в ext-lang-ru.js вообще отсутствует время
 		override: "Ext.form.field.Time",
 		format: "H:i",
@@ -26,12 +26,12 @@ Ext.onReady(function() {
 		maxText: "Время в этом поле должно быть раньше {0}",
 		invalidText: "{0} не является правильным временем"
 	});
-	
+
 	Ext.define("Ext.locale.ru.form.field.Number", {
 		override: "Ext.form.field.Number",
 		decimalSeparator: ","
 	});
-	
+
 	Ext.override(Ext.Date, {
 		defaultFormat: 'd.m.Y'
 	});

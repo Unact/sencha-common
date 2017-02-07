@@ -1,17 +1,17 @@
 Ext.define('Ext.lib.BuyerSpSets', {
 	extend : 'Ext.container.Container',
 	alias : 'widget.buyerSpSets',
-	
+
 	/**
      * @cfg {Int[]} spIds
      * Массив идентификаторов спецификаций покупателя
      */
-    
+
 	/**
      * @cfg {Object} itemsCfg
      * Общие настройки полей (доступные настройки см. Ext.form.field.Text)
      */
-    
+
     /**
      * Загрузить сведения о полях и создать их
      */
@@ -47,16 +47,16 @@ Ext.define('Ext.lib.BuyerSpSets', {
 		    failure: arg.failure
 		});
 	},
-	
+
 	/**
 	 * Загрузить значения в поля
 	 */
 	load: function(client, arg) {
 		me = this;
 		arg = me.prepareArg(arg);
-		
+
 		me.clear();
-		
+
 		Ext.Ajax.request({
 		    url: '/buyers_sp',
 		    method: 'GET',
@@ -64,7 +64,7 @@ Ext.define('Ext.lib.BuyerSpSets', {
 
 		    success: function(xhr) {
 		        var res = Ext.JSON.decode(xhr.responseText);
-		        
+
 		        res.forEach(
 		        	function(spv){
 		        		if(spv !== null) {
@@ -84,26 +84,26 @@ Ext.define('Ext.lib.BuyerSpSets', {
 	 */
 	clear: function() {
 		me = this;
-		
+
 		me.spIds.forEach(function(id){
 			if(el = Ext.getCmp('sp_'+id))
 				el.setValue(null);
 		});
 	},
-	
+
 	/**
 	 * Сохранить значения
 	 */
 	save: function(client, arg) {
 		me = this;
 		arg = me.prepareArg(arg);
-		
+
 		buyer_spv=[];
 		me.spIds.forEach(function(id){
 			if(el = Ext.getCmp('sp_'+id))
 				buyer_spv.push({sp_tp: id, value: el.getValue()});
 		});
-		
+
 		data={
 			client: client,
 			buyer_spv: buyer_spv
@@ -117,7 +117,7 @@ Ext.define('Ext.lib.BuyerSpSets', {
 		    success: arg.success,
 		    failure: arg.failure
 		});
-		
+
 	},
 
 	/**
@@ -134,7 +134,7 @@ Ext.define('Ext.lib.BuyerSpSets', {
      * Представить массив spIds в виде понятном для rails
      */
     getParams: function() {
-    	var me = this;		
+    	var me = this;
 		return typeof me.spIds !== 'undefined' ? {'sp_ids[]': me.spIds} : {};
     },
 
@@ -153,13 +153,13 @@ Ext.define('Ext.lib.BuyerSpSets', {
 
 	/**
      * @private
-     */ 
+     */
 	cretaComboBoxField: function(id, name, sp_values, itemsCfg) {
 		var store = Ext.create('Ext.data.Store', {
 			model: 'app.model.ValueModel',
 			data: sp_values
 		});
-		
+
 		return Ext.create('Ext.form.field.ComboBox',
 				Ext.Object.merge({
 					id: 'sp_'+id,
@@ -168,7 +168,7 @@ Ext.define('Ext.lib.BuyerSpSets', {
 					queryMode: 'local',
 					displayField: 'name',
 					valueField: 'id'
-				}, itemsCfg        		
+				}, itemsCfg
 				)
 			);
 	}

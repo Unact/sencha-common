@@ -4,7 +4,7 @@ Ext.define('Ext.lib.data.proxy.RestJsonLimitless', {
 
 	limitParam : '',
 	pageParam : '',
-	
+
 	extraParams: {
 		limitless: true
 	},
@@ -13,14 +13,14 @@ Ext.define('Ext.lib.data.proxy.RestJsonLimitless', {
 		'Accept': 'application/json',
 		'Content-Type' : 'application/json'
 	},
-	
+
 	constructor: function(config){
 		var me = this;
 		if(!config.extraParams){
 			config.extraParams = {};
 		};
 		config.extraParams.limitless = true;
-		
+
 		me.callParent(arguments);
 	}
-}); 
+});

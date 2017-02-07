@@ -2,16 +2,16 @@ Ext.onReady(function() {
 	Ext.override(Ext.selection.CellModel, {
 		onEditorDown: function(editingPlugin, e) {
 			var me = this;
-			
-			me.onEditorArrowBtn(editingPlugin, e, 'down');		
+
+			me.onEditorArrowBtn(editingPlugin, e, 'down');
 		},
-		
+
 		onEditorUp: function(editingPlugin, e) {
 			var me = this;
-			
+
 			me.onEditorArrowBtn(editingPlugin, e, 'up');
 		},
-		
+
 		/**
 		 * @private
 		 * Клон onEditorTab, только direction передается как параметр

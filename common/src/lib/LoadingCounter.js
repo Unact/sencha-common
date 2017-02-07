@@ -11,20 +11,20 @@ Ext.define('Ext.lib.LoadingCounter', {
 	 * @private
 	 * @property {Function} countDownCallback
 	 * Функция обратного вызова, вызываемая, при обнулении счечтика обратного отсчета.
-	 */	
+	 */
 
 	/**
 	 * Инициируются параметры счетчика обатного отсчета и компоненту устанавливается loading
 	 * @param {Object} initCntDwn Начальное значение счетчика обратного отсчета
 	 * @param {Object} callbackCntDwn Функция обратного вызова
-	 * @return {Ext.LoadMask} The LoadMask instance that has just been shown. 
+	 * @return {Ext.LoadMask} The LoadMask instance that has just been shown.
 	 */
 	setLoadingCounter: function(initCntDwn, callbackCntDwn) {
 		var me = this;
-		
+
 		me.countDownCounter = initCntDwn;
 		me.countDownCallback = callbackCntDwn;
-		
+
 		return me.setLoading(true);
 	},
 
@@ -34,7 +34,7 @@ Ext.define('Ext.lib.LoadingCounter', {
 	 */
 	loadingCountDown: function() {
 		var me = this;
-		
+
 		if(0 == --me.countDownCounter) {
 			var ret = me.setLoading(false);
 			if(me.countDownCallback && (typeof me.countDownCallback)=="function")
@@ -50,15 +50,15 @@ Ext.define('Ext.lib.LoadingCounter', {
 	 */
 	loadingBreak: function(silent) {
 		var me = this;
-		
+
 		me.countDownCounter = 0;
-		
+
 		if(!silent)
 			if(me.countDownCallback && (typeof me.countDownCallback)=="function")
 				me.countDownCallback();
-		
+
 		me.countDownCallback = null;
-		
+
 		return me.setLoading(false);
 	}
 });

@@ -19,17 +19,17 @@ Ext.define('Ext.lib.DateIntervalFilter', {
 	constructor : function(currentConfig) {
 		var initConfig = this.getInitialConfig() || {},
 			i;
-		
+
 		currentConfig=currentConfig || {};
 		config = {};
 		for(i in initConfig){
 			config[i]=initConfig[i];
 		}
-		
+
 		for(i in currentConfig){
 			config[i]=currentConfig[i];
 		};
-		
+
 		items = [{
 			id : 'ddateb' + config.suffix,
 			xtype : 'datefield',
@@ -77,7 +77,7 @@ Ext.define('Ext.lib.DateIntervalFilter', {
 				});
 			}
 		}
-		
+
 		if(config.extraItems != null) {
 			for(var i = 0; i < config.extraItems.length; i++) {
 				config.extraItems[i].id += config.suffix;

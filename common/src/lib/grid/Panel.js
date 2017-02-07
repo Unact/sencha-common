@@ -47,13 +47,13 @@ Ext.define('Ext.lib.grid.Panel', {
 		}
 
 		me.createDefaultButtons(buttons, config);
-		
+
 		if (config.afterButtons != null) {
 			for ( i = 0; i < config.afterButtons.length; i++) {
 				buttons.push(config.afterButtons[i]);
 			}
 		};
-		
+
 		toolbar = {
 			xtype : 'toolbar',
 			dock : config.buttonsDock || 'top',
@@ -63,12 +63,12 @@ Ext.define('Ext.lib.grid.Panel', {
 		//Если тулбар причален к верху, то сделать выравниваение по верху.
 		//Это сделано для того, что бы многострочные фильтры выглядели прилично.
 		//Иначе, например, фильтры занимают две строки, а стандартные кнопки выравнены по-середине. Это не красива.
-		//При выравнивании тулбара по верху tbseparator выглядит некрасиво, но мы им и не пользуемся. 
+		//При выравнивании тулбара по верху tbseparator выглядит некрасиво, но мы им и не пользуемся.
 		if(toolbar.dock == 'top')
 			toolbar.layout = {
 				type: 'hbox',
 				align: 'top'
-			}; 
+			};
 
 		config.dockedItems = [toolbar];
 
@@ -90,14 +90,14 @@ Ext.define('Ext.lib.grid.Panel', {
 						hasEditingPlugin = true;
 						break;
 					}
-					
-					pluginParent = pluginParent.superclass;	
+
+					pluginParent = pluginParent.superclass;
 				};
-				
+
 				if(hasEditingPlugin)
 					break;
 			}
-			
+
 			if (!hasEditingPlugin) {
 				plugins.push((config.editing == 'row') ? {
 					ptype : 'rowediting',
@@ -207,11 +207,11 @@ Ext.define('Ext.lib.grid.Panel', {
 			grid = this,
 			comboColumns = [],
 			errors = [];
-		
+
 		grid.columns.forEach(function(column) {
 			if(column.xtype == 'combocolumn') {
 				var store = column.store;
-				
+
 				if(!comboColumns.some(function(col) {return col.store == store;}))
 					comboColumns.push(column);
 			}
@@ -226,7 +226,7 @@ Ext.define('Ext.lib.grid.Panel', {
 					if (success!==true){
 						errors.push('Ошибка загрузки справочника для поля: ' + column.text + ', окно: ' + grid.title);
 					}
-			
+
 					if (count == 0) {
 						if (errors.length > 0) {
 							Ext.Msg.alert('Ошибка', errors.join("<br/>"));
@@ -275,20 +275,20 @@ Ext.define('Ext.lib.grid.Panel', {
 			return true;
 		};
 	},
-	
+
 	createDefaultButtons: function(buttons, config) {
 		me = this;
-		
+
 		if(config.disableRefresh !== true) {
 			me.refreshBtn = Ext.create('Ext.Button', {
 				id : 'refresh'+config.suffix,
 				icon : '/ext/resources/themes/images/default/grid/refresh.gif',
 				tooltip: 'Обновить'
 			});
-			
+
 			if(config.defaultRefreshClickEvent == true)
 				me.refreshBtn.addListener("click", me.onRefreshClick);
-			
+
 			buttons.push(me.refreshBtn);
 		}
 
@@ -298,10 +298,10 @@ Ext.define('Ext.lib.grid.Panel', {
 				icon : '/images/save.png',
 				tooltip: 'Сохранить'
 			});
-			
+
 			if(config.defaultSaveClickEvent == true)
 				me.saveBtn.addListener("click", me.onSaveClick);
-			
+
 			buttons.push(me.saveBtn);
 		}
 
@@ -314,10 +314,10 @@ Ext.define('Ext.lib.grid.Panel', {
 
 			if(config.defaultAddClickEvent == true)
 				me.addBtn.addListener("click", function(btn) {me.onAddClick(btn);});
-				
+
 			buttons.push(me.addBtn);
 		}
-		
+
 		if (config.disableDelete !== true) {
 			me.deleteBtn = Ext.create('Ext.Button', {
 				id : 'delete'+config.suffix,
@@ -325,26 +325,26 @@ Ext.define('Ext.lib.grid.Panel', {
 				disabled : true,
 				tooltip: 'Удалить'
 			});
-			
+
 			if(config.defaultDeleteClickEvent == true)
 				me.deleteBtn.addListener("click", me.onDeleteClick);
-			
+
 			buttons.push(me.deleteBtn);
 		}
 	},
-	
+
 	onSaveClick: function(btn) {
 		var grid  = btn.up("grid"),
 		    store = grid.getStore();
 
 		if(store.hasChanges()) {
 			grid.setLoading(true);
-		
+
 			store.sync({
 				success: function(batch, opt){
 					grid.setLoading(false);
 				},
-				
+
 				failure: function(batch, opt){
 					if(batch.exceptions.length>0){
 						Ext.lib.ErrorMsg.show('Ошибка сохранения', batch.exceptions);
@@ -354,7 +354,7 @@ Ext.define('Ext.lib.grid.Panel', {
 			});
 		}
 	},
-	
+
 	onAddClick: function(btn, fields) {
 		var grid   = btn.up("grid"),
 		    editingPlugin = grid.findPlugin('cellediting') || grid.findPlugin('rowediting') || grid.findPlugin('arrowablecellediting'),
@@ -368,10 +368,10 @@ Ext.define('Ext.lib.grid.Panel', {
 		store.insert(Math.max(index, 0), model);
 		sm.select(model);
 		editingPlugin.startEdit(model, 0);
-		
+
 		return model;
 	},
-	
+
 	onDeleteClick: function(btn) {
 		var grid  = btn.up("grid"),
 		    editingPlugin = grid.findPlugin('cellediting') || grid.findPlugin('rowediting') || grid.findPlugin('arrowablecellediting'),
@@ -389,7 +389,7 @@ Ext.define('Ext.lib.grid.Panel', {
 			}
 		}
 	},
-	
+
 	onRefreshClick: function(btn) {
 		var grid  = btn.up("grid"),
 		    store = grid.getStore(),
@@ -411,7 +411,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				} else
 					Ext.lib.ErrorMsg.show('Ошибка получения данных', operation);
 
-				grid.setLoading(false);		
+				grid.setLoading(false);
 			}
 		});
 	}

@@ -9,7 +9,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 	 * displayField - отображаемое поле. по умолчанию 'name'
 	 * valueField - отображаемое поле. по умолчанию 'id'
 	 * colorField - строковое поле в котором храниться цвет отображения записи (red, green,...). Если не задано то все по умолчанию
-	 * boldField - числовое поле в котором храниться значение если 1 то будет жирным отображаться иначе не жирным. Если не задано то все по умолчанию 
+	 * boldField - числовое поле в котором храниться значение если 1 то будет жирным отображаться иначе не жирным. Если не задано то все по умолчанию
 	 * onlyRenderer - не создавать элемент для редактирования
 	 * fieldListeners - слушатели событий элемента редактирования
 	 */
@@ -35,16 +35,16 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 					if (config.colorField || '' !== '') {
 						metaData.style = "color: " + record.get(config.colorField) + ";";
 					};
-					if (config.boldField || '' !== '') 
+					if (config.boldField || '' !== '')
 					{
 						if (record.get(config.boldField) == 1)
 						{
 						    metaData.style = metaData.style + "font-weight: bold;";
 						}
 					};
-					
-					
-					
+
+
+
 				}
 				return matching == null;
 			});
@@ -87,6 +87,6 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
 			return true;
 		};
 
-		
+
 	}
-}); 
+});

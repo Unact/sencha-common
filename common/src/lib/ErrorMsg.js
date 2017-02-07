@@ -3,7 +3,7 @@ Ext.define('Ext.lib.ErrorMsg', {
 		show: function(msg, operations) {
 			var err, tail = "", body, bodyDetail = [];
 			if(operations instanceof String) {
-				err = operations; 
+				err = operations;
 			} else {
 				if(operations instanceof Array) {
 					err = operations[0].getError();
@@ -12,7 +12,7 @@ Ext.define('Ext.lib.ErrorMsg', {
 					err = operations.getError();
 				}
 			}
-			
+
 			if(err instanceof String) {
 				body = err;
 			} else {
@@ -21,7 +21,7 @@ Ext.define('Ext.lib.ErrorMsg', {
 				}
 				body = bodyDetail.join("<br/>");
 			}
-			
+
 			Ext.Msg.alert('Ошибка', msg + "<br/>" + body + tail);
 		}
 	}

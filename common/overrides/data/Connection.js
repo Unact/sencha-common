@@ -9,10 +9,10 @@ Ext.onReady(function() {
 		setOptions : function(options, scope) {
 			var me = this;
 			var res = me.callParent(arguments);
-			
+
 			res.url = Ext.urlAppend(res.url, Ext.Object.toQueryString({authenticity_token: window._token}));
 
 			return res;
 		}
 	});
-}); 
+});
