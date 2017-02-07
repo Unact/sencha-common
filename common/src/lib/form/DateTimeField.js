@@ -29,7 +29,7 @@ Ext.define('Ext.lib.form.DateTimeField', {
     initComponent: function(){
         var me = this;
         me.callParent(arguments);
-        
+
         me.datefield =  me.getFields()[0];
         me.timefield = me.getFields()[1];
         me.initField();
@@ -49,7 +49,7 @@ Ext.define('Ext.lib.form.DateTimeField', {
                 me.suspendFieldValueChange--;
             }
         );
-    
+
         return true;
     },
 
@@ -58,7 +58,7 @@ Ext.define('Ext.lib.form.DateTimeField', {
         var time = me.timefield.getValue();
 
         // Иногда приходят странные значения newValue, в таких случаях ничего делать не надо
-        me.suspendFieldValueChange++;    
+        me.suspendFieldValueChange++;
         me.mixins.field.setValue.call(me, me.computeDateTime(newValue, time));
         // Когда сенча обновляет bind, она заново вызывает setValue, которая меняет значения в полях снова
         // чтобы такого цикла не было, даем сенче время на обновление bind
@@ -67,7 +67,7 @@ Ext.define('Ext.lib.form.DateTimeField', {
                 me.suspendFieldValueChange--;
             }
         );
-        
+
         return true;
     },
 
@@ -123,7 +123,7 @@ Ext.define('Ext.lib.form.DateTimeField', {
 
         me.getFields().forEach(function(el){
             valid = !valid ? !el.isValid() : valid;
-            
+
         });
         return valid;
     },

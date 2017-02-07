@@ -21,10 +21,10 @@ Ext.define('Ext.lib.form.MultiFieldContainer', {
 		});
 
 		me.items = config.fields;
-		
+
 		me.callParent(arguments);
 	},
-	
+
 	setValue: function(value){
 		var me = this,
 			field,
@@ -60,7 +60,7 @@ Ext.define('Ext.lib.form.MultiFieldContainer', {
 
 		me.items.items.forEach(function(el, i, array){
 			valid = !valid ? !el.isValid() : valid;
-			
+
 		});
 		return valid;
 	}

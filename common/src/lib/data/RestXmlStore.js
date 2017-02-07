@@ -5,14 +5,14 @@
  */
 Ext.define('Ext.lib.data.RestXmlStore', {
 	extend: 'Ext.data.Store',
-	
+
 	alias: 'store.restxml',
-	
+
 	requires : [
 		'Ext.data.proxy.Rest',
 		'Ext.data.reader.Xml',
 		'Ext.data.writer.Xml'],
-	
+
 	proxy: {
 		type: 'rest',
 		timeout: 120000,
@@ -30,9 +30,9 @@ Ext.define('Ext.lib.data.RestXmlStore', {
 			type:'xml'
 		}
 	},
-	
+
 	/**
-	 * 
+	 *
 	 * @param {Object} config. entityName - имя сущности. по нему автоматически создается конфигурация proxy
 	 */
 	constructor : function(config) {
@@ -43,19 +43,19 @@ Ext.define('Ext.lib.data.RestXmlStore', {
 
 		Ext.apply(currentConfig, this.getInitialConfig());
 		Ext.apply(currentConfig, config);
-		
+
 		currentProxyConfig = currentConfig.proxy,
 		entityName = currentConfig.entityName,
 		entityPluralName = Ext.util.Inflector.pluralize(entityName);
-		
+
 		currentProxyConfig.url = '/rest/' + entityPluralName;
 		currentProxyConfig.reader.record = entityName;
 		currentProxyConfig.reader.rootProperty = entityPluralName;
 		currentProxyConfig.writer.record = entityName;
 		currentProxyConfig.writer.documentRoot = entityPluralName;
-		
+
 		this.callParent(arguments);
-		
+
 		//Ext.apply(this, currentConfig);
 	}
 });

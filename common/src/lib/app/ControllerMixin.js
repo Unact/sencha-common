@@ -2,7 +2,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
     /*
      * Загрузчик словарей.
      * dictionaries - массив. Элементом может являться строка или объект.
-     * Строка трактуется как идентификатор хранилища 
+     * Строка трактуется как идентификатор хранилища
      * Объект должен быть объектом хранилища или
      * содержать идентификатор хранилища в качестве ключа и
      * функцию обратного вызова или массив в качестве значения.
@@ -13,7 +13,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
         var loader;
         var view = controller.getView();
         var errors = [];
-        
+
         function getStore(obj){
             var store;
             if (( typeof obj) === "string") {
@@ -23,7 +23,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
             }
             return store;
         }
-        
+
         loader = {
             dictionaryCount: 0,
             callback: callback,
@@ -31,11 +31,11 @@ Ext.define('Ext.lib.app.ControllerMixin', {
                 var me = this;
                 var errorsTxt;
                 var i;
-                
+
                 if (--me.dictionaryCount == 0) {
                     if(errors.length>0 && !controller.skipDictionaryAlert){
                         errorsTxt = [];
-                        
+
                         for(i = 0; i<errors.length; i++){
                             errorsTxt.push("Хранилище: " + errors[i].storeName + "<br/>" +
                             "Ресурс: " + errors[i].url + "<br/>" +
@@ -55,9 +55,9 @@ Ext.define('Ext.lib.app.ControllerMixin', {
             },
             loadStore: function(store, dictionaryData){
                 var me = this;
-                
+
                 Ext.GlobalEvents.fireEvent('beginserveroperation');
-                
+
                 store.load({
                     callback: function(records, operation, success) {
                         if(success!==true){
@@ -72,7 +72,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
                         } else if (Array.isArray(dictionaryData)) {
                             me.load(dictionaryData);
                         }
-                        
+
                         me.updateDictionariesLoadingCount();
                         Ext.GlobalEvents.fireEvent('endserveroperation');
                     }
@@ -85,12 +85,12 @@ Ext.define('Ext.lib.app.ControllerMixin', {
                 var properties;
                 var i;
                 var simpleStoreConf;
-                
+
                 if (Array.isArray(dictionaries)) {
                     me.dictionaryCount += dictionaries.length;
-                    
+
                     for ( i = 0; i < dictionaries.length; i++) {
-                        
+
                         dictionary = dictionaries[i];
                         store = getStore(dictionary);
                         if(store) {
@@ -103,10 +103,10 @@ Ext.define('Ext.lib.app.ControllerMixin', {
                     properties = Object.getOwnPropertyNames(dictionaries);
                     if (properties.length>=1) {
                         simpleStoreConf = properties.length==1;
-                        
+
                         dictionary = simpleStoreConf ? properties[0] : dictionaries.store;
                         store = getStore(dictionary);
-                        
+
                         if(store) {
                             me.loadStore(store, simpleStoreConf ? dictionaries[dictionary] : dictionaries.data);
                         }
@@ -114,10 +114,10 @@ Ext.define('Ext.lib.app.ControllerMixin', {
                 }
             }
         };
-        
+
         loader.load(dictionaries);
     },
-    
+
     getError: function(response) {
         var me = this;
         var responseContentType = response && response.getResponseHeader ?
@@ -126,7 +126,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
         var error = null;
         var parser, xmlDoc, errorTags;
         var data;
-        
+
         if(responseContentType==null){
             error = response.responseText && response.responseText!="" ?
                 response.responseText :
@@ -147,17 +147,17 @@ Ext.define('Ext.lib.app.ControllerMixin', {
         if(error==null){
             error = response.responseText;
         }
-        
+
         return error;
     },
-    
+
     onError : function(response, callback) {
         var me = this;
         var error = me.getError(response);
-        
+
         Ext.Msg.alert("Ошибка", error, callback);
     },
-    
+
     initVmFromUrlParams: function() {
         var me = this;
         var vm = me.getViewModel();
@@ -166,7 +166,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
         for(key in urlParams) {
             if((urlParams[key] !== '') && (key in vm.getData())) {
                 vm.set(key, urlParams[key]);
-            } 
+            }
         };
     }
 });

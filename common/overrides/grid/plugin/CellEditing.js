@@ -1,6 +1,6 @@
 Ext.define('Ext.overrides.grid.plugin.CellEditing', {
 	override : 'Ext.grid.plugin.CellEditing',
-	
+
 	//добавляем к конфигурации редактора опции из column.editorConfig
 	getEditor: function(record, column) {
         var me = this,
@@ -28,12 +28,12 @@ Ext.define('Ext.overrides.grid.plugin.CellEditing', {
                     field: editor
                 }, column.editorConfig));
             }
-            
+
             // Add the Editor as a floating child of the grid
             // Prevent this field from being included in an Ext.form.Basic
             // collection, if the grid happens to be used inside a form
             editor.field.excludeForm = true;
-            
+
             if(Ext.getVersion().isLessThan('6')){
             	editor.field.validationField = record.self.getField(column.dataIndex);
 
@@ -62,7 +62,7 @@ Ext.define('Ext.overrides.grid.plugin.CellEditing', {
             }
             editors.add(editor);
         }
-        
+
         // Inject an upward link to its owning grid even though it is not an added child.
         editor.ownerCmp = me.grid.ownerGrid;
 

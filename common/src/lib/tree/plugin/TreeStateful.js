@@ -2,7 +2,7 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
 {
     extend:'Ext.AbstractPlugin',
     alias:'plugin.treestateful',
-    
+
     stateId:null,
     stateIdSuffix:'-stfulPlugin',
     //объект tree.Panel, к которому прикручивается плагин
@@ -18,7 +18,7 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
     changedNodes:{},
     changeNum:0,
     currentNode:null,
-    
+
     constructor:function(config)
     {
         var me=this;
@@ -32,15 +32,15 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
         }
         else{me.callParent();}
     },
-    
+
     destroy:function()
     {
         var me=this;
-        
+
         me._flushState();
         me.callParent();
     },
-    
+
     init:function(treePanel)
     {
         var me=this,
@@ -52,7 +52,7 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
         //Взводим признак запоминания результатов событий
         //задействован в treePanel.saveState()
         treePanel.memorizeEnabled=true;
-        
+
         //ищем провайдера пограничных состояний
         if(!(Ext.state.Manager.getProvider()||false))
         {
@@ -74,14 +74,14 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
         {events=['checkchange']}
         else
         {events=['checkchange','afteritemexpand','afteritemcollapse']}
-        
+
         treePanel.on({
             checkchange:{fn:function(node){me.currentEvent='checkchange';me.currentNode=node;},scope:me},
             afteritemexpand:{fn:function(){me.currentEvent='afteritemexpand';},scope:me},
             afteritemcollapse:{fn:function(){me.currentEvent='afteritemcollapse';},scope:me}
         });
         treePanel.addStateEvents(events);
-        
+
         //прикручиваем к целевому дереву методы Ext.state.Stateful
         treePanel.ownSaveState=treePanel.saveState;//собственная память дерева
         treePanel.saveState=function()
@@ -92,12 +92,12 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
                 me._saveState()
             }
         };
-        
+
         treePanel.ownApplyState=treePanel.applyState;//собственная память дерева
         treePanel.applyState=function(act2Apply)
         {
             try{treePanel.ownApplyState(arguments);}catch(e){}
-            
+
             me.actions2Apply=Ext.isEmpty(act2Apply)?me.act2Remember:act2Apply.toString();
             me._applyState();
             me._flushState();
@@ -115,7 +115,7 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
         //Подтираем за предыдущими состояниями
         me._flushState();
     },
-    
+
     //Собирает массив id всех развернутых узлов
     getExpanded:function()
     {
@@ -130,11 +130,11 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
                     if(!node.isRoot()){expandedIds.push(node.getId())};
                     return true;
                 }
-                else 
+                else
                 {return false};
             }
         });
-        
+
         return (expandedIds.length>0)?expandedIds:[];
     },
     //Собираем "хэш" {id: {checked, порядковый номер изменения}} чекнутых/анчекнутых узлов
@@ -163,7 +163,7 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
         //измененные
         if(me.actions2Remember!='expand'&&me.currentEvent=='checkchange')
         {ret.changedNodes=me.getChanged(me.changedNodes);}
-        
+
         return ret;
     },
 
@@ -180,10 +180,10 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
             contentState=Ext.state.Manager.get(me.stateId,false);
             savingData=contentState?contentState:{};
             changedData=me._getState();
-            
+
             for (key in changedData)
             {savingData[key]=changedData[key];}
-            
+
             Ext.state.Manager.set(me.stateId,savingData);
         }
     },
@@ -191,11 +191,11 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
     _flushState:function()
     {
         var me=this;
-        
+
         me.changedNodes={};
         me.changeNum=0;
         me.currentNode=null;
-        
+
         if(!Ext.isEmpty(me.stateId))
         {
             Ext.state.Manager.set(me.stateId,{expandedIds:[],changedNodes:{}});
@@ -218,13 +218,13 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
             {
                 expandedIds=stateContent['expandedIds']||[];
                 changedNodes=stateContent['changedNodes']||{};
-                
+
                 if(expandedIds.length>0 && me.actions2Apply!='check'){me.processExpandedIds(viewStore,expandedIds);}
-                
+
                 if(me.actions2Apply!='expand')
                 {
                     me.clearChecked();
-                    
+
                     if(Object.keys(changedNodes).length>0)
                     {me.processChangedNodes(viewStore,changedNodes);}
                 }
@@ -235,9 +235,9 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
     processExpandedIds:function(treeStore,expIds)
     {
         var me=this;
-        
+
         me.clearExpand();
-        
+
         expIds.forEach(
             function(nodeId)
             {
@@ -250,7 +250,7 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
         );
     },
     clearExpand:function(){this.treePanel.collapseAll();},
-    
+
     //Чекаем/анчекаем
     processChangedNodes:function(treeStore,changedNodes)
     {
@@ -261,11 +261,11 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
         ;
         //отключаем запоминание постыдных событий
         me.treePanel.memorizeEnabled=false;
-        
+
         //формируем массив, отсортированный по порядковому номеру изменения
         for(keyId in changedNodes)
         {arrNodes.push({id:keyId,checked:changedNodes[keyId].checked,changeNum:changedNodes[keyId].changeNum});}
-        
+
         arrNodes=arrNodes.sort(function(n1,n2){return n1.changeNum-n2.changeNum});
         //имитируем прошлую жизнь (спонсор: Ext.tree.View.onCheckChange())
         arrNodes.forEach(
@@ -279,7 +279,7 @@ Ext.define('Ext.lib.tree.plugin.TreeStateful',
                 }
             }
         );
-        
+
         //теперь опять начинаем все тщательно запоминать
         me.treePanel.memorizeEnabled=true;
     },

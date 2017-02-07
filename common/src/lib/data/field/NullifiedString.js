@@ -6,4 +6,4 @@ Ext.define('Ext.lib.data.field.NullifiedString', {
 	convert : function(v) {
 		return v && v.toString().trim()!="" ? v : null;
 	}
-}); 
+});

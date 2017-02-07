@@ -1,6 +1,6 @@
 Ext.define('Ext.lib.app.Routing', {
 	extend : 'Ext.app.Controller',
-	
+
 	routes : {
 		':id' : {
 			before : 'beforeNavigate',
@@ -15,7 +15,7 @@ Ext.define('Ext.lib.app.Routing', {
 			}
 		}
 	},
-	
+
 	onUnmatchedRoute : function(hash) {
 		this.redirectTo("index");
 	},
@@ -23,7 +23,7 @@ Ext.define('Ext.lib.app.Routing', {
 	beforeNavigate : function(id, action) {
 		var me = this,
 			item = me.cards.items.get(id);
-		
+
 		if (item) {
 			action.resume();
 		} else {
@@ -34,16 +34,16 @@ Ext.define('Ext.lib.app.Routing', {
 	onNavigate : function(id) {
 		var me = this,
 			newCard = me.cards.setActiveItem(id);
-		
+
 		if(newCard){
 			document.title = newCard.lookupViewModel().get('title');
 		}
 	},
-	
+
 	onLaunch : function() {
 		var controller = this,
 			mainView = controller.application.getMainView();
-		
+
 		controller.cards = mainView.lookupReference('mainPanel');
 	}
 });

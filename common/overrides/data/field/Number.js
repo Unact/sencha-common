@@ -6,4 +6,4 @@ Ext.define('Ext.overrides.data.field.Number', {
     parse: function(v) {
         return parseFloat(String(v).replace(',', '.').replace(this.stripRe, ''));
     }
-}); 
+});

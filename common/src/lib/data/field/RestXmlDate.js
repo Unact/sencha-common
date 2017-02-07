@@ -2,7 +2,7 @@ Ext.define('Ext.lib.data.field.RestXmlDate', {
 	extend : 'Ext.data.field.Date',
 
 	alias : 'data.field.restXmlDate',
-	
+
 	isDate: true,
 
 	convert : function(v) {
@@ -21,7 +21,7 @@ Ext.define('Ext.lib.data.field.RestXmlDate', {
 				"dmy",
 				"dmY",
 				"d"];
-		
+
 		if (!v) {
 			return null;
 		}
@@ -29,9 +29,9 @@ Ext.define('Ext.lib.data.field.RestXmlDate', {
 		if ( v instanceof Date) {
 			return v;
 		}
-		
+
 		v = v.toString().trim();
-		
+
 		for(var i=0; i<formats.length; i++){
 			parsed = Ext.Date.parse(v, formats[i]);
 			if(parsed){
@@ -43,10 +43,10 @@ Ext.define('Ext.lib.data.field.RestXmlDate', {
 	},
 	serialize: function(v){
 		var result;
-		
+
 		if (v instanceof Date) {
 			result = Ext.Date.format(v, (this.isDate ? 'Y-m-d' : 'Y-m-d H:i:s'));
 		}
 		return result;
 	}
-}); 
+});

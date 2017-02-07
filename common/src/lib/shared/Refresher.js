@@ -22,7 +22,6 @@ Ext.define('Ext.lib.shared.Refresher', {
         this.enterHandlers.push(new Ext.util.KeyNav({
             target: component.el,
             scope: this,
-            defaultEventAction: 'stopEvent',
             enter: this.enterHandler
         }));
     },

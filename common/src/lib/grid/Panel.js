@@ -104,7 +104,7 @@ Ext.define('Ext.lib.grid.Panel', {
 				handler: 'onDeleteByColumn'
 			}, config.deleteColumnConfig));
 		}
-		
+
 		Ext.apply(me, config);
 
 		me.callParent(arguments);

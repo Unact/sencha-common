@@ -5,14 +5,14 @@ Ext.define('Ext.overrides.data.Connection', {
 		var me = this;
 
 		me.callParent(arguments);
-		
+
 		me.on('requestexception', function(conn, response, options, eOpts){
 			if(response.status==401){
 				window.location.replace('/');
 			}
 		});
 	},
-	
+
 	/**
 	 * Sets various options such as the url, params for the request
 	 * @param {Object} options The initial options
@@ -22,7 +22,7 @@ Ext.define('Ext.overrides.data.Connection', {
 	setOptions : function(options, scope) {
 		var me = this;
 		var res = me.callParent(arguments);
-		
+
 		res.url = Ext.urlAppend(res.url, Ext.Object.toQueryString({authenticity_token: window._token}));
 
 		return res;

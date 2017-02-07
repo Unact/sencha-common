@@ -16,19 +16,19 @@ Ext.define('Renew.ymaps.Polygon', {
 				seg1_line2_end = a2 * end1[0] + b2 * end1[1] + d2,
 				seg2_line1_start = a1 * start2[0] + b1 * start2[1] + d1,
 				seg2_line1_end = a1 * end2[0] + b1 * end2[1] + d1;
-	
+
 			//если концы одного отрезка имеют один знак, значит он в одной полуплоскости и пересечения нет.
 			return !(seg1_line2_start * seg1_line2_end >= 0 || seg2_line1_start * seg2_line1_end >= 0);
 		},
-		
+
 		//Функция проверяет пересечение полигонов
 		//Параметр - GeoObjectCollection, состоящий из полигонов. У каждого полигона должно быть заполнено свойство id
-		//Результат - массив пар id-ков пересекающихся полигонов 
+		//Результат - массив пар id-ков пересекающихся полигонов
 		checkPolygonsIntersections: function(polygons){
 			var polygonsCoordinates = [],
 				i, j, k, l, flagNoIntersections,
 				result = [];
-			
+
 			polygons.each(
 				function(polygon){
 					polygonsCoordinates.push({
@@ -37,7 +37,7 @@ Ext.define('Renew.ymaps.Polygon', {
 					});
 				}
 			);
-			
+
 			//смотрим попарно многоугольники
 			//цикл для получения первого многоуольника
 			for(i=0; i<polygonsCoordinates.length-1; i++){

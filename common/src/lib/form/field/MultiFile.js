@@ -4,7 +4,7 @@
 Ext.define('Ext.lib.form.field.MultiFile', {
 	extend: 'Ext.form.field.File',
 	alias: 'widget.multifile',
-	
+
 	listeners: {
 		render: function(me, eOpts) {
 			me.fileInputEl.set({

@@ -7,7 +7,7 @@ Ext.define('Ext.lib.Checkers', {
 			if(value==null || value.replace('\s', '')==''){
 				return 'Введите ИНН';
 			}
-			
+
 			value=value.replace('\s', '');
 			if((value.length!=10 && value.length!=12) || isNaN(parseInt(value))){
 				return 'ИНН должен состоять из 10 или 12 цифр';
@@ -36,10 +36,10 @@ Ext.define('Ext.lib.Checkers', {
 			}
 			return check || "Значение ИНН некорреткно";
 		},
-		
+
 		checkInn: function(value){
 			var check=false;
-			
+
 			if(value!=null){
 				value=value.replace('\s', '');
 				if(value.length==10){
@@ -67,7 +67,7 @@ Ext.define('Ext.lib.Checkers', {
 			}
 			return check;
 		},
-		
+
 		checkOwnAccount: function(value){
 			var check=false,
 				weights = [7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1],
@@ -84,10 +84,10 @@ Ext.define('Ext.lib.Checkers', {
 				},
 				controlValue = 0,
 				cvRegexp = /\d{3}\d{5}(\d{1}|[АВСЕНКМРТХ]{1})\d{14}/;
-			
+
 			function getControlValue(v, CV){
 				var product, cv = 0, intVal, i;
-				
+
 				for(i = 0; i< v.length; i++){
 					intVal = parseInt(v[i]);
 					if(i==8){
@@ -95,9 +95,9 @@ Ext.define('Ext.lib.Checkers', {
 							intVal = clearingCurrencyReplacement[v[i]];
 						}
 					}
-					
+
 					product = intVal*weights[i]*(CV ? CV : 1);
-					
+
 					product = product.toString();
 					cv += parseInt(product[product.length-1]);
 				}
@@ -105,12 +105,12 @@ Ext.define('Ext.lib.Checkers', {
 			}
 			if(value!=null){
 				value=value.replace('\s', '');
-				
+
 				if(cvRegexp.test(value)){
 					controlValue = getControlValue(value)*3;
-					
+
 					controlValue = getControlValue(value, controlValue).toString();
-					
+
 					check = controlValue[controlValue.length-1]==0;
 				}
 			}
@@ -125,7 +125,7 @@ Ext.apply(Ext.form.field.VTypes, {
 	},
 	innText: 'Некорректный ИНН',
 	innMask: /\d/,
-	
+
 	ownaccount: function(value, field){
 		return Ext.lib.Checkers.checkOwnAccount(value);
 	},
