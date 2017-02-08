@@ -7,6 +7,8 @@ Ext.define('Ext.modern.lib.shared.BaseToolbar', {
         'save'
     ],
 
+    scrollable: true,
+
     constructor: function(config) {
         var items = [];
 

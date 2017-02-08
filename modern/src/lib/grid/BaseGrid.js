@@ -7,6 +7,7 @@ Ext.define('Ext.modern.lib.grid.BaseGrid', {
     ],
 
     config: {
+        bufferSize: 100,
         hideTitleBar: true,
         plugins: [
             'columnresizing'
