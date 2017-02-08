@@ -5,4 +5,4 @@ Ext.define('Ext.overrides.data.validator.Presence', {
 		allowEmty: false,
 		message: 'не может быть пустым'
 	}
-}); 
+});

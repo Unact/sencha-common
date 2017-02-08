@@ -1,7 +1,7 @@
 Ext.define("Ext.overrides.form.field.Number", {
 	override: "Ext.form.field.Number",
     decimalSeparators: [',', '.'],
-  
+
     initComponent: function() {
         var me = this;
         if (me.decimalSeparators === null) {
@@ -64,14 +64,14 @@ Ext.define("Ext.overrides.form.field.Number", {
         value = isNaN(value) ? '' : String(value).replace('.', me.decimalSeparators[0]);
         return value;
     },
-    
+
     getSubmitValue: function() {
         var me = this,
             value = me.callParent();
-            
+
         if (!me.submitLocaleSeparator) {
             value = value.replace(me.decimalSeparatorsReg, '.');
-        }  
+        }
         return value;
     },
 
@@ -83,10 +83,10 @@ Ext.define("Ext.overrides.form.field.Number", {
         var me = this,
             ariaDom = me.ariaEl.dom,
             minValue, allowed, ariaDom;
-        
+
         me.minValue = minValue = Ext.Number.from(value, Number.NEGATIVE_INFINITY);
         me.toggleSpinners();
-        
+
         // May not be rendered yet
         if (ariaDom) {
             if (minValue > Number.NEGATIVE_INFINITY) {
@@ -96,11 +96,11 @@ Ext.define("Ext.overrides.form.field.Number", {
                 ariaDom.removeAttribute('aria-valuemin');
             }
         }
-        
+
         // Build regexes for masking and stripping based on the configured options
         if (me.disableKeyFilter !== true) {
             allowed = me.baseChars + '';
-            
+
             if (me.allowExponential) {
                 allowed += me.decimalSeparatorsReg + 'e+-';
             }
@@ -112,7 +112,7 @@ Ext.define("Ext.overrides.form.field.Number", {
                     allowed += '-';
                 }
             }
-            
+
             allowed = Ext.String.escapeRegex(allowed);
             me.maskRe = new RegExp('[' + allowed + ']');
             if (me.autoStripChars) {

@@ -1,17 +1,17 @@
 Ext.define('Ext.lib.singlecheckgrid.ViewController', {
     extend: 'Ext.lib.app.ViewController',
     alias : 'controller.singlecheckgrid',
-    
+
     mixins: ['Ext.lib.shared.Detailable'],
 
     init: function(view){
         var me = this;
-        
-        me.mainView = me.mainView || view;      
-        
-        view.on('refreshtable', me.sharedRefresh, me);  
+
+        me.mainView = me.mainView || view;
+
+        view.on('refreshtable', me.sharedRefresh, me);
         view.on('savetable', me.onSave, me);
-        
+
         //Добавить в экземпляр панели метод
         view.getChecked = function() {
             var checked = [];
@@ -27,7 +27,7 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
     onRefresh: function() {
         var me = this;
         var view = me.getView();
-        
+
         view.setAvailableRowsFK(null);
         me.sharedRefresh();
     },
@@ -40,7 +40,7 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
         var vm = me.getView().getViewModel();
         var sm = me.getView().getSelectionModel();
         var store = me.getView().getStore();
-        var checkmarkStore = me.getView().getCheckmarkStore(); 
+        var checkmarkStore = me.getView().getCheckmarkStore();
         var oldSelection = sm.getSelection();
         var oldSelectionIndex = (oldSelection && oldSelection.length==1) ?
                 store.indexOf(oldSelection[0]) :
@@ -50,7 +50,7 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
                 null;
         var stores = [];
         var counter = 0;
-                
+
         if(me.masterGrid){
             masterRecord = me.masterGrid.getViewModel().get('masterRecord');
             if(masterRecord && !masterRecord.phantom)
@@ -73,10 +73,10 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
         if(vm==null || vm.get('filterReady')!==false) {
             if(resultCheckmark)
                 stores.push(checkmarkStore);
-                
+
             if(result)
                 stores.push(store);
-        }    
+        }
 
 
         counter = stores.length;
@@ -86,22 +86,22 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
         }
 
         me.mainView.setLoading(true);
-        
+
         Ext.Array.each(stores, function(store) {
             store.load({
                 callback: function(records, operation, success) {
                     if (!success) {
                         me.onError(operation.getError().response);
                     }
-                    
+
                     counter--;
                     if(counter == 0) {
                         var recordToSelect = store.getById(oldSelectionId);
-        
+
                         //afterRefresh изменяет выделенную строку, поэтому
                         //вызовим его до установки фокуса на строку
                         me.afterRefresh();
-            
+
                         if(recordToSelect){
                             me.getView().view.scrollToRecord(recordToSelect);
                         } else {
@@ -110,14 +110,14 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
                             }
                             me.getView().view.scrollToRecord(0);
                         }
-                        
+
                         me.mainView.setLoading(false);
                     }
                 }
             });
         });
     },
-    
+
    onSave: function() {
         var me = this;
         var recordsChecked = me.getView().getChecked();
@@ -132,7 +132,7 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
         if(masterRecord == null) {
             return;
         }
-        
+
         if (arguments[0] && (typeof arguments[0]==='function')) {
             callback = arguments[0];
             callbackScope = arguments[1] || me;
@@ -204,7 +204,7 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
     beforeRefresh: function(masterRecord){
         return true;
     },
-    
+
     //Обновлять ли стор допустимых значений.
     //Предполагается, что этот стор должен загружаться один раз,
     //А при смене мастера должны меняться только галочки.
@@ -220,15 +220,15 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
         var store = me.getView().getStore();                     //Стор допустимых значений
         var checkmarkStore = me.getView().getCheckmarkStore();   //Стор отмеченных значений
         var filters = store.getFilters().clone();                //Фильтр, примененный к допустимым значениям.
-                                                                 //В начала метода фиьтр снимается, а в конце - возвращается 
-                                                                 
+                                                                 //В начала метода фиьтр снимается, а в конце - возвращается
+
         //Для отмеченных значений заполнить массив ids внешними ключами на допустимые значения
         checkmarkStore.each(function(record) {
             ids.push(record.get(me.checkmarkLink));
         });
 
         store.clearFilter();
-        
+
         //Приветси галочки в допустимых значениях к состоянию отмеченных значений
         store.each(function(record) {
             var index;
@@ -239,14 +239,14 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
                 record.set('checked', false);
             }
         });
-        
+
         store.filter(filters.getRange());
     },
-    
+
     onFilterCheck: function(btn) {
         var me = this;
         var store = me.getView().getStore();
-        
+
         if(btn.pressed) {
             store.filterBy(function(record) {
                 return record.get('checked');

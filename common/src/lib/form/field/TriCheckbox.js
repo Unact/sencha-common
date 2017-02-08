@@ -125,4 +125,4 @@ Ext.define('Ext.lib.form.field.TriCheckbox', {
         }
         return 0;
     },
-}); 
+});

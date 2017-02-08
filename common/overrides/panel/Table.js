@@ -3,16 +3,16 @@ Ext.define('Ext.overrides.panel.Table', {
 
 	initComponent: function(){
 		var me = this;
-		
+
 		me.callParent(arguments);
-		
+
 		me.initSpecialColumns();
 	},
-	
+
 	setStore: function(){
 		var me = this;
 		var store = arguments[0];
-		
+
 		if(arguments.length>1){
 			me.reconfigure(arguments[0], arguments[1]);
 		} else {
@@ -22,13 +22,13 @@ Ext.define('Ext.overrides.panel.Table', {
         if (me.autoLoad && !(store.loading || store.isLoaded())) {
             store.load();
         }
-		
+
 		me.initSpecialColumns();
 	},
-	
+
 	initSpecialColumns: function(){
 		var me = this;
-		
+
 		model = me.store.getModel();
 
 		if(model){
@@ -40,9 +40,9 @@ Ext.define('Ext.overrides.panel.Table', {
 			});
 		}
 	},
-	
+
 	/**
-     * Reconfigures the grid or tree with a new store and/or columns. Stores and columns 
+     * Reconfigures the grid or tree with a new store and/or columns. Stores and columns
      * may also be passed as params.
      *
      *     grid.reconfigure(store, columns);
@@ -55,10 +55,10 @@ Ext.define('Ext.overrides.panel.Table', {
      *     // or
      *     tree.reconfigure(null, columns);
      *
-     * If you're using locked columns, the {@link #enableLocking} config should be set 
+     * If you're using locked columns, the {@link #enableLocking} config should be set
      * to `true` before the reconfigure method is executed.
      *
-     * @param {Ext.data.Store/Object} [store] The new store instance or store config. You can 
+     * @param {Ext.data.Store/Object} [store] The new store instance or store config. You can
      * pass `null` if no new store.
      * @param {Object[]} [columns] An array of column configs
      * @param {Object} [binding] Used for detect binding initialization
@@ -72,7 +72,7 @@ Ext.define('Ext.overrides.panel.Table', {
             view = me.getView(),
             block, refreshCounter,
             store, columns, binding;
-        
+
         switch(arguments.length){
         	case 1:
         		if(Ext.isArray(arguments[0])){
@@ -87,7 +87,7 @@ Ext.define('Ext.overrides.panel.Table', {
         			binding = arguments[1];
         		} else {
         			store = arguments[0];
-        			
+
         			if(Ext.isArray(arguments[1])){
         				columns = arguments[1];
         			} else {
@@ -106,7 +106,7 @@ Ext.define('Ext.overrides.panel.Table', {
         if (columns) {
             columns = Ext.Array.slice(columns);
         }
-        
+
         me.reconfiguring = true;
         if (store) {
             store = Ext.StoreManager.lookup(store);

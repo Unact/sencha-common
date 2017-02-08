@@ -68,7 +68,7 @@ Ext.define('Ext.overrides.ux.TreePicker', {
                     finishedLayout: function(){
                         var layoutFns = Ext.layout.container.Fit.prototype;
                         layoutFns.finishedLayout.apply(this, arguments);
-          
+
                         if (picker._scrollY) {
                            picker.getView().getEl().dom.scrollTop = picker._scrollY;
                         }
@@ -185,7 +185,7 @@ Ext.define('Ext.overrides.ux.TreePicker', {
             me.lastMutatedValue = rawValue;
             me.lastKey = key;
             if (len && (e.type !== 'keyup' || (!e.isSpecialKey() || isDelete))) {
-                
+
                 store.removeFilter(me.queryFilter, true);
                 filter = me.queryFilter = new Ext.util.Filter({
                     id: me.id + '-filter',
@@ -201,9 +201,9 @@ Ext.define('Ext.overrides.ux.TreePicker', {
 
                 if (me.store.getCount() || me.getPicker().emptyText) {
                     // The filter changing was done with events suppressed, so
-                    // refresh the picker DOM while hidden and it will layout on show.      
+                    // refresh the picker DOM while hidden and it will layout on show.
                     node.expandChildren(true);
-                    me.expand(); 
+                    me.expand();
                 }
                 me.focus();
             } else {
@@ -226,8 +226,8 @@ Ext.define('Ext.overrides.ux.TreePicker', {
                         me.changingFilters = true;
                         me.store.removeFilter(me.queryFilter, true);
                         me.changingFilters = false;
-                    }             
-                    node.collapse(true);         
+                    }
+                    node.collapse(true);
                 }
                 me.callParent([e]);
             }

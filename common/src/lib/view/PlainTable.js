@@ -1,9 +1,9 @@
 Ext.define('Ext.lib.view.PlainTable', {
 	extend: 'Ext.Component',
 	alias: 'widget.plaintable',
-	
+
 	defaultBindProperty: 'data',
-	
+
 	standartTpl: [
 		'<table>',
 			'<tpl if="columns"><tr><tpl for="columns"><th>{.}</th></tpl></tr></tpl>',
@@ -11,7 +11,7 @@ Ext.define('Ext.lib.view.PlainTable', {
 				'<tpl for="rows"><tr><tpl for="."><td>{.}</td></tpl></tr></tpl>',
 			'</tpl>',
 		'</table>'],
-	
+
 	rotatedTpl: [
 		'<table>',
 			'<tpl if="rows">',
@@ -25,19 +25,19 @@ Ext.define('Ext.lib.view.PlainTable', {
 				'</tpl>',
 			'</tpl>',
 		'</table>'],
-	
+
 	constructor: function(config){
 		var me = this;
-		
+
 		Ext.apply(me, config);
-		
+
 		me.tpl = new Ext.XTemplate(me.rotated ? me.rotatedTpl : me.standartTpl);
-		
+
 		me.setData(config.xmlData);
-		
+
 		me.callParent(arguments);
 	},
-	
+
 	setData: function(data){
 		var me = this,
 			newData = {
@@ -45,16 +45,16 @@ Ext.define('Ext.lib.view.PlainTable', {
 				rows: []
 			},
 			i;
-		
+
 		if(me.rootElement && me.rootElement.length>0){
 			me.data = (data && data.length>0) ? Ext.lib.view.PlainTable.parseXML(
 				Ext.util.Format.htmlDecode(data),
 				me.rootElement) : null;
-			
+
 		} else {
 			me.data = data;
 		}
-		
+
 		if(me.fields && me.data){
 			me.fields.forEach(function(field){
 				i = me.data.columns.indexOf(field);
@@ -67,7 +67,7 @@ Ext.define('Ext.lib.view.PlainTable', {
 		}
 		me.update(me.data);
 	},
-	
+
 	statics: {
 		parseXML: function(xmlData, rootElement){
 			var parser = new DOMParser(),
@@ -78,14 +78,14 @@ Ext.define('Ext.lib.view.PlainTable', {
 					columns: [],
 					rows: []
 				};
-			
+
 			for ( i = 0; i < x.length; i++) {
 				data.columns.push(x[i].getAttribute('name'));
 				row = [];
 				if (x[i].childNodes.length > 0) {
 					row.push(x[i].childNodes[0].nodeValue);
 				}
-				
+
 				data.rows.push(row);
 			}
 			return data;

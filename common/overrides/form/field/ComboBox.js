@@ -35,7 +35,7 @@ Ext.define('Ext.overrides.form.field.ComboBox', {
                 displayTplData.push(value.data);
                 raw = me.getDisplayValue();
             }
-            
+
             if (add) {
                 me.value = Ext.Array.from(me.value).concat(value);
             } else {

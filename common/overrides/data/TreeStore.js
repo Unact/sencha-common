@@ -17,7 +17,7 @@ Ext.define('Ext.overrides.data.TreeStore', {
         doFilter: function(node) {
             this.filterNodes(node, this.getFilters().getFilterFn(), true);
         },
-        
+
         filterNodes: function(node, filterFn, parentVisible) {
             var me = this,
                 bottomUpFiltering = me.filterer === 'bottomup',
@@ -59,7 +59,7 @@ Ext.define('Ext.overrides.data.TreeStore', {
                     toAdd.push(root);
                 } else {
                     root.set('visible', false, me._silentOptions);
-                }   
+                }
             }
 
             me.handleNodeExpand(root, childNodes, toAdd);

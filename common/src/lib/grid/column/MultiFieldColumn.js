@@ -13,11 +13,11 @@ Ext.define('Ext.lib.grid.column.MultiFieldColumn', {
 	 * fields - массив полей, которые будет отображать колонка
 	 *
 	 * Отображение поля можно изменить с помощью конфиги tpl.
-	 * 
+	 *
 	 * Для комбобокса присутсвует фикс, позволяющий верно отображаться значения.
 	 * В модель таблицы при ее создании добавляется вычисляемое поле,
 	 * хранящее значение, которое надо отобразить.
-	 * 
+	 *
 	 * НЕ ПОДДЕРЖИВАЕТ field с типом 'checkbox' и 'radio'
 	 */
 
@@ -30,7 +30,7 @@ Ext.define('Ext.lib.grid.column.MultiFieldColumn', {
 
 		config.fields.forEach(function(el, i, array){
 			if (!el.tpl) {
-				tpl += '{';	
+				tpl += '{';
 				if (el.xtype == 'combobox') {
 					tpl += el.dataIndex + '_' + el.displayField;
 				} else {
@@ -40,11 +40,11 @@ Ext.define('Ext.lib.grid.column.MultiFieldColumn', {
 			} else {
 				tpl += el.tpl;
 			}
-			
+
 			if (i != array.length - 1) {
 					tpl += '</br>';
 			}
-			tpl += '</br>';	
+			tpl += '</br>';
 		});
 
         fieldConfig.fields = config.fields;
@@ -71,7 +71,7 @@ Ext.define('Ext.lib.grid.column.MultiFieldColumn', {
 		if (column.xtype == 'multifieldcolumn'){
 			column.getFields().forEach(function(el, i, array){
 				if (el.value != record.get(el.dataIndex)){
-					record.set(el.dataIndex, el.value);	
+					record.set(el.dataIndex, el.value);
 				}
 			});
 		}
@@ -92,7 +92,7 @@ Ext.define('Ext.lib.grid.column.MultiFieldColumn', {
 				el.viewModel = viewModel;
 				el.getBind(); // Требуется, чтобы стор привязался к комбо, иначе пустой
 
-				fieldsToAdd.push({	
+				fieldsToAdd.push({
 					name: el.dataIndex + '_' + el.displayField,
 					convert: function(v, rec) {
 						var matching = null,

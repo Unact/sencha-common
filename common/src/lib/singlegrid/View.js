@@ -12,12 +12,12 @@ Ext.define('Ext.lib.singlegrid.View', {
 	 * @cfg {function} beforeAdd
 	 * beforeAdd - должен вернуть объект для вставки в хранилище
 	 * /
-	
-	/** 
+
+	/**
 	 * @cfg {function} beforeRefresh
 	 * beforeRefresh - должен вернуть истину
 	 */
-	
+
 	// если "предварительные" методы возвращают другие значения, то основной метод далее не выполняется
 
 	/**

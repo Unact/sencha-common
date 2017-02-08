@@ -298,7 +298,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
                 head.appendChild(el);
                 head.removeChild(base);
             } else {
-                // Debugger friendly, file names are still shown even though they're 
+                // Debugger friendly, file names are still shown even though they're
                 // eval'ed code. Breakpoints work on both Firebug and Chrome's Web
                 // Inspector.
                 if (url) {
@@ -324,13 +324,13 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
          *
          *      Ext.Boot.load({
          *          url: 'http://foo.com/bar/Thing.js',
-         *          
+         *
          *          success: function () {
          *          },
-         *          
+         *
          *          failure: function () {
          *          },
-         *          
+         *
          *          scope: this
          *      });
          *
@@ -341,13 +341,13 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
          *          ],
          *          charset: 'utf-8',
          *          cache: false, // add "cache buster"
-         *          
+         *
          *          success: function () {
          *          },
-         *          
+         *
          *          failure: function () {
          *          },
-         *          
+         *
          *          scope: this,
          *          prependBaseUrl: false
          *      });
@@ -488,7 +488,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
                         };
                     /*
                      * When available (IE9m), we need to use the onreadystatechange / readyState
-                     * mechanism to monitor script load and cause script evaluation by appending 
+                     * mechanism to monitor script load and cause script evaluation by appending
                      * elements to the document.  Modern browsers use the onload mechanism.
                      */
                     if (!('readyState' in el)) {
@@ -505,9 +505,9 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
                     }
 
                     entry.onLoadWas = onLoadWas;
-                    el[entry.prop] = url; // IE starts loading scripts here  
+                    el[entry.prop] = url; // IE starts loading scripts here
                 } else {
-                    el[entry.prop] = url; // IE starts loading scripts here  
+                    el[entry.prop] = url; // IE starts loading scripts here
                     head.appendChild(el); // others start loading here
                 }
             }
@@ -797,7 +797,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
 
             /*
              * When available (IE9m), we need to use the onreadystatechange / readyState
-             * mechanism to monitor script load and cause script evaluation by appending 
+             * mechanism to monitor script load and cause script evaluation by appending
              * elements to the document.  Modern browsers use the onload mechanism.
              */
             if (!('readyState' in el)) {
@@ -904,7 +904,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
             while(!stop) {
                 added = false;
 
-                // iterate the requirements for each index and 
+                // iterate the requirements for each index and
                 // accumulate in the index map
                 for(idx in indexMap) {
                     if(indexMap.hasOwnProperty(idx)) {
@@ -921,9 +921,9 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
                             }
                             for(len = reqs.length, i = 0; i < len; i++) {
                                 ridx = reqs[i];
-                                // if we find a requirement that wasn't 
-                                // already in the index map, 
-                                // set the added flag to indicate we need to 
+                                // if we find a requirement that wasn't
+                                // already in the index map,
+                                // set the added flag to indicate we need to
                                 // reprocess
                                 if(!indexMap[ridx]) {
                                     indexMap[ridx] = true;

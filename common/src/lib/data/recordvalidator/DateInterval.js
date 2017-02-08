@@ -1,14 +1,14 @@
 Ext.define('Ext.lib.data.recordvalidator.DateInterval', {
 
-    /**  
+    /**
      * Проверяет, что дата начала меньше дата конца
      * Передать checkNull для проверки на пустые значения
      * @param {String} dateFrom
      * @param {String} dateTo
      * @param {Boolean} checkNull
-     * @return {String/Boolean} Сообщение о не корректных значениях или true 
+     * @return {String/Boolean} Сообщение о не корректных значениях или true
      */
-    
+
     validateDates: function(dateFrom, dateTo, checkNull){
         var me = this;
         if (me.get(dateFrom) && me.get(dateTo)){

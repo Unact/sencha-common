@@ -9,10 +9,10 @@ Ext.onReady(function() {
 
         defaultErrorMessage: 'Установлены некорректные значения',
     });
-    
+
     Ext.define('Ext.locale.ru.grid.RowEditor', {
         override: 'Ext.grid.RowEditor',
-        
+
         saveBtnText: 'Сохранить',
         cancelBtnText: 'Отмена',
         errorsText: 'Ошибки',
@@ -23,12 +23,12 @@ Ext.onReady(function() {
         override: 'Ext.data.field.Field',
 
         defaultInvalidMessage: 'Поле заполнено некорректно'
-    }); 
+    });
 
-    
+
     Ext.define('Ext.locale.ru.window.MessageBox', {
         override: 'Ext.window.MessageBox',
-        
+
         buttonText: {
             ok: 'ОК',
             yes: 'Да',
@@ -36,16 +36,16 @@ Ext.onReady(function() {
             cancel: 'Отмена'
         }
     });
-    
+
     if (Ext.util && Ext.util.Format) {
         Ext.apply(Ext.util.Format, {
             thousandSeparator: ' ',
             currencySign: '\u20bd',
-            
+
             ruMoney: function(v){
                 return Ext.util.Format.currency(v, null, 2, true);
             },
-            
+
             withoutDecimal: function(value){
                 return Ext.util.Format.number(value, '0,000');
             }

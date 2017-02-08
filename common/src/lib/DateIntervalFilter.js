@@ -2,11 +2,11 @@
 Ext.define('Ext.lib.DateIntervalFilter', {
 	extend : 'Ext.container.Container',
 	alias : 'widget.dateintervalfilter',
-	
+
 	layout: {
 	    type: 'hbox'
 	},
-	
+
 	items: [{
         xtype : 'datefield',
         fieldLabel : 'С',

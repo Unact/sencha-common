@@ -1,6 +1,6 @@
 Ext.define('Ext.lib.shared.Csv', {
     mixinId: 'csv',
-    
+
     getRecsFromCsv : function(csv) {
         var grid = this;
         var rows = csv.split("\n");
@@ -38,11 +38,11 @@ Ext.define('Ext.lib.shared.Csv', {
             var row = [];
             grid.columns.every(function(column) {
                 row.push(record.get(column.dataIndex));
-                
+
                 return true;
             });
             rows.push(row.join("\t"));
-            
+
             return true;
         });
         return rows.length>0 ? rows.join("\n") : null;
