@@ -41,13 +41,15 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
     },
 
     refreshDetails: function() {
-        if (!this.refreshDetailOnSelect) {
-            return;
-        }
-
         if (this.detailGrids) {
             this.detailGrids.forEach(function(detail){
-                detail.fireEvent('refreshtable');
+                detail.getController().getViewModel().set(
+                    'selectedMaster',
+                    this.getViewModel().get('masterRecord')
+                );
+                if (this.refreshDetailOnSelect) {
+                    detail.fireEvent('refreshtable');
+                }
             }, this);
         }
     },
@@ -131,7 +133,7 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
         var result = true;
         var masterRecord;
 
-        if(oldSelection) {
+        if (oldSelection) {
             oldSelectionIndex = store.indexOf(oldSelection);
             oldSelectionId = oldSelection.id;
         }
@@ -150,7 +152,6 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
         } else {
             result = me.beforeRefresh(masterRecord);
         }
-
         if(result){
             if (!vm || vm.get('filterReady')!==false) {
                 Ext.GlobalEvents.fireEvent('beginserveroperation');
@@ -159,7 +160,6 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
                         if (!success) {
                             Ext.Msg.alert("Ошибка", operation.getError().response.responseText);
                         }
-
                         me.callbackRefresh(oldSelectionId, oldSelectionIndex);
                         Ext.GlobalEvents.fireEvent('endserveroperation');
                         me.afterRefresh.call(me);
@@ -300,9 +300,9 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
         if (recordToSelect) {
             view.scrollToRecord(recordToSelect);
         } else if (oldSelectionIndex && storeCount > oldSelectionIndex) {
-            view.scrollToRecord(oldSelectionIndex);
+            view.scrollToRecord(store.getAt(oldSelectionIndex));
         } else if (storeCount > 0) {
-            view.scrollToRecord(0);
+            view.scrollToRecord(store.first());
         } else {
             view.fireEvent('selectionchange', view, []);
         }

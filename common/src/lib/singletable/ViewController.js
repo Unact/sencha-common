@@ -74,13 +74,15 @@ Ext.define('Ext.lib.singletable.ViewController', {
     },
 
     refreshDetails: function() {
-        if (!this.refreshDetailOnSelect) {
-            return;
-        }
-
         if (this.detailGrids) {
             this.detailGrids.forEach(function(detail){
-                detail.fireEvent('refreshtable');
+                detail.getController().getViewModel().set(
+                    'selectedMaster',
+                    this.getViewModel().get('masterRecord')
+                );
+                if (this.refreshDetailOnSelect) {
+                    detail.fireEvent('refreshtable');
+                }
             }, this);
         }
     },
