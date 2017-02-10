@@ -8,7 +8,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
      * функцию обратного вызова или массив в качестве значения.
      * callback - функция обратного вызова после загрузки всех словарей
      */
-    loadDictionaries : function(dictionaries, callback) {
+    loadDictionaries : function(dictionaries, callback, showMask) {
         var controller = this;
         var loader;
         var view = controller.getView();
@@ -55,8 +55,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
             },
             loadStore: function(store, dictionaryData){
                 var me = this;
-
-                Ext.GlobalEvents.fireEvent('beginserveroperation');
+                Ext.GlobalEvents.fireEvent('beginserveroperation', showMask);
 
                 store.load({
                     callback: function(records, operation, success) {
@@ -74,7 +73,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
                         }
 
                         me.updateDictionariesLoadingCount();
-                        Ext.GlobalEvents.fireEvent('endserveroperation');
+                        Ext.GlobalEvents.fireEvent('endserveroperation', showMask);
                     }
                 });
             },
