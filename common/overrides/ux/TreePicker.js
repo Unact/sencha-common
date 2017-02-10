@@ -8,19 +8,16 @@ Ext.define('Ext.overrides.ux.TreePicker', {
         'Ext.util.StoreHolder'
     ],
 
-    editable: true,
-
-    pickerAlign: 'tl-bl',
-
-    maxPickerHeight: 400,
-
-    anyMatch: true,
-
-    caseSensitive: false,
-
-    enableRegEx: false,
-
-    queryFilter: null,
+	config: {
+		readOnly: false,
+		editable: true,
+		pickerAlign: 'tl-bl',
+	    maxPickerHeight: 400,
+	    anyMatch: true,
+	    caseSensitive: false,
+	    enableRegEx: false,
+	    queryFilter: null
+	},
 
     getStoreListeners: function(){
     	var me = this;
