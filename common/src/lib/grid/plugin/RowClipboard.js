@@ -331,10 +331,11 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                     var isInsertPrimaryValue =
                         singleInsertPrimaryValue ? me.insertPrimaryValue : me.insertPrimaryValue[dataIndex]
                     if (column.xtype === 'combocolumn'){
-                        var comboRecord;
                         var valueToFind = isInsertPrimaryValue ? column.primaryValue : (column.insertIndex || null);
-                        comboRecord = valueToFind ? column.getStore().findExactRecord(valueToFind, row[rowIdx]) : null;
-                        row[rowIdx] = comboRecord ? comboRecord.get(column.primaryKey) : null;
+                        if (valueToFind) {
+                            var comboRecord = column.getStore().findExactRecord(valueToFind, row[rowIdx])
+                            row[rowIdx] = comboRecord  ? comboRecord.get(column.primaryKey) : null;
+                        }
                     }
                     if (dataIndex) {
                         switch (format) {
