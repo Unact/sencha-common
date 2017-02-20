@@ -55,7 +55,13 @@ Ext.define('Ext.lib.singletable.ViewController', {
     },
 
     changeDisabledButtons: function(selected, options) {
-        this.getView().down('sharedtoolbar').enabledButtons.forEach(function(prefix) {
+        var toolbar = this.getView().down('sharedtoolbar');
+
+        if (!toolbar) {
+            return;
+        }
+
+        toolbar.enabledButtons.forEach(function(prefix) {
             var button = this.lookupReference(prefix + this.getView().suffix);
             var functionName = 'isDisabled' + prefix.charAt(0).toUpperCase() + prefix.slice(1) + 'Button';
 

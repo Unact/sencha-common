@@ -1,36 +1,6 @@
 Ext.define('Ext.overrides.view.Table', {
     override: 'Ext.view.Table',
 
-    onUpdate : function(store, record, operation, modifiedFieldNames, details) {
-        var me = this,
-            isFiltered = details && details.filtered;
-
-        // If, due to filtering or buffered rendering, or node collapse, the updated record is not
-        // represented in the rendered structure, this is a no-op.
-        // The correct, new values will be rendered the next time the record becomes visible and is rendered.
-        if (!isFiltered && me.getNode(record)) {
-
-            // If we are throttling UI updates (See the updateDelay global config), ensure there's a change entry
-            // queued for the record in the global queue.
-            if (me.throttledUpdate) {
-                me.statics().queueRecordChange(me, store, record, operation, modifiedFieldNames);
-            } else {
-                me.handleUpdate.apply(me, arguments);
-            }
-        }
-
-        // Ext.getClassName(store) !== "Ext.grid.feature.GroupStore":
-        // В гридах с ГРУППИРОВКОЙ при изменении значения некоторой модели вдобавок
-        // апдейтится как минимум первая строка. Это приводит к перемещению к ней фокуса,
-        // что может приветси к лишним запросам на сервер (событие смена фокуса в мастер-детейл)
-        // см. http://docs.sencha.com/extjs/6.0.1/classic/Ext.grid.feature.GroupStore.html#method-onUpdate
-        if(me.isVisible(true) && Ext.getClassName(store) !== "Ext.grid.feature.GroupStore"){
-            if(store.indexOf(record)>=0 && me.selModel.getSelection().length === 1){
-                me.scrollToRecord(record);
-            }
-        }
-    },
-
     /**
      * Переход и фокусировка к строке по индексу или записи
      * @param {Number/Ext.data.Model} nodeInfo индекс или запись.
