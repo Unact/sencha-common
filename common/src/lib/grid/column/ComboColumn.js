@@ -57,7 +57,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
             if (config.colorField && record) {
                 metaData.style = "color: " + record.get(config.colorField) + ";";
             };
-            return rec.get(me.fieldName) || "";
+            return rec.get(me.fieldName);
         };
 
         me.renderer = config.renderer || renderer;
@@ -134,7 +134,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
                 }
                 return matching == null;
             });
-            return matching || (foreignKey ? v : null) || "";
+            return matching || (foreignKey != null ? v : "");
         };
 
         model.getFields().forEach(function(fieldFromFrid){
