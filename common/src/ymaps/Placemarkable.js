@@ -15,19 +15,14 @@ Ext.define('Renew.ymaps.Placemarkable', {
 
     createPlacemark: function() {
         var me = this;
-        var coord = [me.get('latitude'), me.get('longitude')];
         var properties = {model: me};
         var options = {};
-
-        if(!me.validCoord(coord)) {
-            coord = Renew.ymaps.Defaults.center;
-        }
 
         me.getFields().forEach(function(field) {
             var fieldName = field.getName();
             if(fieldName == 'latitude' || fieldName == 'longitude') {
                 return;
-            };
+            }
 
             var isOpt = me.options.some(function(opt) {
                 return opt == fieldName;
@@ -38,15 +33,25 @@ Ext.define('Renew.ymaps.Placemarkable', {
                 options[fieldName] = me.get(fieldName);
             } else {
                 properties[fieldName] = me.get(fieldName);
-            };
+            }
         });
 
         Ext.merge(properties, me.appendProperties());
         Ext.merge(options, me.appendOptions());
 
-        me.placemark = new ymaps.Placemark(coord, properties, options);
+        me.placemark = new ymaps.Placemark(this.getCoordinates(), properties, options);
 
         return me.placemark;
+    },
+
+    getCoordinates: function() {
+        var coord = [this.get('latitude'), this.get('longitude')];
+
+        if(!this.validCoord(coord)) {
+            coord = Renew.ymaps.Defaults.center;
+        }
+
+        return coord;
     },
 
     appendProperties: Ext.emptyFn,
