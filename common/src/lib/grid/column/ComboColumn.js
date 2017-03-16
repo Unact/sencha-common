@@ -134,7 +134,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
                 }
                 return matching == null;
             });
-            return matching || (foreignKey != null ? v : "");
+            return matching || (foreignKey != null ? (v || null) : "");
         };
 
         model.getFields().forEach(function(fieldFromFrid){

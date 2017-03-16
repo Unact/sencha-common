@@ -17,6 +17,58 @@ Ext.define('Ext.overrides.data.Model', {
         return true;
     },
 
+    isClone: function(store){
+        var me = this;
+        var fieldNames = [];
+        var firstClonePos = -1;
+        var firstClone = me;
+        var selfValues = {};
+        var idProperty = me.getIdProperty();
+
+
+        me.getFields().forEach(function(el, i){
+            var fieldName = el.getName();
+            var currentValue = me.get(fieldName);
+            if (fieldName!==idProperty){
+                fieldNames.push(el.getName());
+                selfValues[fieldName] = currentValue!==null ? currentValue.valueOf() : null;
+            }
+        });
+
+        store.each(function(rec){
+            var same =
+                fieldNames.every(
+                    function(fieldName){
+                        var recValue = rec.get(fieldName);
+                        var res;
+                        // Если массив, то нужна другая проверка,
+                        // вместе с этим проверяем что они не null
+                        if (recValue instanceof Array && selfValues[fieldName]!==null) {
+                            if (recValue.length===selfValues[fieldName].length){
+                                return recValue.every(function(el,i){
+                                    // В объекте только один ключ, он и выбирается
+                                    var key = Object.keys(el)[0];
+                                    return el[key]===selfValues[fieldName][i][key];
+                                });
+                            } else {
+                                return false;
+                            }
+                        }
+                        return recValue!==null ? recValue.valueOf()===selfValues[fieldName] : recValue===selfValues[fieldName];
+                });
+            if (same && firstClonePos === -1){
+                firstClone = rec;
+                firstClonePos = store.indexOf(rec);
+            }
+        });
+
+        if (me.get(idProperty)!==firstClone.get(idProperty) && store.indexOf(me) > firstClonePos){
+            return true;
+        }
+
+        return false;
+    },
+
     inheritableStatics: {
         DUMMY_ALL: -1,
 
