@@ -17,7 +17,11 @@ Ext.define('Ext.overrides.data.Model', {
         return true;
     },
 
-    isClone: function(store){
+    // Первая попавшаяся уникальная запись в сторе является оригиналом
+    // Все последующие такие же считаются клонами
+    // Поэтому из двух одинаковых записей, та которая встречается в сторе раньше
+    // будет оригиналом, а которая встречается позже клоном
+    isCloneInStore: function(store){
         var me = this;
         var fieldNames = [];
         var firstClonePos = -1;
