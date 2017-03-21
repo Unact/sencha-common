@@ -82,10 +82,13 @@ Ext.define('Ext.lib.singletable.ViewController', {
     refreshDetails: function() {
         if (this.detailGrids) {
             this.detailGrids.forEach(function(detail){
-                detail.getController().getViewModel().set(
-                    'selectedMaster',
-                    this.getViewModel().get('masterRecord')
-                );
+                var vm = detail.getController().getViewModel();
+                if (vm) {
+                    vm.set(
+                        'selectedMaster',
+                        this.getViewModel().get('masterRecord')
+                    );
+                }
                 if (this.refreshDetailOnSelect) {
                     detail.fireEvent('refreshtable');
                 }
