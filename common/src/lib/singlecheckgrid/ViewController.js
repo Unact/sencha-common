@@ -51,8 +51,8 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
         var stores = [];
         var counter = 0;
 
-        if(me.masterGrid){
-            masterRecord = me.masterGrid.getViewModel().get('masterRecord');
+        if(me.hasMaster()){
+            masterRecord = this.getMasterRecord();
             if(masterRecord && !masterRecord.phantom)
             {
                 resultCheckmark = me.beforeRefresh(masterRecord);
@@ -125,7 +125,7 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
         var records = [];
         var recordsDel = [];
         var recordsAdd = [];
-        var masterRecord = me.masterGrid.getViewModel().get('masterRecord');
+        var masterRecord = me.getMasterRecord();
         var callback;
         var callbackScope;
 

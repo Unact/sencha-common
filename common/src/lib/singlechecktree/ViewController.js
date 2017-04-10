@@ -40,8 +40,8 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         var stores = [];
         var counter = 0;
 
-        if(me.masterGrid){
-            masterRecord = me.masterGrid.getViewModel().get('masterRecord');
+        if(me.hasMaster())){
+            masterRecord = me.getMasterRecord();
             if(masterRecord && !masterRecord.phantom)
             {
                 result = me.beforeRefresh(masterRecord);
@@ -134,8 +134,8 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         var callback;
         var callbackScope;
 
-        if (me.masterGrid) {
-            masterRecord = me.masterGrid.getViewModel().get('masterRecord');
+        if (me.hasMaster()) {
+            masterRecord = me.getMasterRecord();
         } else {
             masterRecord = me.getViewModel().get('masterRecord');
         }

@@ -31,5 +31,17 @@ Ext.define('Ext.lib.shared.Detailable', {
                 return detail.xtype === xtype;
             });
         }
+    },
+
+    getMasterRecord: function() {
+        if (this.masterGrid) {
+            return this.masterGrid.getViewModel().get('masterRecord');
+        } else {
+            return null;
+        }
+    },
+
+    hasMaster: function() {
+        return Boolean(this.masterGrid);
     }
 });
