@@ -40,7 +40,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         var stores = [];
         var counter = 0;
 
-        if(me.hasMaster())){
+        if(me.hasMaster()){
             masterRecord = me.getMasterRecord();
             if(masterRecord && !masterRecord.phantom)
             {
@@ -283,5 +283,10 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                 n.set('checked', checked);
             }
         });
+    },
+
+    cleanTable: function() {
+        this.getView().getStore().loadData([]);
+        this.getView().getCheckmarkStore().loadData([]);
     }
 });

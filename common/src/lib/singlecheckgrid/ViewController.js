@@ -254,5 +254,10 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
         } else {
             store.clearFilter();
         }
+    },
+
+    cleanTable: function() {
+        this.getView().getStore().loadData([]);
+        this.getView().getCheckmarkStore().loadData([]);
     }
 });
