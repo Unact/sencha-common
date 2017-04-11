@@ -83,6 +83,9 @@ Ext.define('Ext.lib.singlecheckgrid.View', {
         }
         me.plugins = plugins;
 
+        var suffix = me.suffix || me.xtype;
+        me.reference = me.reference || suffix + 'Table';
+
         me.callParent();
     }
 });

@@ -289,8 +289,8 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         sm.deselectAll();
 
         if(controller){
-            if(controller.masterGrid){
-                masterRecord = controller.masterGrid.getViewModel().get('masterRecord');
+            if(controller.getMasterRecord && (typeof controller.getMasterRecord === "function")){
+                masterRecord = controller.getMasterRecord();
             }
             if(controller.beforeAdd && (typeof controller.beforeAdd === "function")){
                 dataInitializator = controller.beforeAdd;

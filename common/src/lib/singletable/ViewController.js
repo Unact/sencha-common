@@ -161,8 +161,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
 
         sm.deselectAll();
 
-        if(me.masterGrid){
-            masterRecord = me.masterGrid.getViewModel().get('masterRecord');
+        if(me.hasMaster()){
+            masterRecord = me.getMasterRecord();
             if(masterRecord && !masterRecord.phantom) {
                 result = me.beforeRefresh(masterRecord);
             } else {
@@ -220,14 +220,10 @@ Ext.define('Ext.lib.singletable.ViewController', {
         var view = me.getView();
         var sm = view.getSelectionModel();
         var store = view.getStore();
-        var masterRecord;
+        var masterRecord = this.getMasterRecord();
         var editingColumn;
         var editingPlugin;
         var newRec;
-
-        if(me.masterGrid){
-            masterRecord = me.masterGrid.getViewModel().get('masterRecord');
-        }
 
         result = me.beforeAdd(masterRecord);
 
