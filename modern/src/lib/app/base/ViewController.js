@@ -160,6 +160,7 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
                         if (!success) {
                             Ext.Msg.alert("Ошибка", operation.getError().response.responseText);
                         }
+                        view.refresh();
                         me.callbackRefresh(oldSelectionId, oldSelectionIndex);
                         Ext.GlobalEvents.fireEvent('endserveroperation');
                         me.afterRefresh.call(me);
