@@ -7,6 +7,16 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
         'Ext.data.ChainedStore'
     ],
 
+    defineFieldName: function(newTail) {
+        var oldTail = '_id';
+        var len = oldTail.length;
+        if (this.dataIndex.substr(this.dataIndex.length - len, len) === oldTail) {
+            return this.dataIndex.substr(0, this.dataIndex.length - len) + '_' + newTail;
+        } else {
+            return this.dataIndex + '_' + newTail;
+        }
+    },
+
     /**
      * @param {Object} config Config object.
      * store - хранилище или идентификатор или полное имя класса
@@ -33,8 +43,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
         me.primaryKey = config.primaryKey || 'id';
         me.primaryValue = config.primaryValue || 'name';
 
-        me.fieldName = ((me.dataIndex.indexOf('_id')===me.dataIndex.length - 3) ?
-            me.dataIndex.substr(0, me.dataIndex.length - 3) : me.dataIndex) + '_' + me.primaryValue;
+        me.fieldName = this.defineFieldName(me.primaryValue);
 
         if(config.store){
             if(!config.store.isStore){
