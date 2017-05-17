@@ -224,33 +224,40 @@ Ext.define('Ext.lib.xlsgrid.ViewController', {
             records.map(function(r) {
                 return Number(r[me.idColumn]);
             }) : records;
-        var requestOptions = me.getRequestOptions(ids);
+        
+        var requestOptions = {};    
+        var temparray = [];
+        var pageSize = 100;
+        for (var i=0, j=ids.length; i<j; i+=pageSize) {
+            temparray = ids.slice(i,i+pageSize);
+            requestOptions = me.getRequestOptions(temparray);
 
-        if (records.length) {
-            view.setLoading(true);
+            if (records.length) {
+                view.setLoading(true);
 
-            requestOptions.headers = {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            };
+                requestOptions.headers = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                };
 
-            requestOptions.callback = function(options, success, response) {
-                if (success) {
-                    var receivedRecords = Ext.JSON.decode(response.responseText, true);
-                    var receivedIds = receivedRecords.map(function(r) { return Number(r[me.idColumn]); });
-                    me.invalid = me.invalid.concat(Ext.Array.difference(ids, receivedIds));
-                    callback.call(this, receivedRecords, receivedIds);
-                    me.showMessage();
-                } else {
-                    Ext.Msg.alert('Ошибка', response.responseText);
-                }
-                view.setLoading(false);
-            };
+                requestOptions.callback = function(options, success, response) {
+                    if (success) {
+                        var receivedRecords = Ext.JSON.decode(response.responseText, true);
+                        var receivedIds = receivedRecords.map(function(r) { return Number(r[me.idColumn]); });
+                        me.invalid = me.invalid.concat(Ext.Array.difference(temparray, receivedIds));
+                        callback.call(this, receivedRecords, receivedIds);
+                        me.showMessage();
+                    } else {
+                        Ext.Msg.alert('Ошибка', response.responseText);
+                    }
+                    view.setLoading(false);
+                };
 
-            Ext.Ajax.request(requestOptions);
-        } else {
-            me.showMessage();
-        }
+                Ext.Ajax.request(requestOptions);
+            } else {
+                me.showMessage();
+            }
+        }    
     },
 
     unique: function(records) {
