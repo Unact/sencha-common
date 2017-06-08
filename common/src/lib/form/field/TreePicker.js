@@ -1,15 +1,27 @@
 /**
  * A Picker field that contains a tree panel on its popup, enabling selection of tree nodes.
  */
-Ext.define('Ext.overrides.ux.TreePicker', {
-	override: 'Ext.ux.TreePicker',
+Ext.define('Ext.lib.form.field.TreePicker', {
+    extend: 'Ext.form.field.Picker',
+    xtype: 'treepicker',
+
+    uses: [
+        'Ext.tree.Panel'
+    ],
 
     mixins: [
         'Ext.util.StoreHolder'
     ],
 
-	config: {
-		readOnly: false,
+    triggerCls: Ext.baseCSSPrefix + 'form-arrow-trigger',
+
+    config: {
+        store: null,
+        displayField: null,
+        columns: null,
+        selectOnTab: true,
+        minPickerHeight: 100,
+        readOnly: false,
 		editable: true,
 		pickerAlign: 'tl-bl',
 	    maxPickerHeight: 400,
@@ -17,7 +29,25 @@ Ext.define('Ext.overrides.ux.TreePicker', {
 	    caseSensitive: false,
 	    enableRegEx: false,
 	    queryFilter: null
-	},
+    },
+
+
+    initComponent: function() {
+        var me = this;
+
+        me.bindStore(me.store || 'ext-empty-store', true);
+
+        me.callParent(arguments);
+
+        me.mon(me.store, {
+            scope: me,
+            load: me.onLoad,
+            update: me.onUpdate
+        });
+    },
+
+
+
 
     getStoreListeners: function(){
     	var me = this;
@@ -76,14 +106,6 @@ Ext.define('Ext.overrides.ux.TreePicker', {
         return picker;
     },
 
-    initComponent: function() {
-        var me = this;
-
-        me.bindStore(me.store || 'ext-empty-store', true);
-
-        me.callParent(arguments);
-    },
-
     onBindStore: function(store, initial, propertyName, oldStore){
     	var me = this;
 
@@ -131,7 +153,7 @@ Ext.define('Ext.overrides.ux.TreePicker', {
     /**
      * Sets the specified value into the field
      * @param {Mixed} value
-     * @return {Ext.ux.TreePicker} this
+     * @return {Ext.lib.form.field.TreePicker} this
      */
     setValue: function(value) {
         var me = this;
@@ -232,4 +254,90 @@ Ext.define('Ext.overrides.ux.TreePicker', {
         }
     },
 
+
+
+    onViewRender: function(view){
+        view.getEl().on('keypress', this.onPickerKeypress, this);
+    },
+
+    /**
+     * repaints the tree view
+     */
+    repaintPickerView: function() {
+        var style = this.picker.getView().getEl().dom.style;
+
+        // can't use Element.repaint because it contains a setTimeout, which results in a flicker effect
+        style.display = style.display;
+    },
+
+    /**
+     * Handles a click even on a tree node
+     * @private
+     * @param {Ext.tree.View} view
+     * @param {Ext.data.Model} record
+     * @param {HTMLElement} node
+     * @param {Number} rowIndex
+     * @param {Ext.event.Event} e
+     */
+    onItemClick: function(view, record, node, rowIndex, e) {
+        this.selectItem(record);
+    },
+
+    /**
+     * Handles a keypress event on the picker element
+     * @private
+     * @param {Ext.event.Event} e
+     * @param {HTMLElement} el
+     */
+    onPickerKeypress: function(e, el) {
+        var key = e.getKey();
+
+        if(key === e.ENTER || (key === e.TAB && this.selectOnTab)) {
+            this.selectItem(this.picker.getSelectionModel().getSelection()[0]);
+        }
+    },
+
+    /**
+     * Changes the selection to a given record and closes the picker
+     * @private
+     * @param {Ext.data.Model} record
+     */
+    selectItem: function(record) {
+        var me = this;
+        me.setValue(record.getId());
+        me.fireEvent('select', me, record);
+        me.collapse();
+    },
+
+    getSubmitValue: function(){
+        return this.value;
+    },
+
+    /**
+     * Returns the current data value of the field (the idProperty of the record)
+     * @return {Number}
+     */
+    getValue: function() {
+        return this.value;
+    },
+
+    /**
+     * Handles the store's load event.
+     * @private
+     */
+    onLoad: function() {
+        var value = this.value;
+
+        if (value) {
+            this.setValue(value);
+        }
+    },
+
+    onUpdate: function(store, rec, type, modifiedFieldNames){
+        var display = this.displayField;
+
+        if (type === 'edit' && modifiedFieldNames && Ext.Array.contains(modifiedFieldNames, display) && this.value === rec.getId()) {
+            this.setRawValue(rec.get(display));
+        }
+    }
 });

@@ -1,0 +1,35 @@
+/*https://raw.githubusercontent.com/chrismiddle10/tricheckbox/master/tricheckbox.css*/
+/*** False States ***/
+.x-form-tricheckbox {
+	background-image: url('/images/tricheckbox.gif' ) !important;
+	background-repeat: no-repeat;
+	background-position: 0 0;
+}
+.x-form-tricheckbox.x-form-checkbox-focus {
+	background-position:-26px 0;
+}
+.x-item-disabled .x-form-tricheckbox {
+	background-position:-39px 0;
+}
+
+/*** True States ***/
+.x-form-cb-checked .x-form-tricheckbox {
+	background-position:0 -13px !important;
+}
+.x-form-cb-checked .x-form-tricheckbox.x-form-checkbox-focus {
+	background-position:-26px -13px !important;
+}
+.x-form-cb-checked.x-item-disabled .x-form-tricheckbox {
+	background-position:-39px -13px;
+}
+
+/*** Null States ***/
+.x-form-cb-null .x-form-tricheckbox {
+	background-position:0 -26px;
+}
+.x-form-cb-null .x-form-tricheckbox.x-form-checkbox-focus {
+	background-position:-26px -26px;
+}
+.x-form-cb-null.x-item-disabled .x-form-tricheckbox {
+	background-position:-39px -26px;
+}

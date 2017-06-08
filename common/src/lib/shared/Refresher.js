@@ -51,7 +51,7 @@ Ext.define('Ext.lib.shared.Refresher', {
      * Вернуть селектор, который позволяет отобрать подходящие компопенты
      * @private
      */
-    getRefreshingSelector() {
+    getRefreshingSelector: function() {
         // Используем '(true)', что бы не отбирать подклассы. Опасность представляет textarea, где enter - переход на
         // следующую строку
         return this.refreshingXtypes.map(function(xtype) {
