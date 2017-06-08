@@ -14,9 +14,6 @@ Ext.define('Ext.lib.form.field.TriCheckbox', {
 
     initValue : function() {
         var me = this, fileref = document.createElement("link");
-        fileref.setAttribute("rel", "stylesheet");
-        fileref.setAttribute("type", "text/css");
-        fileref.setAttribute("href", "/ext/examples/ux/grid/css/tricheckbox.css");
         head = document.getElementsByTagName("head")[0];
         fragment = document.createDocumentFragment();
         fragment.appendChild(fileref);

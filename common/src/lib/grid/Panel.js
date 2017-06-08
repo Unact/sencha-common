@@ -151,7 +151,7 @@ Ext.define('Ext.lib.grid.Panel', {
 			config.columns.push({
 				xtype : 'actioncolumn',
 				width : 20,
-				icon : '/ext/examples/shared/icons/fam/cross.gif',
+				icon : '/icons/fam/cross.gif',
 				tooltip : 'Удалить',
 				handler : function(grid, rowIndex) {
 					grid.store.removeAt(rowIndex);
@@ -282,7 +282,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		if(config.disableRefresh !== true) {
 			me.refreshBtn = Ext.create('Ext.Button', {
 				id : 'refresh'+config.suffix,
-				icon : '/ext/resources/themes/images/default/grid/refresh.gif',
+				icon : '/images/refresh.gif',
 				tooltip: 'Обновить'
 			});
 
@@ -308,7 +308,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		if(config.disableAdd !== true) {
 			me.addBtn = Ext.create('Ext.Button', {
 				id : 'add'+config.suffix,
-				icon : '/ext/examples/shared/icons/fam/add.gif',
+				icon : '/icons/fam/add.gif',
 				tooltip: 'Добавить'
 			});
 
@@ -321,7 +321,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		if (config.disableDelete !== true) {
 			me.deleteBtn = Ext.create('Ext.Button', {
 				id : 'delete'+config.suffix,
-				icon : '/ext/examples/shared/icons/fam/delete.gif',
+				icon : '/icons/fam/delete.gif',
 				disabled : true,
 				tooltip: 'Удалить'
 			});
