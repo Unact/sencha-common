@@ -1,34 +1,29 @@
 // Взято https://github.com/chrismiddle10/tricheckbox
 Ext.define('Ext.lib.form.field.TriCheckbox', {
-    extend : "Ext.form.field.Checkbox",
-    alias : 'widget.tristatecheckbox',
+    extend: "Ext.form.field.Checkbox",
+    alias: 'widget.tristatecheckbox',
 
-    triCls : 'x-form-tricheckbox',
-    nullCls : 'x-form-cb-null',
-    nullValue : null,
-    checked : null,
-    isTriState : true,
+    triCls: 'x-form-tricheckbox',
+    nullCls: 'x-form-cb-null',
+    nullValue: null,
+    checked: null,
+    isTriState: true,
 
-    uncheckedValue : false,
-    inputValue : true,
+    uncheckedValue: false,
+    inputValue: true,
 
-    initValue : function() {
-        var me = this, fileref = document.createElement("link");
-        head = document.getElementsByTagName("head")[0];
-        fragment = document.createDocumentFragment();
-        fragment.appendChild(fileref);
-        head.appendChild(fragment);
+    initValue: function() {
+        var me = this;
 
         if (me.isTriState === true) {
-            me.originalValue = me.lastValue = me.checked;
-            me.setValue(me.checked);
+            me.originalValue = me.lastValue = me.checked = me.value;
             return;
         }
 
         me.callParent(arguments);
     },
 
-    onRender : function() {
+    onRender: function() {
 
         var me = this;
         me.callParent(arguments);
@@ -42,7 +37,7 @@ Ext.define('Ext.lib.form.field.TriCheckbox', {
         }
     },
 
-    onBoxClick : function(e) {
+    updateValueFromDom: function(e) {
         var me = this;
 
         if (me.isTriState !== true) {
@@ -54,17 +49,18 @@ Ext.define('Ext.lib.form.field.TriCheckbox', {
 
         // Increment the checked value.
         var newVal = me.nullValue;
-        if (me.checked === me.nullValue) {
+        if (this.value === me.nullValue) {
             newVal = false;
-        } else if (me.checked === false) {
+        } else if (this.value === false) {
             newVal = true;
         }
 
-        // Apply the value.
-        me.setValue(newVal);
+            // Apply the value.
+            me.setValue(newVal);
+
     },
 
-    isChecked : function(rawValue, inputValue) {
+    isChecked: function(rawValue, inputValue) {
         var me = this;
         if (me.isTriState === true && rawValue === me.nullValue) {
             return me.nullValue;
@@ -73,34 +69,34 @@ Ext.define('Ext.lib.form.field.TriCheckbox', {
         return this.callParent(arguments);
     },
 
-    setRawValue : function(value) {
+    setRawValue: function(value) {
         var me = this;
         if (me.isTriState === true) {
-            me.checked = me.rawValue = me.isChecked(value, me.inputValue);
+            me.checked = me.rawValue = me.value;
 
             if (me.inputEl) {
                 me.applyStateCls();
             }
 
-            return me.checked;
+            return me.value;
         }
 
         return me.callParent(arguments);
     },
 
-    applyStateCls : function() {
+    applyStateCls: function() {
         var me = this;
 
         if (me.isTriState !== true) {
             // Do nothing.
-        } else if (me.checked === me.nullValue) {
+        } else if (me.value === me.nullValue) {
             me.removeCls(me.checkedCls);
             me.addCls(me.nullCls);
             if (me.displayEl) {
                 me.displayEl.removeCls(me.checkedCls);
                 me.displayEl.addCls(me.nullCls);
             }
-        } else if (me.checked === true) {
+        } else if (me.value === true) {
             me.removeCls(me.nullCls);
             me.addCls(me.checkedCls);
         } else {
@@ -109,17 +105,31 @@ Ext.define('Ext.lib.form.field.TriCheckbox', {
         }
     },
     //хорошо бы получить сразу число
-    getIntValue : function(e) {
+    getIntValue: function(e) {
         var me = this;
 
         if (me.isTriState !== true) {
             return null;
         }
-        if (me.checked === me.nullValue) {
+        if (me.value === me.nullValue) {
             return -1;
-        } else if (me.checked === true) {
+        } else if (me.value === true) {
             return 1;
         }
         return 0;
     },
+
+    getValue: function() {
+        return this.value;
+    },
+
+    getRawValue: function() {
+        return this.rawValue;
+    },
+
+    setValue: function(value){
+        this.checked = this.rawValue = value;
+        this.mixins.field.setValue.call(this, value);
+        this.applyStateCls();
+    }
 });
