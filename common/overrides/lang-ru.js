@@ -6,33 +6,32 @@
  * ext-lang-ru.js менять не будем, может, в будущих версиях они исправят эту багу.
  *
  ************************************************************/
-Ext.onReady(function() {
-	Ext.override(
-    	Ext.form.field.Date,
-    	{
-			startDay : 1,		//Начало недели - понедельник
-			format : 'd.m.Y',	//Год записывается четырьмя знаками
 
-			statics: {
-				dateWithTimeFormat: 'd.m.Y H:i'
-			}
-		}
-	);
+Ext.override(
+    Ext.form.field.Date,
+    {
+        startDay : 1,        //Начало недели - понедельник
+        format : 'd.m.Y',    //Год записывается четырьмя знаками
 
-	Ext.define("app.locale.ru.form.field.Time", {                 //в ext-lang-ru.js вообще отсутствует время
-		override: "Ext.form.field.Time",
-		format: "H:i",
-		minText: "Время в этом поле должно быть позже {0}",
-		maxText: "Время в этом поле должно быть раньше {0}",
-		invalidText: "{0} не является правильным временем"
-	});
+        statics: {
+            dateWithTimeFormat: 'd.m.Y H:i'
+        }
+    }
+);
 
-	Ext.define("Ext.locale.ru.form.field.Number", {
-		override: "Ext.form.field.Number",
-		decimalSeparator: ","
-	});
+Ext.define("app.locale.ru.form.field.Time", {                 //в ext-lang-ru.js вообще отсутствует время
+    override: "Ext.form.field.Time",
+    format: "H:i",
+    minText: "Время в этом поле должно быть позже {0}",
+    maxText: "Время в этом поле должно быть раньше {0}",
+    invalidText: "{0} не является правильным временем"
+});
 
-	Ext.override(Ext.Date, {
-		defaultFormat: 'd.m.Y'
-	});
+Ext.define("Ext.locale.ru.form.field.Number", {
+    override: "Ext.form.field.Number",
+    decimalSeparator: ","
+});
+
+Ext.override(Ext.Date, {
+    defaultFormat: 'd.m.Y'
 });
