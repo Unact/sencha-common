@@ -39,7 +39,9 @@ Ext.define('Ext.locale.ru.window.MessageBox', {
 if (Ext.util && Ext.util.Format) {
     Ext.apply(Ext.util.Format, {
         thousandSeparator: ' ',
-        currencySign: '\u20bd',
+        decimalSeparator: ',',
+        currencySign: '\u0440\u0443\u0431',
+        dateFormat: 'd.m.Y',
 
         ruMoney: function(v){
             return Ext.util.Format.currency(v, null, 2, true);
