@@ -34,7 +34,8 @@ Ext.define('Ext.overrides.field.Select', {
 
             record = store.getAt(index);
         }
-        this.value = record.get(this.getValueField());
+
+        this.value = record ? record.get(this.getValueField()) : null;
 
         return value;
     },
@@ -54,7 +55,6 @@ Ext.define('Ext.overrides.field.Select', {
                 displayValue = this.getValueFieldValue() || '';
             }
         }
-
         if (component) {
             component.setValue(displayValue);
         }
