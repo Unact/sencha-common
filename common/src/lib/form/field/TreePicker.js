@@ -22,13 +22,14 @@ Ext.define('Ext.lib.form.field.TreePicker', {
         selectOnTab: true,
         minPickerHeight: 100,
         readOnly: false,
-		editable: true,
-		pickerAlign: 'tl-bl',
-	    maxPickerHeight: 400,
-	    anyMatch: true,
-	    caseSensitive: false,
-	    enableRegEx: false,
-	    queryFilter: null
+        editable: true,
+        pickerAlign: 'tl-bl',
+        maxPickerHeight: 400,
+        anyMatch: true,
+        caseSensitive: false,
+        enableRegEx: false,
+        queryFilter: null,
+        expandChildrenOnFilter: true
     },
 
 
@@ -50,13 +51,13 @@ Ext.define('Ext.lib.form.field.TreePicker', {
 
 
     getStoreListeners: function(){
-    	var me = this;
+        var me = this;
 
-    	return {
-    		scope: me,
-	    	load: me.onLoad,
-	        update: me.onUpdate
-	    };
+        return {
+            scope: me,
+            load: me.onLoad,
+            update: me.onUpdate
+        };
     },
 
     /**
@@ -107,11 +108,11 @@ Ext.define('Ext.lib.form.field.TreePicker', {
     },
 
     onBindStore: function(store, initial, propertyName, oldStore){
-    	var me = this;
+        var me = this;
 
-    	if(me.picker){
-    		me.picker.setStore(store);
-    	}
+        if(me.picker){
+            me.picker.setStore(store);
+        }
     },
 
     refreshPickerView: function(){
@@ -132,7 +133,7 @@ Ext.define('Ext.lib.form.field.TreePicker', {
         var store = picker.getStore();
         var value = me.value;
         var node;
-		var view = picker.getView();
+        var view = picker.getView();
 
         if (value) {
             node = store.getNodeById(value);
@@ -181,7 +182,7 @@ Ext.define('Ext.lib.form.field.TreePicker', {
 
         bind = me.getBind();
         if(bind.value){
-        	bind.value.setValue(value);
+            bind.value.setValue(value);
         }
 
         return me;
@@ -221,7 +222,7 @@ Ext.define('Ext.lib.form.field.TreePicker', {
                 if (me.store.getCount() || me.getPicker().emptyText) {
                     // The filter changing was done with events suppressed, so
                     // refresh the picker DOM while hidden and it will layout on show.
-                    node.expandChildren(true);
+                    node.expandChildren(me.expandChildrenOnFilter);
                     me.expand();
                 }
                 me.focus();
