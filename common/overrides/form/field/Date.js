@@ -1,4 +1,5 @@
 Ext.form.field.Date.defaultDateFormat = 'd.m.Y';
+Ext.form.field.Date.defaultTimeFormat = 'H:i';
 Ext.define('Ext.overrides.form.field.Date', {
     override: 'Ext.form.field.Date',
 

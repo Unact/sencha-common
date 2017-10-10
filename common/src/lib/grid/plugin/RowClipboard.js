@@ -262,12 +262,12 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
     putRowData: function(data, format) {
         var me = this;
         var processedData = data.replace(/\"/g, '""').replace(/([^\t\r\n]*\"+[^\t\r\n]*)/g, '"$1"'); // удвоить кавычки, поместить в кавычки содержимое поля
-        var raw_values = Ext.util.TSV.decode(processedData);
-        var values = raw_values.filter(function (e) {  return !(e.length === 1 && e[0] === "");}); //по умолчанию пустые строки вставляются, но нам-то они не нужны
+        var rawValues = Ext.util.TSV.decode(processedData);
+        var values = rawValues.filter(function (e) {  return !(e.length === 1 && e[0] === "");}); //по умолчанию пустые строки вставляются, но нам-то они не нужны
         var recCount = values.length;
         var colCount = recCount ? values[0].length : 0;
         var cmp = this.getCmp();
-        var columns = cmp.getView().getVisibleColumnManager().getColumns();
+        var columns = cmp.getView().grid.getColumns();
         var store = cmp.getStore();
         var controller = cmp.getController();
         var sm = cmp.getSelectionModel();
@@ -319,8 +319,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                     sourceColIdx++;
                     colCount++;
                 }
-                column = columns[sourceColIdx];
-
+                column = columns.find(function(el) { return el.xlsPosition === sourceColIdx }) || columns[sourceColIdx];
                 dataIndex = column.dataIndex;
                 if (!me.pasteInEditableOnly || column.editor || column.field) {
                     if(!me.skipTrimValues){
