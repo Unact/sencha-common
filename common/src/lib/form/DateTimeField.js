@@ -20,7 +20,7 @@ Ext.define('Ext.lib.form.DateTimeField', {
             width: '50%'
         }, {
             xtype: 'timefield',
-            increment: 15,
+            increment: 1,
             format: 'H:i',
             width: '50%'
         }
@@ -41,14 +41,16 @@ Ext.define('Ext.lib.form.DateTimeField', {
     changeTimeValue: function(field, newValue){
         var me = this;
         var date = me.datefield.getValue();
+        var newDateTime = newValue !== null ? me.computeDateTime(date, newValue) : null;
 
         me.suspendFieldValueChange++;
-        me.mixins.field.setValue.call(me, me.computeDateTime(date, newValue));
-        (new Ext.util.DelayedTask()).delay(1000,
-            function(){
-                me.suspendFieldValueChange--;
-            }
-        );
+        me.mixins.field.setValue.call(me, newDateTime);
+        if (date === null) {
+            me.datefield.setValue(newDateTime);
+        }
+        (new Ext.util.DelayedTask()).delay(1000, function() {
+            me.suspendFieldValueChange--;
+        });
 
         return true;
     },
@@ -56,30 +58,31 @@ Ext.define('Ext.lib.form.DateTimeField', {
     changeDateValue: function(field, newValue){
         var me = this;
         var time = me.timefield.getValue();
+        var newDateTime = newValue !== null ? me.computeDateTime(newValue, time) : null;
 
         // Иногда приходят странные значения newValue, в таких случаях ничего делать не надо
         me.suspendFieldValueChange++;
-        me.mixins.field.setValue.call(me, me.computeDateTime(newValue, time));
+        me.mixins.field.setValue.call(me, newDateTime);
+        if (time === null) {
+            me.timefield.setValue(newDateTime);
+        }
         // Когда сенча обновляет bind, она заново вызывает setValue, которая меняет значения в полях снова
         // чтобы такого цикла не было, даем сенче время на обновление bind
-        (new Ext.util.DelayedTask()).delay(1000,
-            function(){
-                me.suspendFieldValueChange--;
-            }
-        );
+        (new Ext.util.DelayedTask()).delay(1000, function() {
+            me.suspendFieldValueChange--;
+        });
 
         return true;
     },
 
     // Если дата или время null то и значение должно быть null
-    computeDateTime: function(date, time){
-        var value = null;
-        if (date instanceof Date){
-            if (time instanceof Date){
-                value = Ext.Date.clearTime(date);
-                value = Ext.Date.add(value, Ext.Date.HOUR, time.getHours());
-                value = Ext.Date.add(value, Ext.Date.MINUTE, time.getMinutes());
-            }
+    computeDateTime: function(date, time) {
+        var newDate = date || new Date();
+        var value = Ext.Date.clearTime(newDate);
+
+        if (time instanceof Date) {
+            value = Ext.Date.add(value, Ext.Date.HOUR, time.getHours());
+            value = Ext.Date.add(value, Ext.Date.MINUTE, time.getMinutes());
         }
 
         return value;
