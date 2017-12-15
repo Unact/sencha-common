@@ -124,8 +124,8 @@ Ext.define("Ext.overrides.form.field.Number", {
     /**
      * @private
      */
-    parseValue : function(value) {
-        value = parseFloat(String(value).replace(this.decimalSeparatorsReg, '.'));
+    parseValue: function(value) {
+        value = parseFloat(String(value).replace(this.decimalSeparatorsReg, '.').replace(/[^\d.-]/g, ''));
         return isNaN(value) ? null : value;
     }
 });
