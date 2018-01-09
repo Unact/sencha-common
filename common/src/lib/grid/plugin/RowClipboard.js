@@ -110,21 +110,22 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
             areaEl.value = ' ';
             areaEl.select();
         };
+
         if(me.enabledActions.indexOf('copy')!=-1){
             areaEl.oncopy = function(event){
-                event.clipboardData.setData('text', me.getRowData('text', false));
+                event.clipboardData.setData('text', me.getRowData(me.system, false));
                 event.preventDefault();
             };
         }
         if(me.enabledActions.indexOf('paste')!=-1){
             areaEl.onpaste = function(event){
-                me.doPaste('text', event.clipboardData.getData('text'));
+                me.doPaste('text', event.clipboardData.getData(me.system));
                 event.preventDefault();
             };
         }
         if(me.enabledActions.indexOf('cut')!=-1){
             areaEl.oncut = function(event){
-                event.clipboardData.setData('text', me.getRowData('text', true));
+                event.clipboardData.setData('text', me.getRowData(me.system, true));
                 event.preventDefault();
             };
         }
