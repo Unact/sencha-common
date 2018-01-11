@@ -168,7 +168,8 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
             row = [];
             if (isRaw) {
                 for(j = 0; j<columns.length; j++){
-                    row.push(record.get(columns[j].dataIndex));
+                    data = record.get(columns[j].dataIndex)
+                    row.push(afterCellCopy ? afterCellCopy(data) : data);
                 }
             } else {
                 // Try to access the view node.
@@ -190,7 +191,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                         data = "";
                     }
 
-                    data =  afterCellCopy ? afterCellCopy(data) : data;
+                    data = afterCellCopy ? afterCellCopy(data) : data;
 
                     row.push(data);
                 }
