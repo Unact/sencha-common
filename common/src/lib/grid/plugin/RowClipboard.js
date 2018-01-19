@@ -53,10 +53,13 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
 
                 toolbar.add({
                     xtype: 'textarea',
-                    width: 350,
-                    labelWidth: 290,
+                    width: 290,
+                    labelWidth: 240,
+                    grow: true,
+                    preventScrollbars: true,
+                    growMin: 18,
+                    height: 18,
                     fieldLabel: 'Перед копированием-вставкой нажмите сюда',
-                    fieldStyle: "min-height:20px; height:20px",
                     listeners: {
                         afterrender: me.createBufferTextArea,
                         scope: me
