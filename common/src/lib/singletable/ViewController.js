@@ -136,35 +136,34 @@ Ext.define('Ext.lib.singletable.ViewController', {
 
     afterRefresh: Ext.emptyFn,
 
+    rememberOldSelections: function () {
+        var oldSelection = this.getView().getSelectionModel().getSelection();
+
+        if (oldSelection && oldSelection.length==1) {
+            var r = oldSelection[0];
+            this.oldSelectionIndex = this.getView().getStore().indexOf(r);
+            this.oldSelectionId = r.get('id');
+        } else {
+            this.oldSelectionIndex = null;
+            this.oldSelectionId = null;
+        }
+    },
 
     /**
      * вызывает при наличии функцию beforeRefresh.
      * Функция должна возвратить "истину" для продолжения обновления
      */
     onRefresh: function(){
-        var me = this;
         var result = true;
-        var masterRecord;
-        var view = me.getView();
-        var vm = view.getViewModel();
-        var sm = view.getSelectionModel();
-        var store = view.getStore();
-        var oldSelection = sm.getSelection();
+        var store = this.getView().getStore();
 
-        var oldSelectionIndex = null;
-        var oldSelectionId = null;
-        if(oldSelection && oldSelection.length==1) {
-            var r = oldSelection[0];
-            oldSelectionIndex = store.indexOf(r);
-            oldSelectionId = r.get('id');
-        }
+        this.rememberOldSelections();
+        this.getView().getSelectionModel().deselectAll();
 
-        sm.deselectAll();
-
-        if(me.hasMaster()){
-            masterRecord = me.getMasterRecord();
+        if(this.hasMaster()){
+            var masterRecord = this.getMasterRecord();
             if(masterRecord && !masterRecord.phantom) {
-                result = me.beforeRefresh(masterRecord);
+                result = this.beforeRefresh(masterRecord);
             } else {
                 if(!store.isEmptyStore) {
                     store.loadData([]);
@@ -172,25 +171,35 @@ Ext.define('Ext.lib.singletable.ViewController', {
                 result = false;
             }
         } else {
-            result = me.beforeRefresh(masterRecord);
+            result = this.beforeRefresh();
         }
 
-        if(result){
-            if (vm==null || vm.get('filterReady')!==false) {
-                Ext.GlobalEvents.fireEvent('beginserveroperation');
-                store.load({
-                    callback: function(records, operation, success){
-                        if (!success) {
-                            me.onError(operation.getError().response);
-                        }
-
-                        me.callbackRefresh(view, store, oldSelectionId, oldSelectionIndex);
-                        Ext.GlobalEvents.fireEvent('endserveroperation');
-                        me.afterRefresh.call(me);
+        if (result && this.isFilterReady()) {
+            Ext.GlobalEvents.fireEvent('beginserveroperation');
+            store.load({
+                callback: function(records, operation, success) {
+                    if (!success) {
+                        this.onError(operation.getError().response);
                     }
-                });
-            }
+
+                    this.callbackRefresh(this.getView(), store, this.oldSelectionId, this.oldSelectionIndex);
+                    Ext.GlobalEvents.fireEvent('endserveroperation');
+                    this.afterRefresh();
+                },
+                scope: this
+            });
         }
+    },
+
+    reselectModel: function() {
+        this.rememberOldSelections();
+        this.getView().getSelectionModel().deselectAll();
+        this.callbackRefresh(this.getView(), this.getView().getStore(), this.oldSelectionId, this.oldSelectionIndex);
+    },
+
+    isFilterReady: function() {
+        var vm = this.getView().getViewModel();
+        return !vm || vm.get('filterReady') !== false;
     },
 
     /**
@@ -252,7 +261,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         var view = me.getView();
         var store = view.getStore();
         var messages;
-        var i, j, fieldName, errors = [];
+        var fieldName, errors = [];
         var callback;
         var callbackScope;
         var detailsToProcess = 0;
@@ -268,6 +277,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
                     me.syncing = false;
                     if(!me.autoRefreshingTable) {
                         me.onRefresh();
+                    } else {
+                        me.reselectModel();
                     }
                 }
             };
@@ -291,7 +302,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
 
         if (store.hasChanges()) {
             messages = store.getValidationMessages();
-            if(messages.length==0){
+            if (messages.length === 0){
                 Ext.GlobalEvents.fireEvent('beginserveroperation');
                 store.sync({
                     callback : function(batch) {
@@ -310,7 +321,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
                     if (message.base){
                         errors.push(message.base);
                     }
-                    for(field in message.fields){
+                    for(var field in message.fields){
                         fieldName = null;
                         view.columns.forEach(function(column){
                             if(column.dataIndex==field){

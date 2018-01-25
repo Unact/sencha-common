@@ -118,31 +118,33 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
         return true;
     },
 
+    rememberOldSelections: function () {
+        var oldSelection = this.getView().getSelection();
+
+        if (oldSelection) {
+            this.oldSelectionIndex = this.getView().getStore().indexOf(oldSelection);
+            this.oldSelectionId = oldSelection.id;
+        } else {
+            this.oldSelectionIndex = null;
+            this.oldSelectionId = null;
+        }
+    },
+
     /**
      * вызывает при наличии функцию beforeRefresh.
      * Функция должна возвратить "истину" для продолжения обновления
      */
     onRefresh: function() {
-        var me = this;
-        var view = me.getView();
-        var vm = view.getViewModel();
-        var store = view.getStore();
-        var oldSelection = view.getSelection();
-        var oldSelectionIndex = null;
-        var oldSelectionId = null;
+        var store = this.getView().getStore();
         var result = true;
-        var masterRecord;
 
-        if (oldSelection) {
-            oldSelectionIndex = store.indexOf(oldSelection);
-            oldSelectionId = oldSelection.id;
-        }
-
-        view.deselectAll();
-        if(me.masterGrid){
-            masterRecord = me.masterGrid.getViewModel().get('masterRecord');
+        this.rememberOldSelections();
+        this.getView().deselectAll();
+        if(this.masterGrid){
+            var masterRecord;
+            masterRecord = this.masterGrid.getViewModel().get('masterRecord');
             if(masterRecord && !masterRecord.phantom) {
-                result = me.beforeRefresh(masterRecord);
+                result = this.beforeRefresh(masterRecord);
             } else {
                 if(!store.isEmptyStore) {
                     store.loadData([]);
@@ -150,24 +152,35 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
                 result = false;
             }
         } else {
-            result = me.beforeRefresh(masterRecord);
+            result = this.beforeRefresh();
         }
-        if(result){
-            if (!vm || vm.get('filterReady')!==false) {
-                Ext.GlobalEvents.fireEvent('beginserveroperation');
-                store.load({
-                    callback: function(records, operation, success){
-                        if (!success) {
-                            Ext.Msg.alert("Ошибка", operation.getError().response.responseText);
-                        }
-                        view.refresh();
-                        me.callbackRefresh(oldSelectionId, oldSelectionIndex);
-                        Ext.GlobalEvents.fireEvent('endserveroperation');
-                        me.afterRefresh.call(me);
+
+        if (result && this.isFilterReady()) {
+            Ext.GlobalEvents.fireEvent('beginserveroperation');
+            store.load({
+                callback: function(records, operation, success){
+                    if (!success) {
+                        Ext.Msg.alert("Ошибка", operation.getError().response.responseText);
                     }
-                });
-            }
+                    this.getView().refresh();
+                    this.callbackRefresh(this.oldSelectionId, this.oldSelectionIndex);
+                    Ext.GlobalEvents.fireEvent('endserveroperation');
+                    this.afterRefresh.call();
+                },
+                scope: this
+            });
         }
+    },
+
+    reselectModel: function() {
+        this.rememberOldSelections();
+        this.getView().deselectAll();
+        this.callbackRefresh(this.oldSelectionId, this.oldSelectionIndex);
+    },
+
+    isFilterReady: function() {
+        var vm = this.getView().getViewModel();
+        return !vm || vm.get('filterReady') !== false;
     },
 
     /**
@@ -248,6 +261,8 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
                 me.syncing = false;
                 if(!me.autoRefreshingTable) {
                     me.onRefresh();
+                } else {
+                    me.reselectModel();
                 }
             }
         };

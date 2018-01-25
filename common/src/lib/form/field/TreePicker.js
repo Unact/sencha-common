@@ -73,6 +73,7 @@ Ext.define('Ext.lib.form.field.TreePicker', {
                 displayField: me.displayField,
                 columns: me.columns,
                 maxHeight: me.maxPickerHeight,
+                rootVisible: me.rootVisible || false,
                 manageHeight: false,
                 shadow: false,
                 listeners: {
