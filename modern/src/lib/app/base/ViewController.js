@@ -141,8 +141,7 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
         this.rememberOldSelections();
         this.getView().deselectAll();
         if(this.masterGrid){
-            var masterRecord;
-            masterRecord = this.masterGrid.getViewModel().get('masterRecord');
+            var masterRecord = this.masterGrid.getViewModel().get('masterRecord');
             if(masterRecord && !masterRecord.phantom) {
                 result = this.beforeRefresh(masterRecord);
             } else {
