@@ -103,11 +103,12 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         var recordToSelect = store.getById(oldSelectionId);
         var storeCount = store.getCount();
 
-        if (recordToSelect) {
+        var isLockedGrid = (Ext.getClassName(grid.view) === 'Ext.grid.locking.View');
+        if (recordToSelect && !isLockedGrid) {
             grid.view.scrollToRecord(recordToSelect);
-        } else if (oldSelectionIndex && storeCount > oldSelectionIndex) {
+        } else if (oldSelectionIndex && storeCount > oldSelectionIndex && !isLockedGrid) {
             grid.view.scrollToRecord(oldSelectionIndex);
-        } else if (storeCount > 0) {
+        } else if (storeCount > 0 && !isLockedGrid) {
             grid.view.scrollToRecord(0);
         } else {
             // Когда не отобралось ни одной строчки - послать фейковый selectionchange

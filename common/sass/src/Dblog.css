@@ -1,0 +1,11 @@
+.x-dblog-row .x-grid-cell {
+    background-color:#fff;
+}
+
+.x-dblog-row-alt .x-grid-cell {
+    background-color:#fafafa;
+}
+
+.x-grid-item-selected .x-grid-cell {
+    background-color:#dfe8f6;
+}

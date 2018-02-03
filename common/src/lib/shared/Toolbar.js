@@ -7,6 +7,8 @@ Ext.define('Ext.lib.shared.Toolbar', {
         'delete'
     ],
 
+    requires: ['Ext.lib.dblog.Window'],
+
     additionalButtons: function() {
         var buttons = [];
 
@@ -26,6 +28,16 @@ Ext.define('Ext.lib.shared.Toolbar', {
                 disabled: true,
                 tooltip: 'Удалить',
                 handler: 'onDelete',
+                margin: this.sharedToolbarButtonMargins
+            });
+        }
+        if (this.enabledButtons.indexOf('history') !== -1 && !this.disableНistory) {
+            buttons.push({
+                reference: 'history' + this.suffix,
+                icon: '/images/history.png',
+                disabled: true,
+                tooltip: 'История изменения записи',
+                handler: 'onHistory',
                 margin: this.sharedToolbarButtonMargins
             });
         }

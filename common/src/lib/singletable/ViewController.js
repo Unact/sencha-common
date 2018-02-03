@@ -54,6 +54,17 @@ Ext.define('Ext.lib.singletable.ViewController', {
         }
     },
 
+    onHistory: function() {
+        var selectedModels = this.getView().getSelectionModel().getSelection();
+        var selectedModel = (selectedModels && selectedModels.length === 1) ? selectedModels[0] : null;
+
+        if (selectedModel) {
+            this.recordHistory(selectedModel, this.getView().getStore().getProxy().url);
+        } else {
+            Ext.Msg.alert('Ошибка', 'Запись не определена');
+        }
+    },
+
     changeDisabledButtons: function(selected, options) {
         var toolbar = this.getView().down('sharedtoolbar');
 
@@ -341,6 +352,10 @@ Ext.define('Ext.lib.singletable.ViewController', {
         }
     },
 
+    recordHistory: function(model, url) {
+        Ext.create('Ext.lib.dblog.Window').show().refresh(model, url);
+    },
+
     deleteRecords: Ext.emptyFn,
     addRecord: Ext.emptyFn,
 
@@ -352,6 +367,14 @@ Ext.define('Ext.lib.singletable.ViewController', {
      * @return {Boolean}
      */
     isDisabledDeleteButton: Ext.emptyFn,
+
+    /**
+     * Возвращает true, если надо задизейблить кнопку "История".
+     * @abstract
+     * @param {Ext.data.Model[]} selected - Выбранные строки, если никакая строка не выбрана, то null
+     * @return {Boolean}
+     */
+    isDisabledHistoryButton: Ext.emptyFn,
 
     /**
      * Возвращает true, если надо задизейблить кнопку "Добавить".
