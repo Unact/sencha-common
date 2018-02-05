@@ -18,7 +18,7 @@ Ext.define('Ext.lib.dblog.View', {
     viewConfig: {
         getRowClass: function(record, rowIndex) {
             return Math.floor((rowIndex % 4)/2) === 0 ? 'x-dblog-row-alt' : 'x-dblog-row';
-        },
+        }
     },
 
     title: 'История изменения записи',
@@ -47,12 +47,12 @@ Ext.define('Ext.lib.dblog.View', {
         dataIndex: 'ts',
         xtype: 'datecolumn',
         format: 'd.m.Y H:i:s.u',
-        locked: true,
+        locked: true
     }, {
         width: 120,
         text: 'Пользователь',
         dataIndex: 'creator',
-        locked: true,
+        locked: true
     }, {
         width: 120,
         text: 'Старое/новое зн.',
@@ -60,10 +60,10 @@ Ext.define('Ext.lib.dblog.View', {
         renderer: function(value) {
             return value === 1 ? "Старое значение" : "Новое значение";
         },
-        locked: true,
+        locked: true
     }, {
         // Костыль. см. коммент в контроллере
         width: 0,
-        text: ' ',
+        text: ' '
     }]
 });

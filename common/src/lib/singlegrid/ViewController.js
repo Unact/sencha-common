@@ -102,22 +102,28 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         var me = this;
         var recordToSelect = store.getById(oldSelectionId);
         var storeCount = store.getCount();
-
         var isLockedGrid = (Ext.getClassName(grid.view) === 'Ext.grid.locking.View');
-        if (recordToSelect && !isLockedGrid) {
-            grid.view.scrollToRecord(recordToSelect);
-        } else if (oldSelectionIndex && storeCount > oldSelectionIndex && !isLockedGrid) {
-            grid.view.scrollToRecord(oldSelectionIndex);
-        } else if (storeCount > 0 && !isLockedGrid) {
-            grid.view.scrollToRecord(0);
-        } else {
-            // Когда не отобралось ни одной строчки - послать фейковый selectionchange
-            // Это позволит решить проблему:
-            // когда в гриде ДО рефреша не было данных и ПОСЛЕ рефреша данные не появились - этом случае
-            // selectionchange не отправляется. Хотя в обработчике события ожидается, что после каждого
-            // refresh-a надо вызвать selectionchange
-            // Пример решаемой ошибки см тут: DEV-32192
-            grid.fireEvent('selectionchange', grid, []);
+
+        // У залочeнных гридов не метода scrollToRecord
+        if (!isLockedGrid) {
+            if (recordToSelect) {
+                grid.view.scrollToRecord(recordToSelect);
+                return;
+            } else if (oldSelectionIndex && storeCount > oldSelectionIndex) {
+                grid.view.scrollToRecord(oldSelectionIndex);
+                return;
+            } else if (storeCount > 0) {
+                grid.view.scrollToRecord(0);
+                return
+            }
         }
+
+        // Когда не отобралось ни одной строчки - послать фейковый selectionchange
+        // Это позволит решить проблему:
+        // когда в гриде ДО рефреша не было данных и ПОСЛЕ рефреша данные не появились - этом случае
+        // selectionchange не отправляется. Хотя в обработчике события ожидается, что после каждого
+        // refresh-a надо вызвать selectionchange
+        // Пример решаемой ошибки см тут: DEV-32192
+        grid.fireEvent('selectionchange', grid, []);
     }
 });
