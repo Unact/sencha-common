@@ -29,8 +29,11 @@ Ext.define('Ext.lib.dblog.Window', {
 
     setData: function(data) {
         var view = this.down('dblog');
+        view.getViewModel().setData(data);
+
+        // Без принудительного связывания наблюдается плавающая ошибка, воспроизводящая при выключенной
+        // консоле разработчика. Ошибка: data в vm проинициализирована, но на сервер передаются одни null-ы
         view.getViewModel().notify();
-        view.getViewModel().set(data);
         view.fireEvent('refreshtable');
     },
 
