@@ -43,6 +43,16 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         return false;
     },
 
+    // Кнопка доступна к нажатию только в случае выбора одной не фантомной записи
+    isDisabledHistoryButton: function(records){
+        var record = (records && records.length === 1) ? records[0] : null
+
+        if (record === null) {
+            return true;
+        }
+        return record.phantom;
+    },
+
     onDeleteByColumn: function(grid, rowIndex, colIndex, item, e, record, row) {
         var me = this;
         if(me.grid.enableDeleteDialog===true){

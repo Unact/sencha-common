@@ -353,7 +353,12 @@ Ext.define('Ext.lib.singletable.ViewController', {
     },
 
     recordHistory: function(model, url) {
-        Ext.create('Ext.lib.dblog.Window').show().refresh(model, url);
+        // Вызов refresh на объекте-Window вне коллбэка приводит к плавающей ошибке, при выключенной
+        // консоле разработчика (ошибка: data в vm проинициализирована, но на сервер передаются одни null-ы).
+        // Дока призывает использовать коллбэк при наличии анимации, а ее тут нет. Но коллбэк починил багу
+        Ext.create('Ext.lib.dblog.Window').show(null, function() {
+            this.refresh(model, url);
+        });
     },
 
     deleteRecords: Ext.emptyFn,

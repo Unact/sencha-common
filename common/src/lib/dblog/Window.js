@@ -25,12 +25,16 @@ Ext.define('Ext.lib.dblog.Window', {
                 xid: modelOrXid
             });
         }
-
     },
 
     setData: function(data) {
         var view = this.down('dblog');
+        view.getViewModel().notify();
         view.getViewModel().set(data);
         view.fireEvent('refreshtable');
+    },
+
+    onDestroy: function() {
+        Ext.GlobalEvents.fireEvent('endserveroperation', true, null, true);
     }
 });
