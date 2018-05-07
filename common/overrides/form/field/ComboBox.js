@@ -115,5 +115,44 @@ Ext.define('Ext.overrides.form.field.ComboBox', {
         me.resumeEvent('select');
 
         return me;
+    },
+
+
+    // Метод практически полностью скорирован из LoadMask#bindStore
+    // https://docs.sencha.com/extjs/6.2.1/classic/src/LoadMask.js.html#Ext.LoadMask-method-bindStore
+    // Потому что LoadMask так же отслеживает падения Proxy
+    bindStore: function(store, initial) {
+        var me = this;
+
+        me.callParent(arguments);
+
+        // If the server returns a failure, and the proxy fires an exception instead of
+        // loading the store, the message box must appear.
+        Ext.destroy(me.proxyListeners);
+        store = me.store;
+
+        if (store) {
+            // Skip ChainedStores to the store that does the loading
+            while (store.getSource) {
+                store = store.getSource();
+            }
+
+            // В store может быть и не Store, потому что
+            // в конструкторе ComboColumn создается именно такой объект.
+            if (store.loadsSynchronously && !store.loadsSynchronously()) {
+                me.proxyListeners = store.getProxy().on({
+                    exception: me.onException,
+                    scope: me,
+                    destroyable: true
+                });
+            }
+        }
+    },
+
+    onException: function(component, response) {
+        var cmp = this.up('singletree, singlegrid');
+        if (cmp) {
+            cmp.getController().onError(response);
+        }
     }
 });
