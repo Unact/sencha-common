@@ -266,6 +266,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
      * @param {Ext.data.Batch}
      */
     afterSave: Ext.emptyFn,
+    afterDetailsSave: Ext.emptyFn,
 
     onSave: function() {
         var me = this;
@@ -286,6 +287,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
             callback = function(){
                 if(--detailsToProcess<=0){
                     me.syncing = false;
+                    me.afterDetailsSave();
                     if(!me.autoRefreshingTable) {
                         me.onRefresh();
                     } else {
