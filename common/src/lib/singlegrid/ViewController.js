@@ -116,7 +116,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 
         // У залочeнных гридов не метода scrollToRecord
         if (!isLockedGrid) {
-            if (recordToSelect) {
+            if (recordToSelect && store.contains(recordToSelect)) {
                 grid.view.scrollToRecord(recordToSelect);
                 return;
             } else if (oldSelectionIndex && storeCount > oldSelectionIndex) {
