@@ -103,6 +103,27 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         });
     },
 
+    onSpecialKey: function(field, e) {
+        const processableKeys = [e.UP, e.DOWN, e.ENTER];
+        const key = e.getKey();
+        const view = this.getView();
+        const store = view.getStore();
+        const idx = store.indexOf(this.getView().getSelectionModel().getSelection()[0]);
+        const newDownIdx = idx + 1 < store.getCount() ? idx + 1 : idx;
+        const newUpIdx = idx - 1 < 0 ? idx : idx - 1;
+        const newIdx = (key === e.UP) ? newUpIdx : newDownIdx;
+        const newRec = store.getAt(newIdx);
+        const cellEditor = view.findPlugin('cellediting');
+
+        if (processableKeys.indexOf(key) !== -1) {
+            new Ext.util.DelayedTask(() => {
+                view.getSelectionModel().select(newRec);
+                cellEditor.startEditByPosition({row: newIdx, column: field.column.fullColumnIndex});
+                cellEditor.activateCell(cellEditor.activeEditor.context, false, true);
+            }).delay(10);
+        }
+    },
+
     /*
      * По идентификатору находится модель
      * Если модель найдена, то поставить фокус на нее
