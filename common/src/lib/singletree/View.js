@@ -36,6 +36,10 @@ Ext.define('Ext.lib.singletree.View', {
         autoEditOnAdd: false
     },
 
+    viewConfig: {
+        loadMask: false,
+    },
+
     onLoadStore: function(treeStore, loadedNode, records, successful, eOpts) {
         console.log('onLoadStore', arguments);
 
