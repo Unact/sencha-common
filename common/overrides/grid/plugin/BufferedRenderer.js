@@ -122,6 +122,15 @@ Ext.define('Ext.overrides.grid.plugin.BufferedRenderer', {
         // Focus the cell's column header.
         if (containsFocus && !viewEl.contains(activeEl)) {
             pos = view.actionableMode ? view.actionPosition : view.lastFocused;
+
+            // FIX
+            // If there is an editing plugin element cache it
+            // Otherwise it will be destroyed but still be referenced by the plugin
+            // which will break the next edit
+            if (pos.view.editingPlugin) {
+                Ext.getDetachedBody().dom.appendChild(pos.view.editingPlugin.getActiveEditor().el.dom)
+            }
+
             if (pos && pos.column) {
                 view.onFocusLeave({});
 
