@@ -1,27 +1,38 @@
-/*
-Используются залоченные колонки (можно перемещать грид горизонтально, а залоченные колонки останутся на месте).
-В связи с этим есть ряд проблем:
-- незалоченные колонки добавляются динамически. А заранее известные колонки - залочены. Создав изначально грид
-  с одними только залоченными колонками наблюдаются проблемы при добвлении колонок. Поэтмоу, добавлена пустая колонка,
-  что бы обойти эту проблему. Так же долавлена опция enableColumnHide: false, что бы лишить пользователя возможности
-  увидеть несуществующую колонку
-- при добавлении колонок (метод reconfigure) не удается использовать уже заранее созданные колонки
-  (хотя в незалоченных гридах так можно). Приходится использовать в качестве колонок - initialConfig.
-  Причем получать его не геттером, а непосредственно обращением к полю.
-
-И все равно окно можно сломать: перетащить все залоченные колонки в облать незалоченных колонок
-это можно предотвратить используя enableColumnMove: false, но перемещать калонки представляется полезной
-фитчей в этом потенциально широком гриде
-*/
-
 Ext.define('Ext.lib.dblog.ViewController', {
     extend: 'Ext.lib.singlegrid.ViewController',
     alias: 'controller.dblog',
 
     boxReady: function() {
-        this.getViewModel().notify();
-        this.initialColumns = this.getView().columns.map((column) => {return column.initialConfig});
-        this.initialFields = this.getView().getStore().getModel().getFields().slice();
+        var vm = this.getViewModel();
+        var view = this.getView();
+
+        if (view.allowXidEdit) {
+            vm.set('editableXid', true);
+        }
+        vm.notify();
+        this.initialColumns = view.columns.map((column) => column.initialConfig);
+        this.initialFields = view.getStore().getModel().getFields().slice();
+    },
+
+    onRefresh: function() {
+        var vm = this.getViewModel();
+        var recordInfoStore = this.getStore('recordInfo');
+
+        this.loadDictionaries([recordInfoStore], () => {
+            var info = recordInfoStore.first();
+            var tableName = info.get('table_name');
+
+            if (tableName !== null) {
+                vm.set({
+                    xid: info.get('xid'),
+                    tableName: tableName,
+                    id: info.get('record_id')
+                });
+                this.self.superclass.onRefresh.apply(this);
+            } else {
+                Ext.Msg.alert('Ошибка', 'По данному идентификатору ничего не найдено!');
+            }
+        });
     },
 
     afterRefresh: function() {

@@ -7,8 +7,6 @@ Ext.define('Ext.lib.shared.Toolbar', {
         'delete'
     ],
 
-    requires: ['Ext.lib.dblog.Window'],
-
     additionalButtons: function() {
         var buttons = [];
 
