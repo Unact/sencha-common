@@ -44,6 +44,7 @@ Ext.define('Ext.lib.grid.Panel', {
 		config.suffix = suffix;
 		config.viewConfig = {};
 
+        Ext.apply(config, this.superclass.defaultConfig);
 		Ext.apply(config, Ext.clone(currentConfig));
 		Ext.apply(config, Ext.clone(me.cfg));
 		Ext.applyIf(config.viewConfig, {
