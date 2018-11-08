@@ -43,13 +43,22 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         return false;
     },
 
-    // Кнопка доступна к нажатию только в случае выбора одной не фантомной записи
-    isDisabledHistoryButton: function(records){
+    isDisabledHistoryButton: function(records) {
+        return this.phantomRecord(records);
+    },
+
+    isDisabledExtraButton: function(records) {
+        return this.phantomRecord(records);
+    },
+
+    // Проверим создана ли запись в бд
+    phantomRecord: function(records) {
         var record = (records && records.length === 1) ? records[0] : null
 
         if (record === null) {
             return true;
         }
+
         return record.phantom;
     },
 

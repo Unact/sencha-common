@@ -17,7 +17,7 @@ Ext.define('Ext.lib.dblog.ViewModel', {
                 extraParams: {
                     xid: '{xid}',
                     id: '{id}',
-                    model_name: '{modelName}'
+                    table_model_name: '{modelName}'
                 },
                 reader: {
                     rootProperty: 'data'

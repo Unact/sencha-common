@@ -1,25 +1,23 @@
-Ext.define('Ext.lib.dblog.Window', {
+Ext.define('Ext.lib.extra.Window', {
     extend: 'Ext.window.Window',
 
     requires: [
-        'Ext.lib.dblog.View'
+        'Ext.lib.extra.View'
     ],
 
-    title: 'История изменения записи',
+    title: 'Дополнительно',
     height: 350,
     width: 1200,
     layout: 'fit',
     modal: true,
     items: [{
-        xtype: 'dblog',
-        header: false,
-        allowXidEdit: false
+        xtype: 'extra'
     }],
 
     refresh: function(id, modelName) {
-        var view = this.down('dblog');
+        var view = this.down('extra');
         view.getViewModel().set({
-            id: id,
+            recordId: id,
             modelName: modelName
         });
 

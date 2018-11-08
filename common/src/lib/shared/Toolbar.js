@@ -39,6 +39,16 @@ Ext.define('Ext.lib.shared.Toolbar', {
                 margin: this.sharedToolbarButtonMargins
             });
         }
+        if (this.enabledButtons.indexOf('extra') !== -1 && !this.disableExtra) {
+            buttons.push({
+                reference: 'extra' + this.suffix,
+                icon: '/images/extra.gif',
+                disabled: true,
+                tooltip: 'Дополнительно',
+                handler: 'onExtra',
+                margin: this.sharedToolbarButtonMargins
+            });
+        }
 
         return buttons;
     }

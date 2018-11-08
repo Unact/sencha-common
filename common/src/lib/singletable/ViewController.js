@@ -55,15 +55,11 @@ Ext.define('Ext.lib.singletable.ViewController', {
     },
 
     onHistory: function() {
-        var view = this.getView();
-        var selectedModels = view.getSelectionModel().getSelection();
-        var selectedModel = (selectedModels && selectedModels.length === 1) ? selectedModels[0] : null;
+        this.openRecordWindow('Ext.lib.dblog.Window');
+    },
 
-        if (selectedModel) {
-            this.recordHistory(selectedModel.getId(), view.modelName);
-        } else {
-            Ext.Msg.alert('Ошибка', 'Запись не определена');
-        }
+    onExtra: function() {
+        this.openRecordWindow('Ext.lib.extra.Window');
     },
 
     changeDisabledButtons: function(selected, options) {
@@ -355,8 +351,16 @@ Ext.define('Ext.lib.singletable.ViewController', {
         }
     },
 
-    recordHistory: function(model, url) {
-        Ext.create('Ext.lib.dblog.Window').show().refresh(model, url);
+    openRecordWindow: function(windowClass) {
+        var view = this.getView();
+        var selectedModels = view.getSelectionModel().getSelection();
+        var selectedModel = (selectedModels && selectedModels.length === 1) ? selectedModels[0] : null;
+
+        if (selectedModel) {
+            Ext.create(windowClass).show().refresh(selectedModel.getId(), view.modelName);
+        } else {
+            Ext.Msg.alert('Ошибка', 'Запись не определена');
+        }
     },
 
     deleteRecords: Ext.emptyFn,
@@ -378,6 +382,14 @@ Ext.define('Ext.lib.singletable.ViewController', {
      * @return {Boolean}
      */
     isDisabledHistoryButton: Ext.emptyFn,
+
+    /**
+     * Возвращает true, если надо задизейблить кнопку "Дополнительно".
+     * @abstract
+     * @param {Ext.data.Model[]} selected - Выбранные строки, если никакая строка не выбрана, то null
+     * @return {Boolean}
+     */
+    isDisabledExtraButton: Ext.emptyFn,
 
     /**
      * Возвращает true, если надо задизейблить кнопку "Добавить".
