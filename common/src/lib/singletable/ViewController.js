@@ -55,11 +55,12 @@ Ext.define('Ext.lib.singletable.ViewController', {
     },
 
     onHistory: function() {
-        var selectedModels = this.getView().getSelectionModel().getSelection();
+        var view = this.getView();
+        var selectedModels = view.getSelectionModel().getSelection();
         var selectedModel = (selectedModels && selectedModels.length === 1) ? selectedModels[0] : null;
 
         if (selectedModel) {
-            this.recordHistory(selectedModel, this.getView().getStore().getProxy().url);
+            this.recordHistory(selectedModel.getId(), view.modelName);
         } else {
             Ext.Msg.alert('Ошибка', 'Запись не определена');
         }

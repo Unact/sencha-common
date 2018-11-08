@@ -14,22 +14,12 @@ Ext.define('Ext.lib.dblog.Window', {
         allowXidEdit: false
     }],
 
-    refresh: function(modelOrXid, url) {
-        if (modelOrXid.isModel) {
-            this.setData({
-                id: modelOrXid.getId(),
-                url: url
-            });
-        } else {
-            this.setData({
-                xid: modelOrXid
-            });
-        }
-    },
-
-    setData: function(data) {
+    refresh: function(id, modelName) {
         var view = this.down('dblog');
-        view.getViewModel().set(data);
+        view.getViewModel().set({
+            id: id,
+            modelName: modelName
+        });
 
         // Без принудительного связывания наблюдается плавающая ошибка, воспроизводящая при выключенной
         // консоле разработчика. Ошибка: data в vm проинициализирована, но на сервер передаются одни null-ы

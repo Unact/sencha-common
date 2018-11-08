@@ -5,7 +5,7 @@ Ext.define('Ext.lib.dblog.ViewModel', {
     data: {
         xid: null,
         id: null,
-        url: null,
+        modelName: null,
         editableXid: false
     },
 
@@ -17,7 +17,7 @@ Ext.define('Ext.lib.dblog.ViewModel', {
                 extraParams: {
                     xid: '{xid}',
                     id: '{id}',
-                    url: '{url}'
+                    model_name: '{modelName}'
                 },
                 reader: {
                     rootProperty: 'data'
@@ -28,23 +28,6 @@ Ext.define('Ext.lib.dblog.ViewModel', {
                 {name: 'creator', type: 'string'},
                 {name: 'ts',      type: 'date'},
                 {name: 'row_num', type: 'int'}
-            ]
-        },
-
-        recordInfo: {
-            proxy: {
-                type: 'restjsonlimitless',
-                url: '/dblog/record_info',
-                extraParams: {
-                    xid: '{xid}',
-                    id: '{id}',
-                    url: '{url}'
-                }
-            },
-            fields: [
-                {name: 'record_id', type: 'string', allowNull: true},
-                {name: 'xid',       type: 'string', allowNull: true},
-                {name: 'table_name',type: 'string', allowNull: true}
             ]
         }
     }

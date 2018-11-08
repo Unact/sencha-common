@@ -14,29 +14,11 @@ Ext.define('Ext.lib.dblog.ViewController', {
         this.initialFields = view.getStore().getModel().getFields().slice();
     },
 
-    onRefresh: function() {
-        var vm = this.getViewModel();
-        var recordInfoStore = this.getStore('recordInfo');
-
-        this.loadDictionaries([recordInfoStore], () => {
-            var info = recordInfoStore.first();
-            var tableName = info.get('table_name');
-
-            if (tableName !== null) {
-                vm.set({
-                    xid: info.get('xid'),
-                    tableName: tableName,
-                    id: info.get('record_id')
-                });
-                this.self.superclass.onRefresh.apply(this);
-            } else {
-                Ext.Msg.alert('Ошибка', 'По данному идентификатору ничего не найдено!');
-            }
-        });
-    },
-
     afterRefresh: function() {
-        var newColumns = this.getView().getStore().getProxy().getReader().metaData || [];
+        var view = this.getView();
+        var metaData = view.getStore().getProxy().getReader().metaData;
+        var newColumns = metaData.columns || [];
+        var recordData = metaData.recordData || {};
         var newFields = newColumns.map((column) => {
             return {
                 name: column.dataIndex,
@@ -44,7 +26,8 @@ Ext.define('Ext.lib.dblog.ViewController', {
             };
         });
 
-        this.getView().getStore().getModel().replaceFields(this.initialFields.concat(newFields), true);
-        this.getView().reconfigure(null, this.initialColumns.concat(newColumns));
+        this.getViewModel().set(recordData);
+        view.getStore().getModel().replaceFields(this.initialFields.concat(newFields), true);
+        view.reconfigure(null, this.initialColumns.concat(newColumns));
     }
 });
