@@ -27,7 +27,7 @@ Ext.define('Ext.lib.shared.Refresher', {
     },
 
     initEnterHandlers: function() {
-        this.query(this.getRefreshingSelector()).forEach(function(component) {
+        this.up().query(this.getRefreshingSelector()).forEach(function(component) {
             this.addEnterHandler(component);
         }, this);
     },
