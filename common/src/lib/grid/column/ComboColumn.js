@@ -87,7 +87,8 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
                 column: me,
                 name: me.dataIndex,
                 triggerAction: 'all',
-                xtype: 'combobox'
+                xtype: 'combobox',
+                selectOnFocus: true
             });
 
             if(!fieldConfig.store) {
