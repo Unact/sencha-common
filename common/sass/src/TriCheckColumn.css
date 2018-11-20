@@ -1,0 +1,28 @@
+/*** False States ***/
+.x-grid-tricheckcolumn {
+    background-image: url('/images/tricheckbox.gif' ) !important;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    width: 13px;
+    height: 13px;
+    display: inline-block;
+}
+.x-item-disabled .x-grid-tricheckcolumn {
+    background-position: -39px 0px;
+}
+
+/*** True States ***/
+.x-grid-cc-checked.x-grid-tricheckcolumn {
+    background-position: 0px -13px;
+}
+.x-item-disabled .x-grid-cc-checked.x-grid-tricheckcolumn {
+    background-position: -39px -13px;
+}
+
+/*** Null States ***/
+.x-grid-cc-null.x-grid-tricheckcolumn {
+    background-position: 0px -26px;
+}
+.x-item-disabled .x-grid-cc-null.x-grid-tricheckcolumn {
+    background-position: -39px -26px;
+}
