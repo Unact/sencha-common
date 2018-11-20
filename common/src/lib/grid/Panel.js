@@ -17,9 +17,9 @@ Ext.define('Ext.lib.grid.Panel', {
 			type: 'rowmodel',
 			mode: 'MULTI'
 		},
-
-		saveDetail: false,
-		autoEditOnAdd: false
+        stateful: true,
+        saveDetail: false,
+        autoEditOnAdd: false
 	},
 
 	/**

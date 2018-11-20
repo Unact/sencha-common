@@ -1,47 +1,47 @@
 Ext.define('Ext.overrides.panel.Table', {
-	override : 'Ext.panel.Table',
+    override : 'Ext.panel.Table',
 
-	initComponent: function(){
-		var me = this;
+    initComponent: function(){
+        var me = this;
 
-		me.callParent(arguments);
+        me.callParent(arguments);
 
-		me.initSpecialColumns();
-	},
+        me.initSpecialColumns();
+    },
 
-	setStore: function(){
-		var me = this;
-		var store = arguments[0];
+    setStore: function(){
+        var me = this;
+        var store = arguments[0];
 
-		if(arguments.length>1){
-			me.reconfigure(arguments[0], arguments[1]);
-		} else {
-			me.reconfigure(store);
-		}
+        if(arguments.length>1){
+            me.reconfigure(arguments[0], arguments[1]);
+        } else {
+            me.reconfigure(store);
+        }
 
         if (me.autoLoad && !(store.loading || store.isLoaded())) {
             store.load();
         }
 
-		me.initSpecialColumns();
-	},
+        me.initSpecialColumns();
+    },
 
-	initSpecialColumns: function(){
-		var me = this;
+    initSpecialColumns: function(){
+        var me = this;
 
-		model = me.store.getModel();
+        model = me.store.getModel();
 
-		if(model){
-			me.columns.every(function(column){
-				if(column.xtype=='combocolumn' || column.xtype=='multifieldcolumn'){
-					column.addPrimaryValueField(model);
-				}
-				return true;
-			});
-		}
-	},
+        if(model){
+            me.columns.every(function(column){
+                if(column.xtype=='combocolumn' || column.xtype=='multifieldcolumn'){
+                    column.addPrimaryValueField(model);
+                }
+                return true;
+            });
+        }
+    },
 
-	/**
+    /**
      * Reconfigures the grid or tree with a new store and/or columns. Stores and columns
      * may also be passed as params.
      *
@@ -74,32 +74,32 @@ Ext.define('Ext.overrides.panel.Table', {
             store, columns, binding;
 
         switch(arguments.length){
-        	case 1:
-        		if(Ext.isArray(arguments[0])){
-        			columns = arguments[0];
-        		} else {
-        			store = arguments[0];
-        		}
-        	break;
-        	case 2:
-        		if(Ext.isArray(arguments[0])){
-        			columns = arguments[0];
-        			binding = arguments[1];
-        		} else {
-        			store = arguments[0];
+            case 1:
+                if(Ext.isArray(arguments[0])){
+                    columns = arguments[0];
+                } else {
+                    store = arguments[0];
+                }
+            break;
+            case 2:
+                if(Ext.isArray(arguments[0])){
+                    columns = arguments[0];
+                    binding = arguments[1];
+                } else {
+                    store = arguments[0];
 
-        			if(Ext.isArray(arguments[1])){
-        				columns = arguments[1];
-        			} else {
-        				binding = arguments[1];
-        			}
-        		}
-        	break;
-        	case 3:
-        		store = arguments[0];
-        		columns = arguments[1];
-        		binding = arguments[2];
-        	break;
+                    if(Ext.isArray(arguments[1])){
+                        columns = arguments[1];
+                    } else {
+                        binding = arguments[1];
+                    }
+                }
+            break;
+            case 3:
+                store = arguments[0];
+                columns = arguments[1];
+                binding = arguments[2];
+            break;
         }
 
         // Make copy in case the beforereconfigure listener mutates it.
@@ -128,9 +128,9 @@ Ext.define('Ext.overrides.panel.Table', {
             // Note that we need to process the store first in case one or more passed columns (if there are any)
             // have active gridfilters with values which would filter the currently-bound store.
             if (store && store !== oldStore) {
-            	if(binding && binding.calls===1){
-            		store.setSorters(oldStore.getSorters().items);
-            	}
+                if(binding && binding.calls===1){
+                    store.setSorters(oldStore.getSorters().items);
+                }
                 me.unbindStore();
                 me.bindStore(store);
             }
@@ -157,4 +157,10 @@ Ext.define('Ext.overrides.panel.Table', {
         me.fireEvent('reconfigure', me, store, columns, oldStore, oldColumns);
         delete me.reconfiguring;
     },
+
+    applyState: function(state) {
+        if (state) {
+            this.headerCt.applyColumnsState(this.buildColumnHash(state.columns), null);
+        }
+    }
 });
