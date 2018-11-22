@@ -113,10 +113,11 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
         return this.store;
     },
 
-    setStore: function(store){
+    setStore: function(store) {
         var me = this,
             initConfig = me.getInitialConfig();
 
+        me.addPrimaryValueField(this.up().up().getStore().getModel());
         me.store = store;
         if(me.field &&
             !(
@@ -129,7 +130,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
         }
     },
 
-    // эта функция вызывается таблицей при привязке основного хранилища
+    // эта функция при привязке стора к колонке
     addPrimaryValueField: function(model){
         var me = this;
         var field = null;

@@ -1,13 +1,5 @@
 Ext.define('Ext.overrides.panel.Table', {
-    override : 'Ext.panel.Table',
-
-    initComponent: function(){
-        var me = this;
-
-        me.callParent(arguments);
-
-        me.initSpecialColumns();
-    },
+    override: 'Ext.panel.Table',
 
     setStore: function(){
         var me = this;
@@ -22,8 +14,6 @@ Ext.define('Ext.overrides.panel.Table', {
         if (me.autoLoad && !(store.loading || store.isLoaded())) {
             store.load();
         }
-
-        me.initSpecialColumns();
     },
 
     initSpecialColumns: function(){
