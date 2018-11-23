@@ -117,7 +117,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
         var me = this,
             initConfig = me.getInitialConfig();
 
-        me.addPrimaryValueField(this.up().up().getStore().getModel());
+        me.addPrimaryValueField(this.up('grid').getStore().getModel());
         me.store = store;
         if(me.field &&
             !(
