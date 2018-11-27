@@ -14,16 +14,16 @@ Ext.define('Ext.overrides.panel.Table', {
         if (me.autoLoad && !(store.loading || store.isLoaded())) {
             store.load();
         }
+
+        this.initSpecialColumns();
     },
 
     initSpecialColumns: function(){
-        var me = this;
+        var model = this.store.getModel();
 
-        model = me.store.getModel();
-
-        if(model){
-            me.columns.every(function(column){
-                if(column.xtype=='combocolumn' || column.xtype=='multifieldcolumn'){
+        if (model) {
+            this.columns.forEach(function(column) {
+                if (column.xtype === 'combocolumn' || column.xtype === 'multifieldcolumn') {
                     column.addPrimaryValueField(model);
                 }
                 return true;
