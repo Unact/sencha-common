@@ -7,7 +7,7 @@ Ext.define('Ext.lib.extra.Window', {
 
     title: 'Дополнительно',
     height: 350,
-    width: 1200,
+    width: 1000,
     layout: 'fit',
     modal: true,
     items: [{

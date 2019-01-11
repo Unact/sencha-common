@@ -2,8 +2,15 @@ Ext.define('Ext.lib.extra.ViewController', {
     extend: 'Ext.lib.singlegrid.ViewController',
     alias: 'controller.extra',
 
-    boxReady: function() {
-        this.loadDictionaries([this.getStore('etypeValueList')]);
+    onRefresh: function(){
+        const etypeValueListStore = this.getStore('etypeValueList');
+        if (!etypeValueListStore.isLoaded()) {
+            this.loadDictionaries([etypeValueListStore], () => {
+                this.self.superclass.onRefresh.call(this);
+            });
+        } else {
+            this.callParent();
+        }
     },
 
     onSave: function() {
