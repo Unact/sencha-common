@@ -19,7 +19,7 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
                 if (rec.get('checked')) {
                     checked.push(rec);
                 }
-            });
+            }, null, true);
             return checked;
         };
     },
