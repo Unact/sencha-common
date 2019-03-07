@@ -8,8 +8,6 @@ Ext.define('Ext.lib.form.DateTimeField', {
 
     defaultMargins: '0 0 0 0',
 
-    flex: 1,
-
     // Если включен, значит у полей не надо менять значения
     suspendFieldValueChange: 0,
 
@@ -17,12 +15,12 @@ Ext.define('Ext.lib.form.DateTimeField', {
         {
             xtype: 'datefield',
             format: 'd.m.Y',
-            width: '50%'
+            width: '60%'
         }, {
             xtype: 'timefield',
             increment: 1,
             format: 'H:i',
-            width: '50%'
+            width: '40%'
         }
     ],
 
