@@ -3,6 +3,12 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
     extend: 'Ext.lib.singletable.ViewController',
     alias: 'controller.singlegrid',
 
+    processableKeys: [
+        Ext.event.Event.UP,
+        Ext.event.Event.DOWN,
+        Ext.event.Event.ENTER
+    ],
+
     init: function(view){
         var me = this;
 
@@ -113,7 +119,6 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
     },
 
     onSpecialKey: function(field, e) {
-        const processableKeys = [e.UP, e.DOWN, e.ENTER];
         const key = e.getKey();
         const view = this.getView();
         const store = view.getStore();
@@ -122,15 +127,21 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         const newUpIdx = idx - 1 < 0 ? idx : idx - 1;
         const newIdx = (key === e.UP) ? newUpIdx : newDownIdx;
         const newRec = store.getAt(newIdx);
-        const cellEditor = view.findPlugin('cellediting');
 
-        if (processableKeys.indexOf(key) !== -1) {
+        if (this.processableKeys.indexOf(key) !== -1) {
             new Ext.util.DelayedTask(() => {
-                view.getSelectionModel().select(newRec);
-                cellEditor.startEditByPosition({row: newIdx, column: field.column.fullColumnIndex});
-                cellEditor.activateCell(cellEditor.activeEditor.context, false, true);
+                this.onSpecialKeyMove(field, newIdx, newRec);
             }).delay(10);
         }
+    },
+
+    onSpecialKeyCallback: function(field, newIdx, newRecord) {
+        const view = this.getView();
+        const cellEditor = view.findPlugin('cellediting');
+
+        view.getSelectionModel().select(newRecord);
+        cellEditor.startEditByPosition({row: newIdx, column: field.column.fullColumnIndex});
+        cellEditor.activateCell(cellEditor.activeEditor.context, false, true);
     },
 
     /*
