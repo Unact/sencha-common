@@ -130,7 +130,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
 
         if (this.processableKeys.indexOf(key) !== -1) {
             new Ext.util.DelayedTask(() => {
-                this.onSpecialKeyMove(field, newIdx, newRec);
+                this.onSpecialKeyCallback(field, newIdx, newRec);
             }).delay(10);
         }
     },
