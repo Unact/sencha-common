@@ -22,11 +22,6 @@ Ext.define('Ext.lib.form.field.BarcodeField', {
         'Period': '.',
         'Semicolon': ':',
         'Minus': '-',
-        'ShiftLeft': '',
-        'ShiftRight': '',
-        'Backspace': '',
-        'MetaLeft': '',
-        'MetaRight': '',
         'KeyA': 'A',
         'KeyB': 'B',
         'KeyC': 'C',
@@ -40,7 +35,11 @@ Ext.define('Ext.lib.form.field.BarcodeField', {
     listeners: {
         keyup: function(field, e) {
             if (this.translateInput) {
-                this.setValue(this.value.slice(0, this.value.length - 1) + this.translateChar(e.event));
+                var translatedChar = this.translateChar(e.event);
+
+                if (translatedChar) {
+                    this.setValue(this.value.slice(0, this.value.length - 1) + translatedChar);
+                }
             }
         },
         specialkey: function(field, e) {
@@ -59,7 +58,7 @@ Ext.define('Ext.lib.form.field.BarcodeField', {
     },
 
     onRender: function() {
-        const parent = this.up("tablepanel");
+        var parent = this.up("tablepanel");
 
         if (parent) {
             new Ext.util.KeyMap({
@@ -80,7 +79,6 @@ Ext.define('Ext.lib.form.field.BarcodeField', {
     },
 
     translateChar: function(keyboardEvent) {
-        const dictResult = this.keyCodeMap[keyboardEvent.code];
-        return dictResult == null ? keyboardEvent.key : dictResult;
+        return this.keyCodeMap[keyboardEvent.code];
     }
 });
