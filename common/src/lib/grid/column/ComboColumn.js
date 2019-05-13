@@ -3,7 +3,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
     alias : 'widget.combocolumn',
 
     requires: [
-        'Ext.form.field.ComboBox',
+        'Ext.lib.form.field.ComboColumnField',
         'Ext.data.ChainedStore'
     ],
 
@@ -87,7 +87,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
                 column: me,
                 name: me.dataIndex,
                 triggerAction: 'all',
-                xtype: 'combobox',
+                xtype: 'combocolumnfield',
                 selectOnFocus: true
             });
 
@@ -105,7 +105,7 @@ Ext.define('Ext.lib.grid.column.ComboColumn', {
             }
 
             me.fieldConfig = fieldConfig;
-            me.field = Ext.create('Ext.form.ComboBox', fieldConfig);
+            me.field = Ext.create('Ext.lib.form.field.ComboColumnField', fieldConfig);
         }
     },
 
