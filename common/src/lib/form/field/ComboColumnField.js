@@ -97,7 +97,7 @@ Ext.define('Ext.lib.form.field.ComboColumnField', {
 
         if (this.queryMode === 'remote' && value != null) {
             comboRecord[this.valueField] = value.isModel ? value.get(this.valueField) : value;
-            comboRecord[this.displayField] = displayFieldValue;
+            comboRecord[this.displayField] = value.isModel ? value.get(this.displayField) : displayFieldValue;
             store.add(comboRecord);
         }
 
