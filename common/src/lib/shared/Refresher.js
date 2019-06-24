@@ -11,8 +11,9 @@ Ext.define('Ext.lib.shared.Refresher', {
     /**
      * @private
      */
-    enterHandlers: [],
-
+    config: {
+        enterHandlers: []
+    },
 
     addEnterHandler: function(component) {
         if (!this.refreshBtn) {
