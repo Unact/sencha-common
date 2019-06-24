@@ -11,6 +11,8 @@ Ext.define('Ext.lib.form.DateTimeField', {
     // Если включен, значит у полей не надо менять значения
     suspendFieldValueChange: 0,
 
+    increment: 1,
+
     items: [
         {
             xtype: 'datefield',
@@ -19,10 +21,17 @@ Ext.define('Ext.lib.form.DateTimeField', {
         }, {
             xtype: 'timefield',
             increment: 1,
+            snapToIncrement: true,
             format: 'H:i',
             width: '40%'
         }
     ],
+
+    constructor: function(config) {
+        this.increment = config.increment || this.increment;
+        this.items[1].increment = this.increment;
+        this.callParent(arguments);
+    },
 
     initComponent: function(){
         var me = this;
