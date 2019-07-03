@@ -24,6 +24,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         }
 
         me.refreshDetailOnSelect = view.refreshDetailOnSelect === false ? false : true;
+        me.showSaveError = view.showSaveError === false ? false : true;
         me.autoRefreshingTable = false || view.autoRefreshingTable;
     },
 
@@ -320,7 +321,9 @@ Ext.define('Ext.lib.singletable.ViewController', {
                         Ext.GlobalEvents.fireEvent('endserveroperation');
                         me.afterSave(batch);
                         if (batch.exceptions.length > 0) {
-                            me.onError(batch.exceptions[0].getError().response);
+                            if (me.showSaveError) {
+                                me.onError(batch.exceptions[0].getError().response);
+                            }
                         } else {
                             saveDetails(true, callback, callbackScope);
                         }
