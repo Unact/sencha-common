@@ -13,10 +13,6 @@ Ext.define('Ext.lib.grid.Panel', {
 	mixins: ['Ext.lib.shared.PanelBuilders'],
 
 	config: {
-		selModel: {
-			type: 'rowmodel',
-			mode: 'MULTI'
-		},
         stateful: true,
         saveDetail: false,
         autoEditOnAdd: false
@@ -50,6 +46,10 @@ Ext.define('Ext.lib.grid.Panel', {
 		Ext.applyIf(config.viewConfig, {
             enableTextSelection : true,
             loadMask: false
+        });
+        Ext.applyIf(config.selModel, {
+            type: 'rowmodel',
+            mode: 'MULTI'
         });
 
 		me.formToolbarConfig(config);
