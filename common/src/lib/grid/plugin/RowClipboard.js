@@ -319,12 +319,17 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
             row = values[sourceRowIdx];
 
             // Collect new values in dataObject
-            for ( sourceColIdx = 0, rowIdx = 0; sourceColIdx < colCount && sourceColIdx < columns.length; sourceColIdx++, rowIdx++) {
-                if (columns[sourceColIdx].xtype == 'rownumberer'){
-                    sourceColIdx++;
-                    colCount++;
+            for ( sourceColIdx = 0, rowIdx = 0; sourceColIdx < colCount; sourceColIdx++, rowIdx++) {
+                if (columns.find(function(el) { return el.hasOwnProperty('xlsPosition') })) {
+                    column = columns.find(function(el) { return el.xlsPosition === sourceColIdx })
+                } else {
+                    column = columns[sourceColIdx];
                 }
-                column = columns.find(function(el) { return el.xlsPosition === sourceColIdx }) || columns[sourceColIdx];
+
+                if (column == null || column.xtype == 'rownumberer') {
+                    continue;
+                }
+
                 dataIndex = column.dataIndex;
                 if (!me.pasteInEditableOnly || column.editor || column.field) {
                     if(!me.skipTrimValues){
