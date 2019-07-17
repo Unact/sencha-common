@@ -47,5 +47,24 @@ Ext.define('Ext.lib.grid.column.WindowColumn', {
         me.callParent(arguments);
 
         me.fieldName = me.defineFieldName(me.primaryValue);
+    },
+
+    addPrimaryValueField: function(model){
+        var me = this;
+        var field = null;
+
+        model.getFields().forEach(function(fieldFromGrid) {
+            if (fieldFromGrid.name === me.fieldName) {
+                field = fieldFromGrid;
+            }
+            return field;
+        });
+
+        if (!field) {
+            model.addFields([{
+                name: me.fieldName,
+                persist: false
+            }]);
+        }
     }
 });

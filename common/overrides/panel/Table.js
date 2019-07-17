@@ -1,6 +1,10 @@
 Ext.define('Ext.overrides.panel.Table', {
     override: 'Ext.panel.Table',
 
+    statics: {
+        SPECIAL_COLUMN_XTYPES: ['combocolumn', 'multifieldcolumn', 'windowcolumn']
+    },
+
     setStore: function(){
         var me = this;
         var store = arguments[0];
@@ -23,7 +27,7 @@ Ext.define('Ext.overrides.panel.Table', {
 
         if (model) {
             this.columns.forEach(function(column) {
-                if (column.xtype === 'combocolumn' || column.xtype === 'multifieldcolumn') {
+                if (Ext.panel.Table.SPECIAL_COLUMN_XTYPES.indexOf(column.xtype) !== -1) {
                     column.addPrimaryValueField(model);
                 }
                 return true;

@@ -24,6 +24,10 @@ Ext.define('Ext.lib.window.windowcolumn.View', {
             text: 'Отмена',
             handler: 'close',
             scope: this
+        }, {
+            text: 'Удалить',
+            handler: 'deselect',
+            scope: this
         }],
 
         this.callParent(arguments);
@@ -36,5 +40,18 @@ Ext.define('Ext.lib.window.windowcolumn.View', {
         this.parentRecord.set(parentColumn.dataIndex, masterRecord.get(parentColumn.primaryKey));
         this.parentRecord.set(parentColumn.fieldName, masterRecord.get(parentColumn.primaryValue));
         this.close();
+    },
+
+    deselect: function() {
+        const parentColumn = this.parentColumn;
+
+        this.parentRecord.set(parentColumn.dataIndex, null);
+        this.parentRecord.set(parentColumn.fieldName, null);
+        this.close();
+    },
+
+    close: function() {
+        this.parentColumn.up('grid').findPlugin('cellediting').cancelEdit();
+        this.callParent();
     }
 });
