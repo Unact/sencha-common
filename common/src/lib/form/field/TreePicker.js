@@ -108,11 +108,21 @@ Ext.define('Ext.lib.form.field.TreePicker', {
         return picker;
     },
 
-    onBindStore: function(store, initial, propertyName, oldStore){
+    onBindStore: function(store, initial) {
         var me = this;
+        var picker = me.picker;
 
-        if(me.picker){
-            me.picker.setStore(store);
+        if (store && picker && picker.getStore() !== store) {
+            picker.bindStore(store);
+        }
+    },
+
+    onUnbindStore: function() {
+        var me = this;
+        var picker = me.picker;
+
+        if (picker) {
+            picker.bindStore(null);
         }
     },
 
@@ -144,12 +154,13 @@ Ext.define('Ext.lib.form.field.TreePicker', {
             node = store.getRoot();
         }
 
-        node.expand();
-
-        picker.ensureVisible(node, {
-            select: true,
-            focus: true
+        node.bubble(function(innerNode) {
+            if (!innerNode.isRoot()) {
+                innerNode.expand();
+            }
         });
+        me.picker.selModel.select(node);
+        view.scrollToRecord(node);
     },
 
     /**
@@ -160,19 +171,33 @@ Ext.define('Ext.lib.form.field.TreePicker', {
     setValue: function(value) {
         var me = this;
         var store = me.getStore();
+        var isLoaded = store.getCount() > 0 || store.isLoaded();
+        var pendingLoad = store.hasPendingLoad();
+        var unloaded = !isLoaded && !pendingLoad;
+        var isEmptyStore = store.isEmptyStore;
+        var bind = me.getBind();
         var record;
-        var bind;
 
-        me.value = value;
 
-        if (store.loading || !store.isTreeStore) {
-            // Called while the Store is loading. Ensure it is processed by the onLoad method.
-            return me;
+       if (pendingLoad || unloaded || !isLoaded || isEmptyStore) {
+            if (value == null || !value.isModel) {
+                me.value = value;
+            }
+
+            if (unloaded && !isEmptyStore) {
+                store.load();
+                return me;
+            }
+
+            if (value == null || !value.isModel || isEmptyStore) {
+                return me;
+            }
         }
 
         // try to find a record in the store that matches the value
         if (value) {
             record = store.getNodeById(value);
+            me.value = value;
         } else {
             record = store.getRoot();
             me.value = record.getId();
@@ -181,8 +206,7 @@ Ext.define('Ext.lib.form.field.TreePicker', {
         // set the raw value to the record's display field if a record was found
         me.setRawValue(record ? record.get(me.displayField) : '');
 
-        bind = me.getBind();
-        if(bind.value){
+        if (bind && bind.value) {
             bind.value.setValue(value);
         }
 

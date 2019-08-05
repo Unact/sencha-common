@@ -28,7 +28,7 @@ Ext.define('Ext.lib.window.windowcolumn.View', {
             text: 'Удалить',
             handler: 'deselect',
             scope: this
-        }],
+        }];
 
         this.callParent(arguments);
     },
@@ -51,7 +51,7 @@ Ext.define('Ext.lib.window.windowcolumn.View', {
     },
 
     close: function() {
-        this.parentColumn.up('grid').findPlugin('cellediting').cancelEdit();
+        this.parentColumn.up('grid').getView().refresh();
         this.callParent();
     }
 });

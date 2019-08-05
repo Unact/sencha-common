@@ -2,7 +2,7 @@ Ext.define('Ext.overrides.panel.Table', {
     override: 'Ext.panel.Table',
 
     statics: {
-        SPECIAL_COLUMN_XTYPES: ['combocolumn', 'multifieldcolumn', 'windowcolumn']
+        SPECIAL_COLUMN_XTYPES: ['combocolumn', 'multifieldcolumn', 'windowcolumn', 'treepickercolumn']
     },
 
     setStore: function(){

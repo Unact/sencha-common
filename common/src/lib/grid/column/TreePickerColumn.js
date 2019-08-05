@@ -1,24 +1,22 @@
-Ext.define('Ext.lib.grid.column.ComboColumn', {
+Ext.define('Ext.lib.grid.column.TreepickerColumn', {
     extend: 'Ext.lib.grid.column.ChoiceColumn',
-    alias: 'widget.combocolumn',
+    alias: 'widget.treepickercolumn',
 
     requires: [
         'Ext.lib.grid.column.ChoiceColumn',
-        'Ext.lib.form.field.ComboColumnField'
+        'Ext.lib.form.field.TreePicker'
     ],
 
     defaultFieldConfig: function() {
         var me = this;
 
         return {
-            queryMode: 'local',
             displayField: me.primaryValue,
-            valueField: me.primaryKey,
+            xtype: 'treepicker',
+            rootVisible: true,
             column: me,
             name: me.dataIndex,
-            triggerAction: 'all',
-            xtype: 'combocolumnfield',
             selectOnFocus: true
         };
-    },
+    }
 });
