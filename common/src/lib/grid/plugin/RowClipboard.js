@@ -326,12 +326,12 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                     column = columns[sourceColIdx];
                 }
 
-                if (column == null || column.xtype == 'rownumberer') {
+                if (column == null) {
                     continue;
                 }
 
                 dataIndex = column.dataIndex;
-                if (!me.pasteInEditableOnly || column.editor || column.field) {
+                if (column.xtype !== 'rownumberer' && (!me.pasteInEditableOnly || column.editor || column.field)) {
                     if(!me.skipTrimValues){
                         row[rowIdx] = row[rowIdx] ? row[rowIdx].trimRight() : null;
                     }
