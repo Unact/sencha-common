@@ -171,7 +171,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
 
         if(this.hasMaster()){
             var masterRecord = this.getMasterRecord();
-            if(masterRecord && !this.masterGrid.getController().phantomRecord([masterRecord])) {
+
+            if (masterRecord && !masterRecord.phantom) {
                 result = this.beforeRefresh(masterRecord);
             } else {
                 if(!store.isEmptyStore) {
