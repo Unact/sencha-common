@@ -361,7 +361,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
         var selectedModel = (selectedModels && selectedModels.length === 1) ? selectedModels[0] : null;
 
         if (selectedModel) {
-            Ext.create(windowClass).show().refresh(selectedModel.getId(), view.modelName);
+            var id = view.modelIdFieldName ? selectedModel.get(view.modelIdFieldName) : selectedModel.getId();
+            Ext.create(windowClass).show().refresh(id, view.modelName);
         } else {
             Ext.Msg.alert('Ошибка', 'Запись не определена');
         }
