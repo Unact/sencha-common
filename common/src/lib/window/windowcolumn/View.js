@@ -14,7 +14,10 @@ Ext.define('Ext.lib.window.windowcolumn.View', {
         this.title = this.parentColumn.text;
         this.items = [{
             region: 'center',
-            xtype: this.parentColumn.gridXtype
+            xtype: this.parentColumn.gridXtype,
+            viewConfig: {
+                loadMask: true
+            }
         }];
         this.buttons = [{
             text: 'Выбрать',

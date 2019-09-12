@@ -11,7 +11,10 @@ Ext.define('Ext.lib.extra.Window', {
     layout: 'fit',
     modal: true,
     items: [{
-        xtype: 'extra'
+        xtype: 'extra',
+        viewConfig: {
+            loadMask: true
+        }
     }],
 
     refresh: function(id, modelName) {

@@ -13,7 +13,10 @@ Ext.define('Ext.lib.dblog.Window', {
     items: [{
         xtype: 'dblog',
         header: false,
-        allowXidEdit: false
+        allowXidEdit: false,
+        viewConfig: {
+            loadMask: true
+        }
     }],
 
     refresh: function(id, modelName) {
