@@ -49,6 +49,18 @@ Ext.define('Ext.lib.shared.Toolbar', {
                 margin: this.sharedToolbarButtonMargins
             });
         }
+        if (this.enabledButtons.indexOf('changemaster') !== -1 && !this.disableChangemaster) {
+            buttons.push({
+                reference: 'changemaster' + this.suffix,
+                disabled: true,
+                handler: 'onChangeMaster',
+                margin: this.sharedToolbarButtonMargins,
+                bind: {
+                    icon: `{copiedRecords == null ? '/images/table_go.png' : '/images/table_copy.png'}`,
+                    tooltip: `{copiedRecords == null ? 'Перенести в буфер' : 'Вставить из буфера'}`
+                },
+            });
+        }
 
         return buttons;
     }

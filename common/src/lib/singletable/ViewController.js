@@ -22,6 +22,10 @@ Ext.define('Ext.lib.singletable.ViewController', {
         if(view.disableSelectionChangeHandler!==true){
             view.on('selectionchange', me.onChangeSelect, me);
         }
+        if (view.masterProperty) {
+            me.masterProperty = view.masterProperty;
+            this.getViewModel().set('copiedRecords', null);
+        }
 
         me.refreshDetailOnSelect = view.refreshDetailOnSelect === false ? false : true;
         me.showSaveError = view.showSaveError === false ? false : true;
@@ -371,6 +375,13 @@ Ext.define('Ext.lib.singletable.ViewController', {
     deleteRecords: Ext.emptyFn,
     addRecord: Ext.emptyFn,
 
+    /**
+     * Возвращает true, если надо задизейблить кнопку "История".
+     * @abstract
+     * @param {Ext.data.Model[]} selected - Выбранные строки, если никакая строка не выбрана, то null
+     * @return {Boolean}
+     */
+    isDisabledChangemasterButton: Ext.emptyFn,
 
     /**
      * Возвращает true, если надо задизейблить кнопку "Удалить".

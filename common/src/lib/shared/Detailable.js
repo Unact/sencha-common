@@ -43,5 +43,26 @@ Ext.define('Ext.lib.shared.Detailable', {
 
     hasMaster: function() {
         return Boolean(this.masterGrid);
+    },
+
+    onChangeMaster: function() {
+        var vm = this.getViewModel();
+        var view = this.getView();
+        var store = view.getStore();
+        var records = vm.get('copiedRecords');
+
+        if (records === null) {
+            var selection = view.getSelectionModel().getSelection();
+
+            vm.set('copiedRecords', selection);
+            store.remove(selection);
+        } else {
+            var masterId = vm.get('selectedMaster').get('id');
+            var storeRecords = store.add(records);
+            storeRecords.map(rec => rec.set(this.masterProperty, masterId));
+
+            vm.set('copiedRecords', null);
+            view.getView().scrollToRecord(storeRecords[0]);
+        }
     }
 });

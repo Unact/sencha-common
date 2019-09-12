@@ -57,6 +57,10 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         return this.phantomRecord(records);
     },
 
+    isDisabledChangemasterButton: function(records) {
+        return (records.length === 0 && this.getViewModel().get('copiedRecords') == null);
+    },
+
     // Проверим создана ли запись в бд
     phantomRecord: function(records) {
         var record = (records && records.length === 1) ? records[0] : null
