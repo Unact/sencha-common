@@ -2,16 +2,14 @@ Ext.define('Ext.lib.dblog.ViewController', {
     extend: 'Ext.lib.singlegrid.ViewController',
     alias: 'controller.dblog',
 
-    boxReady: function() {
-        var vm = this.getViewModel();
-        var view = this.getView();
-
+    init: function(view) {
         if (view.allowXidEdit) {
             vm.set('editableXid', true);
         }
-        vm.notify();
+
         this.initialColumns = view.columns.map((column) => column.initialConfig);
         this.initialFields = view.getStore().getModel().getFields().slice();
+        this.callParent(arguments);
     },
 
     afterRefresh: function() {
