@@ -84,7 +84,7 @@ Ext.define('Ext.lib.form.DateTimeField', {
 
     // Если дата или время null то и значение должно быть null
     computeDateTime: function(date, time) {
-        var newDate = date || new Date();
+        var newDate = Ext.isDate(date) ? date : new Date();
         var value = Ext.Date.clearTime(newDate);
 
         if (time instanceof Date) {

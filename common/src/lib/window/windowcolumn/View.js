@@ -2,8 +2,8 @@ Ext.define('Ext.lib.window.windowcolumn.View', {
     extend: 'Ext.window.Window',
     alias: 'widget.windowwindowcolumn',
 
-    height: 300,
-    width: 600,
+    height: 350,
+    width: 1000,
 
     layout: 'border',
 
@@ -38,10 +38,16 @@ Ext.define('Ext.lib.window.windowcolumn.View', {
 
     select: function() {
         const parentColumn = this.parentColumn;
-        const masterRecord = this.down(this.parentColumn.gridXtype).getSelectionModel().getSelection()[0];
+        const masterView = this.down(this.parentColumn.gridXtype);
+        const masterController = masterView.getController();
+        const masterRecord = masterView.getSelectionModel().getSelection()[0];
 
         this.parentRecord.set(parentColumn.dataIndex, masterRecord.get(parentColumn.primaryKey));
         this.parentRecord.set(parentColumn.fieldName, masterRecord.get(parentColumn.primaryValue));
+
+        if (masterController.afterSelect && (typeof masterController.afterSelect === 'function')) {
+            masterController.afterSelect(masterRecord);
+        }
         this.close();
     },
 
