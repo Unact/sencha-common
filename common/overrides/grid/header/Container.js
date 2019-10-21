@@ -37,8 +37,14 @@ Ext.define('Ext.overrides.grid.header.Container', {
 
                 // FIX
                 // Fixes restoring column width from state
-                if (columnState.width) {
+                if (columnState.width != null) {
                     col.width = columnState.width;
+                }
+
+                // FIX
+                // Fixes restoring column visibility from state
+                if (columnState.hidden != null) {
+                    col.hidden = columnState.hidden;
                 }
 
                 newOrder[index] = col;
