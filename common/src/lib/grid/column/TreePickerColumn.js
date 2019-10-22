@@ -15,8 +15,7 @@ Ext.define('Ext.lib.grid.column.TreepickerColumn', {
             xtype: 'treepicker',
             rootVisible: true,
             column: me,
-            name: me.dataIndex,
-            selectOnFocus: true
+            name: me.dataIndex
         };
     }
 });
