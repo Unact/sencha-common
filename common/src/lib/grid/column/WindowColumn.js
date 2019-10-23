@@ -13,13 +13,13 @@ Ext.define('Ext.lib.grid.column.WindowColumn', {
         return {
             xtype: 'textfield',
             listeners: {
-                focus: 'onFocus',
+                focus: 'onFieldFocus',
                 scope: me
             }
         };
     },
 
-    onFocus: function() {
+    onFieldFocus: function() {
         var grid = this.up('grid');
         this.windowView = Ext.create('Ext.lib.window.windowcolumn.View', {
             parentColumn: this,
