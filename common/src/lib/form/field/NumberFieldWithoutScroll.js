@@ -11,7 +11,8 @@ Ext.define('Ext.lib.form.field.NumberFieldWithoutScroll', {
 
     keyNavEnabled: false,
 
-    mouseWheelEnabled: false
+    mouseWheelEnabled: false,
+
+    selectOnFocus: true
 
 });
-
