@@ -35,7 +35,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         store.getSorters().clear();
         this.grid.getView().refresh();
 
-        newRec = store.insert(Math.max(index, 0), result)[0];
+        newRec = store.insert(Math.max(index + 1, 0), result)[0];
 
         return newRec;
     },
