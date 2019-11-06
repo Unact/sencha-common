@@ -1,7 +1,9 @@
 Ext.define('Ext.overrides.form.field.ComboBox', {
-	override : 'Ext.form.field.ComboBox',
+    override: 'Ext.form.field.ComboBox',
 
-	// private implementation to set or add a value/values
+    minChars: 3,
+
+    // private implementation to set or add a value/values
     doSetValue: function(value /* private for use by addValue */, add) {
         var me = this,
             store = me.getStore(),
