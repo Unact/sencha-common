@@ -67,6 +67,10 @@ Ext.define('Ext.lib.singletable.ViewController', {
         this.openRecordWindow('Ext.lib.extra.Window');
     },
 
+    onBi: function() {
+        this.openRecordWindow('Ext.lib.bi.Window');
+    },
+
     changeDisabledButtons: function(selected, options) {
         var toolbar = this.getView().down('sharedtoolbar');
 
@@ -406,6 +410,14 @@ Ext.define('Ext.lib.singletable.ViewController', {
      * @return {Boolean}
      */
     isDisabledExtraButton: Ext.emptyFn,
+
+    /**
+     * Возвращает true, если надо задизейблить кнопку "Дополнительно".
+     * @abstract
+     * @param {Ext.data.Model[]} selected - Выбранные строки, если никакая строка не выбрана, то null
+     * @return {Boolean}
+     */
+    isDisabledBiButton: Ext.emptyFn,
 
     /**
      * Возвращает true, если надо задизейблить кнопку "Добавить".

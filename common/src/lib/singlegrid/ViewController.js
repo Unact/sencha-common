@@ -56,6 +56,10 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         return this.phantomRecord(records);
     },
 
+    isDisabledBiButton: function(records) {
+        return this.phantomRecord(records);
+    },
+
     isDisabledChangemasterButton: function(records) {
         return (records.length === 0 && this.getViewModel().get('copiedRecords') == null);
     },

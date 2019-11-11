@@ -49,6 +49,16 @@ Ext.define('Ext.lib.shared.Toolbar', {
                 margin: this.sharedToolbarButtonMargins
             });
         }
+        if (this.enabledButtons.indexOf('bi') !== -1 && !this.disableBi) {
+            buttons.push({
+                reference: 'bi' + this.suffix,
+                icon: '/images/bi.png',
+                disabled: true,
+                tooltip: 'Признаки',
+                handler: 'onBi',
+                margin: this.sharedToolbarButtonMargins
+            });
+        }
         if (this.enabledButtons.indexOf('changemaster') !== -1 && !this.disableChangemaster) {
             buttons.push({
                 reference: 'changemaster' + this.suffix,
