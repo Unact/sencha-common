@@ -26,7 +26,6 @@ Ext.define('Ext.lib.form.field.ComboColumnField', {
             valueChanged, key;
         var grid = this.column.getView().grid;
         var displayFieldValue = grid.findPlugin('cellediting').context.record.get(this.column.fieldName);
-        var comboRecord = {};
 
         //<debug>
         if (add && !me.multiSelect) {
@@ -55,14 +54,8 @@ Ext.define('Ext.lib.form.field.ComboColumnField', {
 
                 me.setHiddenValue(me.value);
 
-                if (this.queryMode === 'remote' && value != null) {
-                    if (store.isEmptyStore) {
-                        this.setRawValue(displayFieldValue);
-                    } else {
-                        comboRecord[this.valueField] = value;
-                        comboRecord[this.displayField] = displayFieldValue;
-                        store.add(comboRecord);
-                    }
+                if (this.queryMode === 'remote' && value != null && store.isEmptyStore) {
+                    me.setRawValue(displayFieldValue);
                 } else {
                     // If we know that the display value is the same as the value, then show it.
                     // A store load is still scheduled so that the matching record can be published.
@@ -90,15 +83,27 @@ Ext.define('Ext.lib.form.field.ComboColumnField', {
             // If they had set a string value, another setValue call is scheduled in the onLoad handler.
             // If the store is the defauilt empty one, the setValueOnData call will be made in bindStore
             // when the real store arrives.
-            if (!value.isModel || isEmptyStore) {
+            if (isEmptyStore) {
                 return me;
             }
         }
 
-        if (this.queryMode === 'remote' && value != null) {
-            comboRecord[this.valueField] = value.isModel ? value.get(this.valueField) : value;
-            comboRecord[this.displayField] = value.isModel ? value.get(this.displayField) : displayFieldValue;
-            store.add(comboRecord);
+        if (
+            this.queryMode === 'remote' &&
+            value != null &&
+            !value.isModel &&
+            !store.findExactRecord(this.valueField, value)
+        ) {
+            var comboRecord = {};
+
+            comboRecord[this.valueField] = value;
+            comboRecord[this.displayField] = displayFieldValue;
+
+            this.setRawValue(displayFieldValue);
+            record = store.loadData([comboRecord]);
+
+            me.lastSelection = [record];
+            me.lastSelectedRecords = me.lastSelection;
         }
 
         // This method processes multi-values, so ensure value is an array.
@@ -165,21 +170,83 @@ Ext.define('Ext.lib.form.field.ComboColumnField', {
             valueChanged = matchedRecords.length;
         }
 
-        if (valueChanged) {
-            // beginUpdate which means we only want to notify this.onValueCollectionEndUpdate after it's all changed.
-            me.suspendEvent('select');
-            me.valueCollection.beginUpdate();
-            if (matchedRecords.length) {
-                selModel.select(matchedRecords, false);
-            } else {
-                selModel.deselectAll();
-            }
-            me.valueCollection.endUpdate();
-            me.resumeEvent('select');
+        // FIX Always update value
+        me.suspendEvent('select');
+        me.valueCollection.beginUpdate();
+        if (matchedRecords.length) {
+            selModel.select(matchedRecords, false);
         } else {
-            me.updateValue();
+            selModel.deselectAll();
         }
+        me.valueCollection.endUpdate();
+        me.resumeEvent('select');
 
         return me;
+    },
+
+    assertValue: function() {
+        var me = this,
+            rawValue = me.getRawValue(),
+            displayValue = me.getDisplayValue(),
+            lastRecords = me.lastSelectedRecords,
+            preventChange = false,
+            value, rec;
+
+        if (me.forceSelection) {
+            if (me.multiSelect) {
+                // For multiselect, check that the current displayed value matches the current
+                // selection, if it does not then revert to the most recent selection.
+                if (rawValue !== displayValue) {
+                    me.setRawValue(displayValue);
+                }
+            } else {
+                // For single-select, match the displayed value to a record and select it,
+                // if it does not match a record then revert to the most recent selection.
+                rec = me.findRecordByDisplay(rawValue);
+                if (!rec) {
+                    if (lastRecords && (!me.allowBlank || me.rawValue)) {
+                        rec = lastRecords[0];
+                    }
+                    // if we have a custom displayTpl it's likely that findRecordByDisplay won't
+                    // find the value based on RawValue, so we give it another try using the data
+                    // stored in displayTplData if there is any.
+                    else if (me.displayTplData && me.displayTplData.length) {
+                        rec = me.findRecordByValue(me.displayTplData[0][me.valueField]);
+                    }
+                }
+                // Prevent an issue where we have duplicate display values with
+                // different underlying values.
+                else if (me.getDisplayValue([me.getRecordDisplayData(rec)]) === displayValue) {
+                    rec = null;
+                    preventChange = true;
+                }
+
+                if (rec) {
+                    me.select(rec, true);
+                    me.fireEvent('select', me, rec);
+                } else if (!preventChange) {
+                    if (lastRecords) {
+                        delete me.lastSelectedRecords;
+                    }
+                    // We need to reset any value that could have been set in the dom before or during a store load
+                    // for remote combos.  If we don't reset this, then ComboBox#getValue() will think that the value
+                    // has changed and will then set `undefined` as the .value for forceSelection combos.  This then
+                    // gets changed AGAIN to `null`, which will get set into the model field for editors. This is BAD.
+                    me.setRawValue('');
+                }
+            }
+        }
+        // we can only call getValue() in this process if forceSelection is false
+        // otherwise it will break the grid edit on tab
+        else if ((value = me.getValue())) {
+            rec = me.findRecordByDisplay(value);
+
+            // FIX remove unneccessary check
+            if (rec && (rec !== (lastRecords && lastRecords[0]))) {
+                me.select(rec, true);
+                me.fireEvent('select', me, rec);
+            }
+        }
+        me.collapse();
     }
 });
