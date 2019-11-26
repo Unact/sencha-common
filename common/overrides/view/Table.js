@@ -1,6 +1,8 @@
 Ext.define('Ext.overrides.view.Table', {
     override: 'Ext.view.Table',
 
+    enableTextSelection: true,
+
     /**
      * Переход и фокусировка к строке по индексу или записи
      * @param {Number/Ext.data.Model} nodeInfo индекс или запись.
