@@ -157,10 +157,10 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
      * иначе поставить фокус на строку тем же порядковым номером, что и был ранее
      */
     callbackRefresh: function (grid, store, oldSelectionId, oldSelectionIndex) {
-        var me = this;
         var recordToSelect = store.getById(oldSelectionId);
         var storeCount = store.getCount();
         var isLockedGrid = (Ext.getClassName(grid.view) === 'Ext.grid.locking.View');
+        var isMultiGrid = grid.view.getSelectionModel().mode === 'MULTI';
 
         // У залочeнных гридов не метода scrollToRecord
         if (!isLockedGrid) {
@@ -170,7 +170,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
             } else if (oldSelectionIndex && storeCount > oldSelectionIndex) {
                 grid.view.scrollToRecord(oldSelectionIndex);
                 return;
-            } else if (storeCount > 0) {
+            } else if (storeCount > 0 && !isMultiGrid) {
                 grid.view.scrollToRecord(0);
                 return
             }
