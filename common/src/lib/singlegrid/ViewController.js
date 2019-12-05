@@ -160,7 +160,6 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         var recordToSelect = store.getById(oldSelectionId);
         var storeCount = store.getCount();
         var isLockedGrid = (Ext.getClassName(grid.view) === 'Ext.grid.locking.View');
-        var isMultiGrid = grid.view.getSelectionModel().mode === 'MULTI';
 
         // У залочeнных гридов не метода scrollToRecord
         if (!isLockedGrid) {
@@ -170,7 +169,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
             } else if (oldSelectionIndex && storeCount > oldSelectionIndex) {
                 grid.view.scrollToRecord(oldSelectionIndex);
                 return;
-            } else if (storeCount > 0 && !isMultiGrid) {
+            } else if (storeCount > 0) {
                 grid.view.scrollToRecord(0);
                 return
             }
