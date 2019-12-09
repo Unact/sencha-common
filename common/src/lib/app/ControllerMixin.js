@@ -121,7 +121,7 @@ Ext.define('Ext.lib.app.ControllerMixin', {
         var me = this;
         var responseContentType = response && response.getResponseHeader ?
             response.getResponseHeader("Content-Type") :
-            null;
+            (Ext.JSON.decode(response.responseText, true) == null ? null : 'json');
         var error = null;
         var parser, xmlDoc, errorTags;
         var data;
