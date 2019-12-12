@@ -43,19 +43,25 @@ Ext.define('Ext.lib.bigrid.ViewController', {
         const view = this.getView();
 
         this.loadDictionaries([spValuesStore], () => {
-            const biGroups = spValuesStore.getData().items.
+            const biGroupsIds = spValuesStore.getData().items.
                 map(rec => rec.get('bi_group')).
-                filter((value, index, self) => self.indexOf(value) === index).sort((a, b) => a - b);
+                filter((value, index, self) => self.indexOf(value) === index)
+            const biGroups = biGroupsIds.map(id => {
+                return {
+                    id: id,
+                    name: spValuesStore.findExactRecord('bi_group', id).get('bi_name')
+                }
+            }).sort((a, b) => a.name > b.name ? 1 : -1);
 
             const oldColumns = view.columns.map((column) => {
                 return column.cloneConfig();
             });
 
             const newColumns = biGroups.map(val => {
-                const dataIndex = 'bi_group' + val;
+                const dataIndex = 'bi_group' + val.id;
 
                 return {
-                    text: spValuesStore.findExactRecord('bi_group', val).get('bi_name'),
+                    text: val.name,
                     dataIndex: dataIndex,
                     width: 150,
                     xtype: 'combocolumn',
@@ -66,20 +72,13 @@ Ext.define('Ext.lib.bigrid.ViewController', {
                                 return '{["&nbsp;".repeat(2*values.tlev)]}{' + displayField + '}';
                             },
                         },
-                        listeners: {
-                            beforequery: function(queryPlan) {
-                                queryPlan.combo.getStore().filter({
-                                    property: 'bi_group',
-                                    value: val
-                                });
-                            },
-                            select: function() {
-                                this.getStore().clearFilter();
-                            }
-                        },
-                        bind: {
-                            store: '{spValuesCombo}'
-                        }
+                        store: Ext.create('Ext.data.ChainedStore', {
+                            source: spValuesStore,
+                            filters: [{
+                                property: 'bi_group',
+                                value: val.id
+                            }]
+                        })
                     },
                     bind: {
                         store: '{spValues}'

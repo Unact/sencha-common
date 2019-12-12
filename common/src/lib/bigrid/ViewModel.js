@@ -57,10 +57,6 @@ Ext.define('Ext.lib.bigrid.ViewModel', {
             sorters: [{
                 property: 'sortcolumn'
             }]
-        },
-
-        spValuesCombo: {
-            source: '{spValues}',
         }
     }
 });
