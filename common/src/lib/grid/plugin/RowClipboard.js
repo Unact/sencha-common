@@ -272,10 +272,10 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         var recCount = values.length;
         var colCount = recCount ? values[0].length : 0;
         var cmp = this.getCmp();
-        var columns = cmp.getView().grid.getColumns();
         var store = cmp.getStore();
         var controller = cmp.getController();
         var sm = cmp.getSelectionModel();
+        var columns = [];
         var records = [];
         var dataObjects = [];
         var row;
@@ -288,6 +288,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         var masterRecord;
         var dataInitializator;
         var insertInStore;
+        var pasteStart;
         var pasteComplete;
         var singleInsertPrimaryValue = Ext.isBoolean(me.insertPrimaryValue)
 
@@ -305,10 +306,21 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                 pasteComplete = controller.afterPaste;
             }
 
+            if(controller.beforePaste && (typeof controller.beforePaste === "function")){
+                pasteStart = controller.beforePaste;
+            }
+
             if (controller.insertValues && (typeof controller.insertValues === "function")) {
                 insertInStore = controller.insertValues;
             }
         }
+
+        if (pasteStart) {
+            pasteStart.call(controller, values);
+        }
+
+        columns = cmp.getView().grid.getColumns();
+
         for ( sourceRowIdx = recCount-1; sourceRowIdx >= 0; sourceRowIdx--) {
             dataObject = dataInitializator ? dataInitializator.call(controller, masterRecord) : {};
 
