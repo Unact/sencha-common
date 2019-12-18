@@ -10,7 +10,8 @@ Ext.define('Ext.lib.bigrid.ViewController', {
 
     addRecordSpSetsToChange: function(record) {
         const keys = Object.getOwnPropertyNames(record.data);
-        const spSetsData = keys.filter(key => key.includes('bi_group')).reduce((acc, key) => {
+        const biGroupKeys = keys.filter(key => key.includes('bi_group'));
+        const spSetsData = biGroupKeys.reduce((acc, key) => {
             const value = record.get(key);
 
             if (Ext.isNumeric(value)) {
@@ -20,6 +21,7 @@ Ext.define('Ext.lib.bigrid.ViewController', {
             return acc;
         }, {});
 
+        biGroupKeys.forEach(key => delete record.data[key]);
         this.spSetsToChange.push({
             internalId: record.internalId,
             data: spSetsData
@@ -92,7 +94,7 @@ Ext.define('Ext.lib.bigrid.ViewController', {
 
                 model.addFields([{
                     name: column.dataIndex,
-                    persist: false
+                    persist: true
                 }]);
                 column.addPrimaryValueField(model);
             });
@@ -101,7 +103,8 @@ Ext.define('Ext.lib.bigrid.ViewController', {
 
     afterRefresh: function() {
         const view = this.getView();
-        const records = view.getStore().getData().items;
+        const store = view.getStore();
+        const records = store.getData().items;
         const recordSpSetsStore = this.getStore('recordSpSets');
 
         if (records.length > 0) {
@@ -116,6 +119,7 @@ Ext.define('Ext.lib.bigrid.ViewController', {
                         filter(spSetRec => spSetRec.get('id')[0] === record.get('id')).
                         forEach(spSetRec => record.set('bi_group' + spSetRec.get('id')[2], spSetRec.get('spv_id')));
                 });
+                store.commitChanges();
                 view.view.refresh();
             });
         }
@@ -137,17 +141,22 @@ Ext.define('Ext.lib.bigrid.ViewController', {
 
         batch.operations.forEach(operation => {
             const record = operation.getRecords()[0];
-            const spSetsData = this.removeRecordSpSetsToChange(record);
+            const spSetsInfo = this.removeRecordSpSetsToChange(record);
+            const spSetsData = spSetsInfo.data;
+
+            record.set(spSetsData);
 
             if (!operation.exception) {
-                biStore.add({
-                    sp_sets_data: spSetsData,
-                    model_name: view.modelName,
-                    record_id: record.get('id'),
-                    only_delete: operation.request.getAction() === 'destroy'
-                });
-            } else {
-                record.set(spSetsData);
+                record.commit();
+
+                if (Object.keys(spSetsData).length > 0) {
+                    biStore.add({
+                        sp_sets_data: spSetsInfo,
+                        model_name: view.modelName,
+                        record_id: record.get('id'),
+                        only_delete: operation.request.getAction() === 'destroy'
+                    });
+                }
             }
         });
 
@@ -173,9 +182,13 @@ Ext.define('Ext.lib.bigrid.ViewController', {
                                 }
                             }
                         });
+                    } else {
+                        this.onRefresh();
                     }
                 }
             });
+        } else {
+            this.onRefresh();
         }
     }
 });
