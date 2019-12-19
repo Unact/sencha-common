@@ -76,8 +76,7 @@ Ext.define('Ext.lib.grid.plugin.XlsExport', {
                 footers: footers,
                 data: data
             }),
-            url: '/xls',
-            timeout: 30000
+            url: '/xls'
         }).then((response) => {
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(new Blob([response.responseBytes]));
