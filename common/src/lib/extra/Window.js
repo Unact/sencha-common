@@ -9,6 +9,7 @@ Ext.define('Ext.lib.extra.Window', {
     height: 350,
     width: 1000,
     layout: 'fit',
+    closeAction: 'hide',
     modal: true,
     items: [{
         xtype: 'extra',
