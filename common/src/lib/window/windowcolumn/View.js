@@ -62,5 +62,9 @@ Ext.define('Ext.lib.window.windowcolumn.View', {
     close: function() {
         this.parentColumn.up('grid').getView().refresh();
         this.callParent();
+    },
+
+    onDestroy: function() {
+        Ext.GlobalEvents.fireEvent('endserveroperation', true, null, true);
     }
 });
