@@ -16,7 +16,7 @@ Ext.define('Ext.lib.dblog.ViewModel', {
                 url: '/dblog/ask_dw_dblog',
                 extraParams: {
                     xid: '{xid}',
-                    id: '{id}',
+                    'id[]': '{id}',
                     table_model_name: '{modelName}'
                 },
                 reader: {
