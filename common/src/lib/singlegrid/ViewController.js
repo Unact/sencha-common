@@ -132,7 +132,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         const idx = store.indexOf(this.getView().getSelectionModel().getSelection()[0]);
         const newDownIdx = idx + 1 < store.getCount() ? idx + 1 : idx;
         const newUpIdx = idx - 1 < 0 ? idx : idx - 1;
-        const newIdx = (key === e.UP) ? newUpIdx : newDownIdx;
+        const newIdx = (key === e.UP || (key === e.ENTER && e.shiftKey)) ? newUpIdx : newDownIdx;
         const newRec = store.getAt(newIdx);
 
         if (this.processableKeys.indexOf(key) !== -1) {
