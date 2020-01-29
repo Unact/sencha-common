@@ -163,16 +163,19 @@ Ext.define(null, {
             // Restore active element's focus processing.
             activeEl.resumeFocusEvents();
 
-            // FIX
-            // If there is an editing plugin and has an active editor element then cache it
-            // Otherwise it will be destroyed but still be referenced by the plugin
-            // which will break the next edit
-            if (pos.view.editingPlugin && pos.view.editingPlugin.getActiveEditor()) {
-                Ext.getDetachedBody().dom.appendChild(pos.view.editingPlugin.getActiveEditor().el.dom)
-            }
 
             if (!viewEl.contains(activeEl)) {
                 pos = view.actionableMode ? view.actionPosition : view.lastFocused;
+
+
+                // FIX
+                // If there is an editing plugin and has an active editor element then cache it
+                // Otherwise it will be destroyed but still be referenced by the plugin
+                // which will break the next edit
+                if (pos && pos.view.editingPlugin && pos.view.editingPlugin.getActiveEditor()) {
+                    Ext.getDetachedBody().dom.appendChild(pos.view.editingPlugin.getActiveEditor().el.dom)
+                }
+
                 if (pos && pos.column) {
                     // we set the rendering rows to true here so the actionables know
                     // that view is forcing the onFocusLeave method here

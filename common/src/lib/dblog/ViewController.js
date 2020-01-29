@@ -15,6 +15,11 @@ Ext.define('Ext.lib.dblog.ViewController', {
     afterRefresh: function() {
         var view = this.getView();
         var metaData = view.getStore().getProxy().getReader().metaData;
+
+        if (metaData == null) {
+            return;
+        }
+
         var newColumns = metaData.columns || [];
         var recordData = metaData.recordData || {};
         var newFields = newColumns.map((column) => {

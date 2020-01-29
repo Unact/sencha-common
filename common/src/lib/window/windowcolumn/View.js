@@ -42,6 +42,11 @@ Ext.define('Ext.lib.window.windowcolumn.View', {
         const masterController = masterView.getController();
         const masterRecord = masterView.getSelectionModel().getSelection()[0];
 
+        if (masterRecord == null) {
+            Ext.Msg.alert('Ошибка', 'Не выбрана запись');
+            return;
+        }
+
         this.parentRecord.set(parentColumn.dataIndex, masterRecord.get(parentColumn.primaryKey));
         this.parentRecord.set(parentColumn.fieldName, masterRecord.get(parentColumn.primaryValue));
 
