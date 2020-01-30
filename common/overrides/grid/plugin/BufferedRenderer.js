@@ -1,4 +1,4 @@
-Ext.define(null, {
+Ext.define('Ext.overrides.grid.plugin.BufferedRenderer', {
     override: 'Ext.grid.plugin.BufferedRenderer',
 
     onRangeFetched: function(range, start, end, options, fromLockingPartner) {
@@ -167,13 +167,12 @@ Ext.define(null, {
             if (!viewEl.contains(activeEl)) {
                 pos = view.actionableMode ? view.actionPosition : view.lastFocused;
 
-
                 // FIX
                 // If there is an editing plugin and has an active editor element then cache it
                 // Otherwise it will be destroyed but still be referenced by the plugin
                 // which will break the next edit
-                if (pos && pos.view.editingPlugin && pos.view.editingPlugin.getActiveEditor()) {
-                    Ext.getDetachedBody().dom.appendChild(pos.view.editingPlugin.getActiveEditor().el.dom)
+                if (view && view.editingPlugin && view.editingPlugin.getActiveEditor()) {
+                    Ext.getDetachedBody().dom.appendChild(view.editingPlugin.getActiveEditor().el.dom)
                 }
 
                 if (pos && pos.column) {
