@@ -1,16 +1,14 @@
 div.picture {
-    float: left;
-    margin: 5px;
-    text-align: center;
-    line-height: 14px;
-    color: #333;
-    font-size: 10px;
-    font-family: "Helvetica Neue",sans-serif;
-    width: 262px;
-    height: 222px;
-    overflow: hidden;
-    border-top: 1px solid transparent;
-    cursor: pointer;
+  float: left;
+  margin: 5px;
+  text-align: center;
+  line-height: 14px;
+  color: #333;
+  font-size: 10px;
+  font-family: "Helvetica Neue",sans-serif;
+  overflow: hidden;
+  border-top: 1px solid transparent;
+  cursor: pointer;
 }
 
 div.picture-hover {
