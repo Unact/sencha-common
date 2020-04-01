@@ -75,7 +75,7 @@ Ext.define('Ext.lib.picturepanel.View', {
                 '<div class="picture">',
                     '<img width="{small_width}" height="{small_height}" src="' +
                     config.pictureUrlPrefix +
-                    '/get_small/{id}?_dc={[new Date()]}"/>',
+                    '/get_small/{id}?_dc={[new Date().getTime()]}"/>',
                     '<span class="x-editable">{name}</span>',
                 '</div>',
             '</tpl>'
