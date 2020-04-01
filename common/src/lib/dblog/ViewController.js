@@ -4,7 +4,7 @@ Ext.define('Ext.lib.dblog.ViewController', {
 
     init: function(view) {
         if (view.allowXidEdit) {
-            vm.set('editableXid', true);
+            this.getViewModel().set('editableXid', true);
         }
 
         this.initialColumns = view.columns.map((column) => column.initialConfig);
