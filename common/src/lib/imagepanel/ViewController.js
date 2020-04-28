@@ -37,7 +37,8 @@ Ext.define('Ext.lib.imagepanel.ViewController', {
     },
 
     onAddWindowClose: function() {
-        const fileInput = this.getView().lookupReference('addFileField').fileInputEl.dom;
+        const field = this.getView().lookupReference('addFileField');
+        const fileInput = field.fileInputEl.dom;
 
         if (fileInput.files.length > 0) {
             const formData = new FormData();
@@ -62,9 +63,13 @@ Ext.define('Ext.lib.imagepanel.ViewController', {
                 method: 'POST'
             }).then((response) => {
                 Ext.GlobalEvents.fireEvent('endserveroperation');
+
+                field.reset();
                 this.onRefresh();
             }, (response) => {
                 Ext.GlobalEvents.fireEvent('endserveroperation');
+
+                field.reset();
                 this.onError(response);
             });
         }

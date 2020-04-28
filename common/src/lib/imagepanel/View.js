@@ -9,38 +9,33 @@ Ext.define('Ext.lib.imagepanel.View', {
 
     controller: 'imagepanel',
 
-    bind: {
-        store: '{images}'
-    },
-
     listeners: {
         itemdblclick: 'onImageDblClick'
     },
 
-    cfg: {
-        beforeButtons: [{
-            hidden: true,
-            name: 'images[]',
-            xtype: 'multifile',
-            reference: 'addFileField',
-            accept: 'image/*',
-            acceptSize: 30000,
-            buttonOnly: true,
-            listeners: {
-                change: 'onAddWindowClose'
-            }
-        }],
-        columns: [{
-            width: 300,
-            text: 'Изображения',
-            xtype: 'templatecolumn',
-            tpl: new Ext.XTemplate(
-                '<tpl for=".">',
-                    '<div class="picture">',
-                        '<img src="{short_url}"/>',
-                    '</div>',
-                '</tpl>'
-            )
-        }]
-    }
+    buttons: [{
+        hidden: true,
+        name: 'images[]',
+        xtype: 'multifile',
+        reference: 'addFileField',
+        accept: 'image/*',
+        acceptSize: 30000,
+        buttonOnly: true,
+        listeners: {
+            change: 'onAddWindowClose'
+        }
+    }],
+
+    columns: [{
+        width: 300,
+        text: 'Изображения',
+        xtype: 'templatecolumn',
+        tpl: new Ext.XTemplate(
+            '<tpl for=".">',
+                '<div class="picture">',
+                    '<img src="{short_url}"/>',
+                '</div>',
+            '</tpl>'
+        )
+    }]
 });
