@@ -33,7 +33,7 @@ Ext.define('Ext.lib.imagepanel.View', {
         tpl: new Ext.XTemplate(
             '<tpl for=".">',
                 '<div class="picture">',
-                    '<img src="{short_url}"/>',
+                    '<img src="{medium_url}"/>',
                 '</div>',
             '</tpl>'
         )
