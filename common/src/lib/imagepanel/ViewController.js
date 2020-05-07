@@ -53,10 +53,6 @@ Ext.define('Ext.lib.imagepanel.ViewController', {
 
             Ext.GlobalEvents.fireEvent('beginserveroperation');
             Ext.Ajax.request({
-                headers: {
-                    'Content-Type': null,
-                    'Authorization': AppProperties.rapiHeader
-                },
                 url: this.getView().getStore().getProxy().getUrl(),
                 rawData: formData,
                 timeout: 300000,
