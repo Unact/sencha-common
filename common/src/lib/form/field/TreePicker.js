@@ -254,12 +254,7 @@ Ext.define('Ext.lib.form.field.TreePicker', {
             } else {
                 // We have *erased* back to empty if key is a delete, or it is a non-key event (cut/copy)
                 if (!len && (!key || isDelete)) {
-                    // This portion of code may end up calling setValue will check for change. But since
-                    // it's come from field mutations, we need to respect the checkChangeBuffer, so
-                    // we suspend checks here, it will be handled by callParent
-                    // Essentially a silent setValue.
-                    // Clear our value
-                    me.value = null;
+                    me.setValue(null);
                     // Just erased back to empty. Hide the dropdown.
                     me.collapse();
 
