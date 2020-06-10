@@ -9,10 +9,9 @@ Ext.define('Ext.lib.imagegallery.View', {
     controller: 'imagegallery',
 
     /*
-        Обязательно передавать в конфиге:
-            smallImagesUri - путь к превью (напр. /my_controller/get_small_picture/)
-            fullImagesUri - путь к полным изображениям (напр. /my_controller/get_full_picture/)
-            imageField - поле модели для подстановки в URI, чтобы получить полный путь к изображению
+        Обязательно передавать в моделе:
+            small_url - ссылка на превью
+            url - путь к полным изображениям
 
         Имя окна с полным изображением задается через конфиг windowName.
         Если нужны скроллы, использовать стандартный конфиг для View - scrollable.
@@ -92,8 +91,7 @@ Ext.define('Ext.lib.imagegallery.View', {
             '<tpl for=".">',
                 '<div class="x-gallery-thumb-wrap">',
                     '<div class="x-gallery-thumb">',
-                        '<div class="x-gallery-centered-image" style="background-image:url(' +
-                            me.smallImagesUri + '{' + me.imageField + '})">',
+                        '<div class="x-gallery-centered-image" style="background-image:url({small_url})">',
                         '</div>',
                     '</div>',
                 '</div>',
@@ -106,7 +104,7 @@ Ext.define('Ext.lib.imagegallery.View', {
     deferEmptyText: false,
     emptyText: '<div class="x-gallery-empty-text">Нет фотографий для отображения</div>',
     listeners: {
-    	changepicture: 'onChangePicture',
+        changepicture: 'onChangePicture',
         beforeselect: 'onItemClick',
         scope: 'controller'
     },

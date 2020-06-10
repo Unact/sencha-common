@@ -6,7 +6,7 @@ Ext.define('Ext.lib.imagegallery.ViewController', {
         var me = this;
         var store = me.getView().getStore();
 
-        store.getProxy().setExtraParam('q[id_eq]', id);
+        store.getProxy().setExtraParam('id', id);
         store.load();
     },
 
@@ -48,7 +48,7 @@ Ext.define('Ext.lib.imagegallery.ViewController', {
 
             view.getByRef('imageContainer').setLoading(true);
             if (record)
-                view.getByRef('img').setSrc(view.fullImagesUri + record.get(view.imageField));
+                view.getByRef('img').setSrc(record.get('url'));
         },
 
         selectNextImage: function(direction) {
