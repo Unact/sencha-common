@@ -195,12 +195,12 @@ Ext.define('Ext.lib.form.field.TreePicker', {
         }
 
         // try to find a record in the store that matches the value
-        if (value) {
+        if (value != null) {
             record = store.getNodeById(value);
             me.value = value;
         } else {
-            record = store.getRoot();
-            me.value = record.getId();
+            record = null;
+            me.value = null;
         }
 
         // set the raw value to the record's display field if a record was found
