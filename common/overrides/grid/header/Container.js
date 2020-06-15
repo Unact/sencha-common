@@ -39,7 +39,7 @@ Ext.define('Ext.overrides.grid.header.Container', {
 
                 // FIX
                 // Fixes restoring column width from state
-                if (columnState.width != null) {
+                if (columnState.width != null && columnState.columns == null) {
                     col.width = columnState.width;
                 }
 
