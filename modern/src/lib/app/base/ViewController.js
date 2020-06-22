@@ -17,6 +17,7 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
             view.on('selectionchange', this.onChangeSelect, this);
         }
 
+        this.showSaveError = view.showSaveError === false ? false : true;
         this.refreshDetailOnSelect = view.refreshDetailOnSelect === false ? false : true;
         this.autoRefreshingTable = false || view.autoRefreshingTable;
     },
@@ -291,7 +292,9 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
                     Ext.GlobalEvents.fireEvent('endserveroperation');
                     me.afterSave(batch);
                     if (batch.exceptions.length > 0) {
-                        Ext.Msg.alert("Ошибка", batch.exceptions[0].getError().response.responseText);
+                        if (showSaveError) {
+                            Ext.Msg.alert("Ошибка", batch.exceptions[0].getError().response.responseText);
+                        }
                     } else {
                         saveDetails(true, callback, callbackScope);
                     }
