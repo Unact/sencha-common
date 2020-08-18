@@ -7,6 +7,6 @@ Ext.define('Ext.lib.data.field.IntegerTime', {
     },
 
     serialize: function(v) {
-        return v.getHours() * 60 + v.getMinutes();
+        return v != null ? v.getHours() * 60 + v.getMinutes() : null;
     }
 });
