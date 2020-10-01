@@ -7,6 +7,8 @@ Ext.define('Ext.lib.window.windowcolumn.View', {
 
     layout: 'border',
 
+    modal: true,
+
     constructor: function(config) {
         this.parentColumn = config.parentColumn;
         this.parentRecord = config.parentRecord;
@@ -47,12 +49,19 @@ Ext.define('Ext.lib.window.windowcolumn.View', {
             return;
         }
 
+        if (masterController.beforeSelect && (typeof masterController.beforeSelect === 'function')) {
+            if (masterController.beforeSelect(masterRecord) === false) {
+                return;
+            }
+        }
+
         this.parentRecord.set(parentColumn.dataIndex, masterRecord.get(parentColumn.primaryKey));
         this.parentRecord.set(parentColumn.fieldName, masterRecord.get(parentColumn.primaryValue));
 
         if (masterController.afterSelect && (typeof masterController.afterSelect === 'function')) {
             masterController.afterSelect(masterRecord);
         }
+
         this.close();
     },
 
