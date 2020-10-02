@@ -13,9 +13,15 @@ Ext.define('Ext.overrides.data.TreeStore', {
      * Otherwise a parent node which fails the test will terminate the branch and
      * descebdant nodes which pass the filter test will be filtered out.
      */
+    filterHasChanges: function(item) {
+        return this.callParent(arguments) && !item.isRoot();
+    },
+
     privates: {
         doFilter: function(node) {
-            this.filterNodes(node, this.getFilters().getFilterFn(), true);
+            if (node) {
+                this.filterNodes(node, this.getFilters().getFilterFn(), true);
+            }
         },
 
         filterNodes: function(node, filterFn, parentVisible) {
