@@ -17,6 +17,21 @@ Ext.define('Ext.overrides.data.TreeStore', {
         return this.callParent(arguments) && !item.isRoot();
     },
 
+    filterDataSource: function(fn) {
+        var source = this.getDataSource();
+        var items = [];
+
+        this.getRootNode().cascadeBy(rec => items.push(rec));
+
+        var len = items.length;
+        var ret = [];
+
+        for (var i = 0; i < len; i++)
+            if (fn.call(source, items[i]))
+                ret.push(items[i]);
+        return ret
+    },
+
     privates: {
         doFilter: function(node) {
             if (node) {
