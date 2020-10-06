@@ -35,15 +35,12 @@ Ext.define('Ext.lib.bigrid.ViewController', {
         return foundRecord;
     },
 
-    init: function() {
+    init: function(view) {
         this.callParent(arguments);
+
         this.autoRefreshingTable = true;
-    },
 
-    boxReady: function() {
-        const spValuesStore = this.getStore('spValues')
-        const view = this.getView();
-
+        const spValuesStore = this.getStore('spValues');
         this.loadDictionaries([spValuesStore], () => {
             const biGroupsIds = spValuesStore.getData().items.
                 map(rec => rec.get('bi_group')).
@@ -117,7 +114,12 @@ Ext.define('Ext.lib.bigrid.ViewController', {
                 records.forEach(record => {
                     recordSpSetsStore.getData().items.
                         filter(spSetRec => spSetRec.get('id')[0] === record.get('id')).
-                        forEach(spSetRec => record.set('bi_group' + spSetRec.get('id')[2], spSetRec.get('spv_id')));
+                        forEach(spSetRec => {
+                            const groupProp = 'bi_group' + spSetRec.get('id')[2];
+
+                            record.set(groupProp, spSetRec.get('spv_id'));
+                            record.set(groupProp + '_name', spSetRec.get('spv_name'));
+                        });
                 });
                 store.commitChanges();
                 view.view.refresh();

@@ -17,8 +17,9 @@ Ext.define('Ext.lib.bigrid.ViewModel', {
                 {name: 'id',            type: 'auto'},
                 {name: 'record_id',     type: 'int'},
                 {name: 'bi_group',      type: 'int'},
-                {name: 'spv_id',        type: 'int', allowNull: true},
-                {name: 'sp_tp',         type: 'int', allowNull: true}
+                {name: 'spv_id',        type: 'int',    allowNull: true},
+                {name: 'spv_name',      type: 'string', allowNull: true},
+                {name: 'sp_tp',         type: 'int',    allowNull: true}
             ]
         },
 
