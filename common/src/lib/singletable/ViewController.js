@@ -30,6 +30,20 @@ Ext.define('Ext.lib.singletable.ViewController', {
         me.refreshDetailOnSelect = view.refreshDetailOnSelect === false ? false : true;
         me.showSaveError = view.showSaveError === false ? false : true;
         me.autoRefreshingTable = false || view.autoRefreshingTable;
+        me.storeInitialized = false;
+    },
+
+    initStore: function() {
+        this.getView().getStore().on({
+            beforesync: function() {
+                Ext.GlobalEvents.fireEvent('beginserveroperation');
+            },
+            beforeload: function() {
+                Ext.GlobalEvents.fireEvent('beginserveroperation');
+            }
+        });
+
+        this.storeInitialized = true;
     },
 
     onDelete: function(){
@@ -193,7 +207,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
         }
 
         if (result && this.isFilterReady()) {
-            Ext.GlobalEvents.fireEvent('beginserveroperation');
+            if (!this.storeInitialized) this.initStore();
+
             store.load({
                 callback: function(records, operation, success) {
                     if (!success) {
@@ -323,7 +338,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
         if (store.hasChanges()) {
             messages = store.getValidationMessages();
             if (messages.length === 0){
-                Ext.GlobalEvents.fireEvent('beginserveroperation');
+                if (!me.storeInitialized) me.initStore();
+
                 store.sync({
                     callback : function(batch) {
                         view.getSelectionModel().refresh();

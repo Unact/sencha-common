@@ -2,6 +2,10 @@ Ext.define('Ext.lib.sp.View', {
     extend: 'Ext.lib.singlegrid.View',
     alias: 'widget.sp',
 
+    inheritableStatics: {
+        STRING_TYPE: 1
+    },
+
     config: {
         enabledButtons: ['save', 'refresh'],
     },
@@ -18,7 +22,7 @@ Ext.define('Ext.lib.sp.View', {
             return rec.get('value') ? rec.get('value_name') : null;
         },
         getEditor: function(record) {
-            if (record.get('type') === app.model.Sp.STRING_TYPE) {
+            if (record.get('type') === Ext.lib.sp.View.STRING_TYPE) {
                 return Ext.create('Ext.grid.CellEditor', {
                     field: Ext.create('Ext.form.field.Text', {
                         listeners: {
