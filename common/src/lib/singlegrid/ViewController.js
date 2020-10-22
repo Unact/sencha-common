@@ -147,9 +147,9 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         const cellEditor = view.findPlugin('cellediting');
 
         view.getSelectionModel().select(newRecord);
-        cellEditor.cancelEdit();
+        cellEditor.completeEdit();
 
-        // Подождем чтобы другие события после select и cancelEdit обработались
+        // Подождем чтобы другие события после select и completeEdit обработались
         new Ext.util.DelayedTask(() => {
             cellEditor.startEditByPosition({row: newIdx, column: field.column.fullColumnIndex});
             cellEditor.activateCell(cellEditor.activeEditor.context, false, true);
