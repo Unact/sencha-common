@@ -138,7 +138,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         if (this.processableKeys.indexOf(key) !== -1) {
             new Ext.util.DelayedTask(() => {
                 this.onSpecialKeyCallback(field, newIdx, newRec);
-            }).delay(10);
+            }).delay(0);
         }
     },
 
@@ -147,8 +147,13 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         const cellEditor = view.findPlugin('cellediting');
 
         view.getSelectionModel().select(newRecord);
-        cellEditor.startEditByPosition({row: newIdx, column: field.column.fullColumnIndex});
-        cellEditor.activateCell(cellEditor.activeEditor.context, false, true);
+        cellEditor.cancelEdit();
+
+        // Подождем чтобы другие события после select и cancelEdit обработались
+        new Ext.util.DelayedTask(() => {
+            cellEditor.startEditByPosition({row: newIdx, column: field.column.fullColumnIndex});
+            cellEditor.activateCell(cellEditor.activeEditor.context, false, true);
+        }).delay(0);
     },
 
     /*
