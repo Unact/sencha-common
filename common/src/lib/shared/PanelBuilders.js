@@ -30,8 +30,9 @@ Ext.define('Ext.lib.shared.PanelBuilders', {
         var toolbarConfig = {
             xtype: 'sharedtoolbar',
 
-            beforeButtons: config.beforeButtons,
-            afterButtons: config.afterButtons,
+            beforeButtons: config.beforeButtons || [],
+            afterButtons: config.afterButtons || [],
+            enabledButtons: config.enabledButtons,
 
             disableDelete: config.disableDelete,
             disableAdd: config.disableAdd,
@@ -46,12 +47,16 @@ Ext.define('Ext.lib.shared.PanelBuilders', {
             config.dockedItems = [];
         }
 
-        if (config.enabledButtons) {
-            toolbarConfig['enabledButtons'] = config.enabledButtons;
+        if (config.buttonsDock) {
+            toolbarConfig.buttonsDock = config.buttonsDock;
         }
 
-        if (config.buttonsDock) {
-            toolbarConfig['buttonsDock'] = config.buttonsDock;
+        if (
+            (toolbarConfig.enabledButtons && toolbarConfig.enabledButtons.length === 0) &&
+            toolbarConfig.beforeButtons.length === 0 &&
+            toolbarConfig.afterButtons.length === 0
+        ) {
+            toolbarConfig = null;
         }
 
         if (config.beforeToolbar) {
@@ -60,7 +65,9 @@ Ext.define('Ext.lib.shared.PanelBuilders', {
             }
         }
 
-        config.dockedItems.push(toolbarConfig);
+        if (toolbarConfig) {
+            config.dockedItems.push(toolbarConfig);
+        }
 
         if (config.afterToolbar) {
             for (i = 0; i < config.afterToolbar.length; i++) {
