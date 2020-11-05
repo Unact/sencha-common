@@ -127,6 +127,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         var me = this;
         var view = me.getView();
         var recordsChecked = view.getChecked();
+        var viewStore = this.getView().getStore();
         var store = view.getCheckmarkStore();
         var recordsDel = [];
         var recordsAdd = [];
@@ -150,6 +151,10 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             var isExists = false;
             Ext.Array.each(recordsChecked, function(recordChecked) {
                 if(record.get(me.checkmarkLink) == recordChecked.get('id')) {
+                    if (recordChecked.dirty) {
+                        record.set(recordChecked.getChanges());
+                    }
+
                     isExists = true;
                     return false; //выход из итератора
                 }
@@ -175,7 +180,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             //Если в сторе нет записи
             if(!isExists) {
                 recordsAdd.push(
-                    me.createCheckmarkRecord(recordChecked, masterRecord)
+                    Ext.merge(me.createCheckmarkRecord(recordChecked, masterRecord), recordChecked.getChanges())
                 );
             }
         });
@@ -187,6 +192,9 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             store.sync({
                 success: function(){
                     me.mainView.setLoading(false);
+
+                    viewStore.each(record => record.commit());
+
                     if(callback) {
                         callback.call(callbackScope);
                     }
@@ -256,20 +264,33 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         var checkmarkStore = view.getCheckmarkStore();
         var store = view.getStore();
         var filters = store.getFilters().clone();
+        var additionalNodeData = {};
 
         checkmarkStore.each(function(record) {
-            ids.push(record.get(me.checkmarkLink));
+            var id = record.get(me.checkmarkLink);
+            var additionalFields = record.getFields().
+                filter(field => field.identifier !== true && field.name !== me.checkmarkLink).
+                map(field => field.name);
+
+            ids.push(id);
+            additionalNodeData[id] = additionalFields.reduce(function(prev, field) {
+                prev[field] = record.get(field);
+                return prev;
+            }, {});
         });
 
         store.clearFilter();
         rootNode.cascadeBy(function(node) {
-            var index;
-            if((index = ids.indexOf(node.get('id'))) >= 0) {
+            var index = ids.indexOf(node.get('id'));
+
+            if (index >= 0) {
                 node.set('checked', true);
+                node.set(additionalNodeData[ids[index]]);
                 ids.splice(index, 1);
             } else {
                 node.set('checked', false);
             }
+            node.commit();
         });
 
         store.filter(filters.getRange());
