@@ -6,7 +6,9 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
     processableKeys: [
         Ext.event.Event.UP,
         Ext.event.Event.DOWN,
-        Ext.event.Event.ENTER
+        Ext.event.Event.ENTER,
+        Ext.event.Event.PAGE_DOWN,
+        Ext.event.Event.PAGE_UP
     ],
 
     init: function(view){
@@ -130,9 +132,10 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         const view = this.getView();
         const store = view.getStore();
         const idx = store.indexOf(this.getView().getSelectionModel().getSelection()[0]);
-        const newDownIdx = idx + 1 < store.getCount() ? idx + 1 : idx;
-        const newUpIdx = idx - 1 < 0 ? idx : idx - 1;
-        const newIdx = (key === e.UP || (key === e.ENTER && e.shiftKey)) ? newUpIdx : newDownIdx;
+        const moveBy = (key === e.PAGE_UP || key === e.PAGE_DOWN) ? view.bufferedRenderer.viewSize : 1;
+        const newDownIdx = idx + moveBy < store.getCount() ? idx + moveBy : store.getCount() - 1;
+        const newUpIdx = idx - moveBy < 0 ? 0 : idx - moveBy;
+        const newIdx = key === e.UP || (key === e.ENTER && e.shiftKey) || key === e.PAGE_UP ? newUpIdx : newDownIdx;
         const newRec = store.getAt(newIdx);
 
         if (this.processableKeys.indexOf(key) !== -1) {
@@ -146,7 +149,7 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         const view = this.getView();
         const cellEditor = view.findPlugin('cellediting');
 
-        view.getSelectionModel().select(newRecord);
+        view.getView().scrollToRecord(newRecord);
         cellEditor.completeEdit();
 
         // Подождем чтобы другие события после select и completeEdit обработались

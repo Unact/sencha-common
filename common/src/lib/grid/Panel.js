@@ -58,24 +58,6 @@ Ext.define('Ext.lib.grid.Panel', {
 
         me.addEditingPlugins(config, plugins);
 
-        if (config.enableBuffering === true) {
-            var hasBufferPlugin = false;
-
-            for ( i = 0; i < plugins.length; i++) {
-                if (plugins[i].ptype == 'bufferedrenderer') {
-                    hasBufferPlugin = true;
-                    break;
-                }
-            }
-            if (!hasBufferPlugin) {
-                plugins.push({
-                    ptype : 'bufferedrenderer',
-                    trailingBufferZone : 20,
-                    leadingBufferZone : 50
-                });
-            }
-        }
-
         if (config.extraPlugins != null) {
             for ( i = 0; i < config.extraPlugins.length; i++) {
                 if (config.extraPlugins[i].ptype != 'rowediting' && config.extraPlugins[i].ptype != 'cellediting' && config.extraPlugins[i].ptype != 'bufferedrenderer') {
