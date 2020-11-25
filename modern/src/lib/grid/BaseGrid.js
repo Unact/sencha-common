@@ -6,33 +6,20 @@ Ext.define('Ext.modern.lib.grid.BaseGrid', {
         'Ext.modern.lib.shared.Toolbar'
     ],
 
-    config: {
-        bufferSize: 100,
-        minimumBufferDistance: 20,
-        manageBorders: true,
-        hideTitleBar: true,
-        plugins: [
-            'columnresizing'
-        ],
-        masked: {
-
-        }
-    },
-
-
+    hideTitleBar: true,
+    loadingText: '',
 
     constructor: function(currentConfig){
         var initialConfig = this.config;
+
         var config = {};
         var toolbarConfig;
 
         config.suffix = initialConfig.suffix || this.xtype;
         config.enableDeleteDialog = initialConfig.enableDeleteDialog;
         //Base config
-        if (initialConfig.hideTitleBar){
-            config.titleBar = {
-                hidden: true
-            }
+        if (this.hideTitleBar){
+            config.titleBar = null;
         }
 
         //Toolbar config
@@ -56,11 +43,6 @@ Ext.define('Ext.modern.lib.grid.BaseGrid', {
         //New config
         Ext.apply(currentConfig, config);
         this.callParent(arguments);
-    },
-
-
-    //Иначе появляется маска загрузки
-    onBeforeLoad: function(){
     },
 
     scrollToRecord: function(record){

@@ -75,9 +75,9 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
         return master;
     },
 
-    onChangeSelect: function(sm, selected, eOpts) {
+    onChangeSelect: function(sm, selected, isSelected, selection, eOpts) {
         var master = this.extractAndSetMasterRecord();
-        this.beforeChangeSelect(sm, selected, eOpts);
+        this.beforeChangeSelect(sm, selected, isSelected, selection, eOpts);
         this.changeDisabledButtons();
         this.changeDisabledDetails(master);
         this.refreshDetails();

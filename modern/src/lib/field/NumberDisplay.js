@@ -1,5 +1,5 @@
 Ext.define('Ext.modern.lib.field.NumberDisplay', {
-    extend: 'Ext.modern.lib.field.Display',
+    extend: 'Ext.modern.lib.field.CustomDisplay',
     xtype: 'numberdisplayfield',
 
     format: '0,000.00',
