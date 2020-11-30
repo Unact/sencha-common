@@ -16,6 +16,10 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
         }
     },
 
+    gridListeners: {
+        render: 'onCmpReady'
+    },
+
     config: {
         copyColumnHeaders: false,
         pasteInEditableOnly: false,
