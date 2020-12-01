@@ -7,7 +7,8 @@ Ext.define('Ext.overrides.data.reader.Json', {
             length, i;
 
         if (recordName) {
-
+            /// FIX
+            /// Previously if the response had a length property data extraction would fail
             if (Ext.isArray(root)) {
                 length = root.length;
             } else {
