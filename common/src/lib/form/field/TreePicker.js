@@ -47,9 +47,6 @@ Ext.define('Ext.lib.form.field.TreePicker', {
         });
     },
 
-
-
-
     getStoreListeners: function(){
         var me = this;
 
@@ -74,7 +71,6 @@ Ext.define('Ext.lib.form.field.TreePicker', {
                 columns: me.columns,
                 maxHeight: me.maxPickerHeight,
                 rootVisible: me.rootVisible || false,
-                manageHeight: false,
                 shadow: false,
                 listeners: {
                     scope: me,
@@ -83,24 +79,7 @@ Ext.define('Ext.lib.form.field.TreePicker', {
                 viewConfig: {
                     listeners: {
                         scope: me,
-                        render: me.onViewRender,
-                        afteritemexpand: me.refreshPickerView,
-                        afteritemcollapse: me.refreshPickerView,
-                        beforeitemclick: function(){
-                            var view = picker.getView();
-                            picker._scrollY = view.getEl().getScroll().top;
-                        }
-                    }
-                },
-                layout: {
-                    // Set the scroll after the layout.
-                    finishedLayout: function(){
-                        var layoutFns = Ext.layout.container.Fit.prototype;
-                        layoutFns.finishedLayout.apply(this, arguments);
-
-                        if (picker._scrollY) {
-                           picker.getView().getEl().dom.scrollTop = picker._scrollY;
-                        }
+                        render: me.onViewRender
                     }
                 }
             });
