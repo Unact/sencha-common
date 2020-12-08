@@ -63,7 +63,7 @@ Ext.define('Ext.lib.form.field.TreePicker', {
     createPicker: function() {
         var me = this,
             picker = new Ext.tree.Panel({
-                shrinkWrapDock: 2,
+                animate: false,
                 store: me.store,
                 doFocus: true,
                 floating: true,
