@@ -12,7 +12,9 @@ Ext.define('Ext.overrides.view.Table', {
 
         me.selModel.select(nodeInfo, false, silentSelect);
         if (me.bufferedRenderer) {
-            me.bufferedRenderer.scrollTo(nodeInfo);
+            if (nodeInfo != null) {
+                me.bufferedRenderer.scrollTo(nodeInfo);
+            }
         } else if (me.getRow(nodeInfo) !== null) {
             me.getRow(nodeInfo).scrollIntoView(me.getEl());
         }

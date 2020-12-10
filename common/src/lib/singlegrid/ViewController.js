@@ -155,7 +155,10 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         // Подождем чтобы другие события после select и completeEdit обработались
         new Ext.util.DelayedTask(() => {
             cellEditor.startEditByPosition({row: newIdx, column: field.column.fullColumnIndex});
-            cellEditor.activateCell(cellEditor.activeEditor.context, false, true);
+
+            if (cellEditor.activeEditor) {
+                cellEditor.activateCell(cellEditor.activeEditor.context, false, true);
+            }
         }).delay(0);
     },
 
