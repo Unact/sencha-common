@@ -65,7 +65,7 @@ Ext.define('Ext.lib.grid.plugin.RowClipboard', {
                     height: 18,
                     fieldLabel: 'Перед копированием-вставкой нажмите сюда',
                     listeners: {
-                        afterrender: me.createBufferTextArea,
+                        boxready: me.createBufferTextArea,
                         scope: me
                     }
                 });
