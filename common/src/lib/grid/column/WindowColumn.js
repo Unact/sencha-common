@@ -21,11 +21,15 @@ Ext.define('Ext.lib.grid.column.WindowColumn', {
 
     onFieldFocus: function() {
         var grid = this.up('grid');
-        this.windowView = Ext.create('Ext.lib.window.windowcolumn.View', {
-            parentColumn: this,
-            parentRecord: grid.getSelection()[0]
-        });
-        this.windowView.show();
+
+        if (this.windowView == null || this.windowView.destroyed) {
+            this.windowView = Ext.create('Ext.lib.window.windowcolumn.View', {
+                parentColumn: this,
+                parentRecord: grid.getSelection()[0]
+            });
+            this.windowView.show();
+        }
+
         new Ext.util.DelayedTask(function() {
             grid.findPlugin('cellediting').cancelEdit();
         }).delay(0);
