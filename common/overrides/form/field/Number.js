@@ -1,5 +1,5 @@
-Ext.define("Ext.overrides.form.field.Number", {
-	override: "Ext.form.field.Number",
+Ext.define('Ext.overrides.form.field.Number', {
+    override: 'Ext.form.field.Number',
     decimalSeparators: [',', '.'],
 
     initComponent: function() {
@@ -25,7 +25,7 @@ Ext.define("Ext.overrides.form.field.Number", {
         value = arguments.length > 0 ? value : this.processRawValue(this.getRawValue());
 
         var me = this,
-            errors = me.callParent([value]),
+            errors = me.superclass.callParent([value]),
             format = Ext.String.format,
             num;
 

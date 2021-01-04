@@ -46,7 +46,9 @@ Ext.define('Ext.modern.lib.grid.BaseGrid', {
     },
 
     scrollToRecord: function(record){
-        this.callParent(arguments);
-        this.select(record);
+        if (record != null) {
+            this.callParent(arguments);
+            this.select(record);
+        }
     }
 });
