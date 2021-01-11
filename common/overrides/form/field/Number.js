@@ -22,18 +22,18 @@ Ext.define('Ext.overrides.form.field.Number', {
      * @return {String[]} All validation errors for this field
      */
     getErrors: function(value) {
-        value = arguments.length > 0 ? value : this.processRawValue(this.getRawValue());
+        var me = this;
 
-        var me = this,
-            errors = me.superclass.callParent([value]),
-            format = Ext.String.format,
-            num;
+        value = arguments.length > 0 ? value : this.processRawValue(this.getRawValue());
+        value = String(value).replace(me.decimalSeparatorsReg, '.');
+
+        var errors = me.callParent([value]);
+        var format = Ext.String.format;
+        var num;
 
         if (value.length < 1) { // if it's blank and textfield didn't flag it then it's valid
              return errors;
         }
-
-        value = String(value).replace(me.decimalSeparatorsReg, '.');
 
         if(isNaN(value)){
             errors.push(format(me.nanText, value));
