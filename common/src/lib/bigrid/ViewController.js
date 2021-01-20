@@ -51,11 +51,6 @@ Ext.define('Ext.lib.bigrid.ViewController', {
                     name: spValuesStore.findExactRecord('bi_group', id).get('bi_name')
                 }
             }).sort((a, b) => a.name > b.name ? 1 : -1);
-
-            const oldColumns = view.columns.map((column) => {
-                return column.cloneConfig();
-            });
-
             const newColumns = biGroups.map(val => {
                 const dataIndex = 'bi_group' + val.id;
 
@@ -85,7 +80,7 @@ Ext.define('Ext.lib.bigrid.ViewController', {
                 };
             });
 
-            view.view.grid.reconfigure(null, oldColumns.concat(newColumns));
+            view.view.grid.headerCt.add(newColumns);
             view.view.grid.getColumns().filter(column => column.dataIndex.includes('bi_group')).forEach(column => {
                 const model = view.getStore().model;
 
