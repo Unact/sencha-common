@@ -18,8 +18,11 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
         }
 
         this.showSaveError = view.showSaveError === false ? false : true;
-        this.refreshDetailOnSelect = view.refreshDetailOnSelect === false ? false : true;
         this.autoRefreshingTable = false || view.autoRefreshingTable;
+    },
+
+    needRefreshDetailOnSelect: function() {
+        return true;
     },
 
     changeDisabledButtons: function() {
@@ -48,7 +51,7 @@ Ext.define('Ext.modern.lib.app.base.ViewController', {
                     'selectedMaster',
                     this.getViewModel().get('masterRecord')
                 );
-                if (this.refreshDetailOnSelect) {
+                if (this.needRefreshDetailOnSelect()) {
                     detail.fireEvent('refreshtable');
                 }
             }, this);

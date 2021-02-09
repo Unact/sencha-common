@@ -184,7 +184,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
                 );
             }
         });
-        store.add(recordsAdd);
+        store.add(recordsAdd).forEach(rec => rec.phantom = true);
 
         if(store.hasChanges()) {
             me.mainView.setLoading(true);
@@ -283,7 +283,8 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         rootNode.cascadeBy(function(node) {
             var index = ids.indexOf(node.get('id'));
 
-            if (index >= 0) {
+            // Ignore pseudo-root node called "Root"
+            if (index >= 0 && !node.isRoot()) {
                 node.set('checked', true);
                 node.set(additionalNodeData[ids[index]]);
                 ids.splice(index, 1);

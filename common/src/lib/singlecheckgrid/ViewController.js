@@ -125,12 +125,14 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
         var records = [];
         var recordsDel = [];
         var recordsAdd = [];
-        var masterRecord = me.getMasterRecord();
+        var masterRecord;
         var callback;
         var callbackScope;
 
-        if(masterRecord == null) {
-            return;
+        if (me.hasMaster()) {
+            masterRecord = me.getMasterRecord();
+        } else {
+            masterRecord = me.getViewModel().get('masterRecord');
         }
 
         if (arguments[0] && (typeof arguments[0]==='function')) {
@@ -171,7 +173,7 @@ Ext.define('Ext.lib.singlecheckgrid.ViewController', {
                     me.createCheckmarkRecord(recordChecked, masterRecord)
                 );
         });
-        store.add(recordsAdd);
+        store.add(recordsAdd).forEach(rec => rec.phantom = true);
 
         if(store.hasChanges()) {
             me.mainView.setLoading(true);

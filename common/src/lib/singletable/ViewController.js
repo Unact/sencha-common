@@ -27,10 +27,13 @@ Ext.define('Ext.lib.singletable.ViewController', {
             this.getViewModel().set('copiedRecords', null);
         }
 
-        me.refreshDetailOnSelect = view.refreshDetailOnSelect === false ? false : true;
         me.showSaveError = view.showSaveError === false ? false : true;
         me.autoRefreshingTable = false || view.autoRefreshingTable;
         me.storeInitialized = false;
+    },
+
+    needRefreshDetailOnSelect: function() {
+        return true;
     },
 
     initStore: function() {
@@ -120,7 +123,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
                         this.getViewModel().get('masterRecord')
                     );
                 }
-                if (this.refreshDetailOnSelect) {
+                if (this.needRefreshDetailOnSelect()) {
                     detail.fireEvent('refreshtable');
                 }
             }, this);
