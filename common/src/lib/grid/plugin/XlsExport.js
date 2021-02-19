@@ -35,6 +35,20 @@ Ext.define('Ext.lib.grid.plugin.XlsExport', {
         this.callParent();
     },
 
+    formatRecordProp: function(propValue, column) {
+        if (column && column.format) {
+            if (Ext.isDate(propValue)) {
+                return Ext.util.Format.date(propValue, column.format);
+            }
+        }
+
+        if (Ext.isBoolean(propValue)) {
+            return propValue ? 'Да' : 'Нет';
+        }
+
+        return propValue;
+    },
+
     onExportXls: function() {
         const view = this.getCmp();
         const controller = view.getController();
@@ -53,7 +67,10 @@ Ext.define('Ext.lib.grid.plugin.XlsExport', {
             controller.dataForXls(headers) :
             view.getStore().getData().items.map((rec) => {
                 return Object.keys(headers).reduce((obj, prop) => {
-                    obj[prop] = rec.get(prop);
+                    const column = exportColumns.find(col => col.dataIndex == prop);
+
+                    obj[prop] = this.formatRecordProp(rec.get(prop), column);
+
                     return obj;
                 }, {});
             });
