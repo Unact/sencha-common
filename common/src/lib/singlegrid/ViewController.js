@@ -136,25 +136,33 @@ Ext.define('Ext.lib.singlegrid.ViewController', {
         const newDownIdx = idx + moveBy < store.getCount() ? idx + moveBy : store.getCount() - 1;
         const newUpIdx = idx - moveBy < 0 ? 0 : idx - moveBy;
         const newIdx = key === e.UP || (key === e.ENTER && e.shiftKey) || key === e.PAGE_UP ? newUpIdx : newDownIdx;
-        const newRec = store.getAt(newIdx);
 
         if (this.processableKeys.indexOf(key) !== -1) {
             new Ext.util.DelayedTask(() => {
-                this.onSpecialKeyCallback(field, newIdx, newRec);
+                this.onSpecialKeyCallback(field, newIdx);
             }).delay(0);
         }
     },
 
-    onSpecialKeyCallback: function(field, newIdx, newRecord) {
+    onSpecialKeyCallback: function(field, newIdx) {
         const view = this.getView();
+        const gridView = view.getView();
         const cellEditor = view.findPlugin('cellediting');
+        let newColIdx = field.column.fullColumnIndex;
 
-        view.getView().scrollToRecord(newRecord);
+        if (gridView.isLockingView) {
+            newColIdx += gridView.lockedView == field.column.view ? 0 : gridView.lockedView.getGridColumns().length;
+
+            gridView.lockedView.scrollToRecord(newIdx);
+        } else {
+            gridView.scrollToRecord(newIdx);
+        }
+
         cellEditor.completeEdit();
 
         // Подождем чтобы другие события после select и completeEdit обработались
         new Ext.util.DelayedTask(() => {
-            cellEditor.startEditByPosition({row: newIdx, column: field.column.fullColumnIndex});
+            cellEditor.startEditByPosition({row: newIdx, column: newColIdx});
 
             if (cellEditor.activeEditor) {
                 cellEditor.activateCell(cellEditor.activeEditor.context, false, true);
