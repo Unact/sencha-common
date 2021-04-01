@@ -58,7 +58,7 @@ Ext.define('Ext.lib.grid.Printer', {
             //the other to create the body (see the escaped {} below)
             var columns = [];
             //account for grouped columns
-            Ext.each(grid.columns, function(c) {
+            Ext.each(grid.getColumns(), function(c) {
                 if(c.items.length > 0) {
                     columns = columns.concat(c.items.items);
                 } else {
@@ -139,7 +139,7 @@ Ext.define('Ext.lib.grid.Printer', {
             if (this.stylesheetPath === null) {
                 var scriptPath = Ext.Loader.getPath('Ext.lib.grid.Printer');
                 this.stylesheetPath = scriptPath.substring(0, scriptPath.indexOf('Printer.js')) +
-                    '../../../sass/src/GridPrinter.css';;
+                    '../../../sass/src/GridPrinter.css';
             }
 
             //use the headerTpl and bodyTpl markups to create the main XTemplate below
@@ -179,14 +179,13 @@ Ext.define('Ext.lib.grid.Printer', {
                     '<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />',
                     '<link href="' + this.stylesheetPath + '" rel="stylesheet" type="text/css" />',
                     extraCSSLinks,
-                    '<title>' + grid.title + '</title>',
+                    '<title>' + (grid.title || this.mainTitle) + '</title>',
                   '</head>',
                   '<body class="' + Ext.baseCSSPrefix + 'ux-grid-printer-body">',
                   '<div class="' + Ext.baseCSSPrefix + 'ux-grid-printer-noprint ' + Ext.baseCSSPrefix + 'ux-grid-printer-links">',
                       '<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkprint" href="javascript:void(0);" onclick="window.print();">' + this.printLinkText + '</a>',
                       '<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkclose" href="javascript:void(0);" onclick="window.close();">' + this.closeLinkText + '</a>',
                   '</div>',
-                  '<h1>' + this.mainTitle + '</h1>',
                     '<table>',
                       '<tr>',
                         headings,
