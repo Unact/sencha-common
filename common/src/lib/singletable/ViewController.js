@@ -11,6 +11,8 @@ Ext.define('Ext.lib.singletable.ViewController', {
         masterGrid: null
     },
 
+    STORE_WARNING_COUNT: 1000,
+
     init: function(view){
         var me = this;
 
@@ -30,6 +32,7 @@ Ext.define('Ext.lib.singletable.ViewController', {
         me.showSaveError = view.showSaveError === false ? false : true;
         me.autoRefreshingTable = false || view.autoRefreshingTable;
         me.storeInitialized = false;
+        me.showStoreCountWarning = false || view.showStoreCountWarning;
     },
 
     needRefreshDetailOnSelect: function() {
@@ -220,6 +223,11 @@ Ext.define('Ext.lib.singletable.ViewController', {
 
                     this.callbackRefresh(this.getView(), store, this.oldSelectionId, this.oldSelectionIndex);
                     Ext.GlobalEvents.fireEvent('endserveroperation');
+
+                    if (this.showStoreCountWarning && store.count() >= this.STORE_WARNING_COUNT) {
+                        Ext.toast('Показаны не все записи. Необходимо уточнить запрос', 'Предупреждение');
+                    }
+
                     this.afterRefresh();
                 },
                 scope: this
