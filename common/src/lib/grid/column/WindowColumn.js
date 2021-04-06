@@ -4,7 +4,7 @@ Ext.define('Ext.lib.grid.column.WindowColumn', {
 
     requires: [
         'Ext.lib.grid.column.ChoiceColumn',
-        'Ext.lib.window.windowcolumn.View'
+        'Ext.lib.window.windowcolumn.Window'
     ],
 
     defaultFieldConfig: function() {
@@ -23,7 +23,7 @@ Ext.define('Ext.lib.grid.column.WindowColumn', {
         var grid = this.up('grid');
 
         if (this.windowView == null || this.windowView.destroyed) {
-            this.windowView = Ext.create('Ext.lib.window.windowcolumn.View', {
+            this.windowView = Ext.create('Ext.lib.window.windowcolumn.Window', {
                 parentColumn: this,
                 parentRecord: grid.getSelection()[0]
             });

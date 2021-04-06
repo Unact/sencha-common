@@ -1,6 +1,6 @@
-Ext.define('Ext.lib.window.windowcolumn.View', {
+Ext.define('Ext.lib.window.windowcolumn.Window', {
     extend: 'Ext.window.Window',
-    alias: 'widget.windowwindowcolumn',
+    alias: 'widget.windowwindowcolumnwindow',
 
     height: 350,
     width: 1000,
@@ -16,10 +16,7 @@ Ext.define('Ext.lib.window.windowcolumn.View', {
         this.title = this.parentColumn.text;
         this.items = [{
             region: 'center',
-            xtype: this.parentColumn.gridXtype,
-            viewConfig: {
-                loadMask: true
-            }
+            xtype: this.parentColumn.gridXtype
         }];
         this.buttons = [{
             text: 'Выбрать',
