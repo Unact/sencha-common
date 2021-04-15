@@ -101,16 +101,16 @@ Ext.define('Ext.lib.bigrid.ViewController', {
 
         if (records.length > 0) {
             recordSpSetsStore.getProxy().setExtraParams({
-                'q[id_in][]': records.map(rec => rec.get('id')),
+                'q[id_in][]': records.map(rec => rec.getId()),
                 'q[for_model]': view.modelName
             });
 
             this.loadDictionaries([recordSpSetsStore], () => {
                 records.forEach(record => {
                     recordSpSetsStore.getData().items.
-                        filter(spSetRec => spSetRec.get('id')[0] === record.get('id')).
+                        filter(spSetRec => spSetRec.getId()[0] === record.getId()).
                         forEach(spSetRec => {
-                            const groupProp = 'bi_group' + spSetRec.get('id')[2];
+                            const groupProp = 'bi_group' + spSetRec.getId()[2];
 
                             record.set(groupProp, spSetRec.get('spv_id'));
                             record.set(groupProp + '_name', spSetRec.get('spv_name'));
@@ -150,7 +150,7 @@ Ext.define('Ext.lib.bigrid.ViewController', {
                     biStore.add({
                         sp_sets_data: spSetsInfo,
                         model_name: view.modelName,
-                        record_id: record.get('id'),
+                        record_id: record.getId(),
                         only_delete: operation.request.getAction() === 'destroy'
                     });
                 }
