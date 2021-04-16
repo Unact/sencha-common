@@ -13,11 +13,11 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
 
         view.on('refreshtable', me.onCheckmarkRefresh, me);
         view.on('savetable', me.onSave, me);
-        view.on('checkchange', me.onCheckchange, me);
+        view.on('checkchange', me.onViewCheckChange, me);
     },
 
     onCheckmarkRefresh: function() {
-        this.sharedRefresh(false, true);
+        this.sharedRefresh(true, true);
     },
 
     onRefresh: function() {
@@ -297,7 +297,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
         store.filter(filters.getRange());
     },
 
-    onCheckchange: function(node, checked) {
+    onViewCheckChange: function(node, checked) {
         var me = this;
 
         node.cascadeBy(function(n) {
