@@ -29,7 +29,10 @@ Ext.define('Ext.lib.shared.Refresher', {
 
     initEnterHandlers: function() {
         this.up().query(this.getRefreshingSelector()).forEach(function(component) {
-            this.addEnterHandler(component);
+            // Не добавляем для textarea, где enter - переход на следующую строку
+            if (!component.isXType('textarea') || component.enterIsSpecial) {
+                this.addEnterHandler(component);
+            }
         }, this);
     },
 
@@ -53,10 +56,8 @@ Ext.define('Ext.lib.shared.Refresher', {
      * @private
      */
     getRefreshingSelector: function() {
-        // Используем '(true)', что бы не отбирать подклассы. Опасность представляет textarea, где enter - переход на
-        // следующую строку
         return this.refreshingXtypes.map(function(xtype) {
-            return xtype + '(true)';
+            return xtype;
         }).join(',');
     }
 });
