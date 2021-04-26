@@ -55,7 +55,7 @@ Ext.define('Ext.lib.singlechecktree.ViewController', {
             result = me.beforeRefresh(masterRecord);
         }
 
-        if(isRefreshTree) {
+        if(isRefreshTree && !treeStore.isLoaded()) {
             stores.push(treeStore);
         }
 
