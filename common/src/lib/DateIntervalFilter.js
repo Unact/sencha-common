@@ -19,6 +19,9 @@ Ext.define('Ext.lib.DateIntervalFilter', {
             value: '{dateFrom}'
         }
     }, {
+        xtype: 'container',
+        width: 10
+    }, {
         allowBlank: false,
         xtype: 'datefield',
         fieldLabel: 'По',
